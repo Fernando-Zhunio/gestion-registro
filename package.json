@@ -24,6 +24,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "@inertiajs/react": "^1.0.3"
+        "@inertiajs/react": "^1.0.3",
+        "react-icons": "^4.8.0"
     }
 }
