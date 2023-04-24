@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\course;
 use App\Http\Requests\StorecourseRequest;
 use App\Http\Requests\UpdatecourseRequest;
+use App\Models\Student;
 use App\Models\Teacher;
 use Inertia\Inertia;
 
@@ -16,8 +17,10 @@ class DashboardController extends Controller
     public function index()
     {
         $countTeacher = Teacher::count();
+        $countStudent = Student::count();
         return Inertia::render('Dashboard', [
-            'countTeacher' => $countTeacher
+            'countTeacher' => $countTeacher,
+            'countStudent' => $countStudent
         ]);
     }
 
