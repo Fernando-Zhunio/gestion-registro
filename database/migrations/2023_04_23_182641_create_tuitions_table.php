@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students');
             $table->foreignId('period_id')->constrained('periods');
             $table->foreignId('course_id')->constrained('courses');
+            $table->unique(['student_id', 'period_id', 'course_id']);
             $table->timestamps();
         });
     }

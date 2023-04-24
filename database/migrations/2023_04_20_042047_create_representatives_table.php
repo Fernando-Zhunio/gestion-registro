@@ -21,6 +21,7 @@ return new class extends Migration
             $table->char('doc_type', 1);
             $table->string('doc_number');
             $table->string('occupation');
+            $table->char('gender', 1);
             $table->timestamps();
         });
     }

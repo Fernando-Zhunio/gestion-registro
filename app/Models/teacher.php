@@ -8,4 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class teacher extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'address',
+        'doc_type',
+        'doc_number',
+        'birthday',
+        'academic_title',
+        'working_day'
+    ];
+
+    public function schedules()
+    {
+        return $this->hasMany('App\Models\schedule');
+    }
 }

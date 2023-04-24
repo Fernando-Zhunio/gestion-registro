@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\parallel;
+use App\Models\Parallel;
 use Illuminate\Auth\Access\Response;
 
 class ParallelPolicy

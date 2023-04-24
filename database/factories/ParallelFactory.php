@@ -17,7 +17,10 @@ class ParallelFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name,
+            'description' => $this->faker->text,
+            'quota' => 40,
+            'registered' => $this->faker->randomNumber(2),
         ];
     }
 }

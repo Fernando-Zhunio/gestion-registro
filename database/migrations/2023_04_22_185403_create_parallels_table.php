@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('description');
             $table->integer('quota');
             $table->integer('registered');
-            $table->foreignId('course_id')->constrained('courses');
+            // $table->foreignId('course_id')->constrained('courses');
             $table->timestamps();
         });
     }

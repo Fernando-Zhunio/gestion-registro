@@ -13,9 +13,19 @@ class subject extends Model
     protected $fillable = [
         'name',
         'description',
-        'course_id',
-        'teacher_id'
+        'nivel',
+        'hours',
+        'status',
+        'course_id'
     ];
 
-    
+    public function course()
+    {
+        return $this->belongsTo('App\Models\course');
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany('App\Models\schedule');
+    }
 }
