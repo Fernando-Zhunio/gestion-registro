@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('students', function (Blueprint $table) {
+        Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
@@ -21,11 +21,8 @@ return new class extends Migration
             $table->char('doc_type', 1);
             $table->string('doc_number');
             $table->date('birthday');
-            $table->char('gender', 1);
-            $table->string('previous_institution');
-            $table->string('illness_or_disability');
-            $table->foreignId('course_id')->constrained('courses');
-            $table->foreignId('representative_id')->constrained();
+            $table->string('academic_title');
+            $table->string('working_day');
             $table->timestamps();
         });
     }
@@ -35,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('teachers');
     }
 };
