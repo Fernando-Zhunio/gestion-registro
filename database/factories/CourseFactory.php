@@ -20,6 +20,8 @@ class CourseFactory extends Factory
             'name' => $this->faker->name,
             'description' => $this->faker->text,
             'nivel' => $this->faker->randomNumber(2),
+            'journey' => $this->faker->randomElement(['M', 'T', 'N']),
+            'specialty_id' => $this->faker->randomNumber(2),
         ];
     }
 }

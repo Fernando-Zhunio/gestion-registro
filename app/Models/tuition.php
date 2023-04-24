@@ -10,8 +10,8 @@ class tuition extends Model
     use HasFactory;
 
     protected $fillable = [
-        'doc_type',
-        'doc_number',
+        // 'doc_type',
+        // 'doc_number',
         'status',
         'approved',
         'student_id',

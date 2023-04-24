@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('address');
             $table->char('doc_type', 1);
-            $table->string('doc_number');
+            $table->string('doc_number')->unique();
             $table->date('birthday');
             $table->string('academic_title');
             $table->string('working_day');

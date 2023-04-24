@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
+            $table->string('nivel');
+            $table->char('journey', 1)->default('M');
             $table->timestamps();
             $table->foreignId('specialty_id')->constrained('specialties');
+            $table->unique(['nivel', 'specialty_id', 'journey']);
         });
     }
 

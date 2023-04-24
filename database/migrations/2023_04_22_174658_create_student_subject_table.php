@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreign('subject_id')->references('id')->on('subjects');
             $table->timestamps();
             $table->index(['student_id', 'subject_id']);
+            $table->unique(['student_id', 'subject_id']);
         });
     }
 

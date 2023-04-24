@@ -22,12 +22,15 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // create roles of laravel permission the roles are admin, student, teacher
-        $roles = ['admin', 'student', 'teacher'];
+        $roles = ['admin', 'student', 'teacher', 'secretary'];
         foreach ($roles as $role) {
             \Spatie\Permission\Models\Role::create(['name' => $role]);
         }
 
         $user->assignRole('admin');
+
+        // create specialties
+        
 
     }
 }
