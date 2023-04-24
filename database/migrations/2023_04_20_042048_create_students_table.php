@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('illness_or_disability');
             $table->foreignId('course_id')->constrained('courses');
             $table->foreignId('representative_id')->constrained();
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }

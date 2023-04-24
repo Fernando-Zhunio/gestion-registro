@@ -23,6 +23,7 @@ return new class extends Migration
             $table->date('birthday');
             $table->string('academic_title');
             $table->string('working_day');
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }
