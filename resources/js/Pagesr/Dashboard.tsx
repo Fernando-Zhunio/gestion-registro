@@ -21,16 +21,12 @@ export default function Dashboard({ auth, countTeacher }: PageProps<{countTeache
 
             <div className='text-gray-900 dark:text-gray-100 container mt-5'>
                 <div> 
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
                             <span className="px-2"><FaChalkboardTeacher size={80}/></span>
                             Total de Profesores {countTeacher}
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
-                            <span className="px-2"><FaChalkboardTeacher size={80}/></span>
-                            Total de Profesores
-                        </div>
 
                         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
                             <span className="px-2"><FaChalkboardTeacher size={80}/></span>
@@ -46,6 +42,11 @@ export default function Dashboard({ auth, countTeacher }: PageProps<{countTeache
                             <span className="px-2"><FaChalkboardTeacher size={80}/></span>
                             Total de Profesores
                         </div>
+
+                        {/* <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
+                            <span className="px-2"><FaChalkboardTeacher size={80}/></span>
+                            Total de Profesores
+                        </div> */}
                     </div>
                 </div>
             </div>
