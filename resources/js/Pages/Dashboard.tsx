@@ -27,7 +27,6 @@ export default function Dashboard({ auth, countTeacher }: PageProps<{countTeache
                             Total de Profesores {countTeacher}
                         </div>
 
-
                         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
                             <span className="px-2"><FaChalkboardTeacher size={80}/></span>
                             Total de Profesores

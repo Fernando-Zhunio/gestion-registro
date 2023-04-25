@@ -7,6 +7,7 @@ use App\Http\Requests\StorecourseRequest;
 use App\Http\Requests\UpdatecourseRequest;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\tuition;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -17,7 +18,8 @@ class DashboardController extends Controller
     public function index()
     {
         $countTeacher = Teacher::count();
-        $countStudent = Student::count();
+        
+        $countStudent = Tuition::;
         return Inertia::render('Dashboard', [
             'countTeacher' => $countTeacher,
             'countStudent' => $countStudent

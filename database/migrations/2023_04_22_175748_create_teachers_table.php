@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('academic_title');
             $table->string('working_day');
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('contract_teacher_id')->constrained('contract_teachers');
             $table->timestamps();
         });
     }
