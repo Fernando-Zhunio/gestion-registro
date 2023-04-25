@@ -2,8 +2,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import {FaChalkboardTeacher} from 'react-icons/fa';
-
-export default function Dashboard({ auth, countTeacher }: PageProps<{countTeacher: number}>) {
+import {IoIosAdd} from 'react-icons/io';
+export default function Dashboard({ auth, currentState }: PageProps<{currentState: any}>) {
+    console.log(currentState);
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -22,30 +23,33 @@ export default function Dashboard({ auth, countTeacher }: PageProps<{countTeache
             <div className='text-gray-900 dark:text-gray-100 container mt-5'>
                 <div> 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
-                            <span className="px-2"><FaChalkboardTeacher size={80}/></span>
-                            Total de Profesores {countTeacher}
+                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
+                            <span className='text-7xl'>{currentState.number_teachers}</span>
+                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Profesores <button className='mx-2 bg-slate-500/60 rounded-full'><IoIosAdd  size={30}/></button></div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
-                            <span className="px-2"><FaChalkboardTeacher size={80}/></span>
-                            Total de Profesores
+                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
+                            <span className='text-7xl'>{currentState.number_students}</span>
+                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Total de Estudiantes</div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
-                            <span className="px-2"><FaChalkboardTeacher size={80}/></span>
-                            Total de Profesores
+                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
+                            <span className='text-7xl'>{currentState.number_teachers}</span>
+                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Total de Profesores</div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
-                            <span className="px-2"><FaChalkboardTeacher size={80}/></span>
-                            Total de Profesores
+                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
+                            <span className='text-7xl'>{currentState.number_teachers}</span>
+                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Total de Profesores</div>
                         </div>
 
-                        {/* <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm flex p-3">
-                            <span className="px-2"><FaChalkboardTeacher size={80}/></span>
-                            Total de Profesores
-                        </div> */}
+                        
+
+                       
+
+                    
+
+                        
                     </div>
                 </div>
             </div>

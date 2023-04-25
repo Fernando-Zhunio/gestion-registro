@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\CurrentState;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,6 +30,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $user->assignRole('admin');
+
+        CurrentState::factory()->create();
 
         // create specialties
         

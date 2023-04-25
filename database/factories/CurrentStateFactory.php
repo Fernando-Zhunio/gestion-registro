@@ -17,7 +17,11 @@ class CurrentStateFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'observation' => $this->faker->word,
+            'name_institution' => $this->faker->word,
+            'mission' => $this->faker->word,
+            'vision' => $this->faker->word,
+            'period_id' => \App\Models\Period::factory(),
         ];
     }
 }

@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --sidebar-width: 200px;
+    --header-height: 64px;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    height: calc(100vh - 2.5rem);
+    position: fixed;
+    height: calc(100vh - var(--header-height));
+    position: fixed;
+    top: var(--header-height);
+}

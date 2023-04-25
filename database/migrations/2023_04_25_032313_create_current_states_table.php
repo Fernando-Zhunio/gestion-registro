@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('name_institution');
             $table->string('mission', 2000);
             $table->string('vision', 2000);
-            
+            $table->integer('number_students')->default(0);
+            $table->integer('number_teachers')->default(0);
             $table->foreignId('period_id')->constrained();
             $table->timestamps();
         });

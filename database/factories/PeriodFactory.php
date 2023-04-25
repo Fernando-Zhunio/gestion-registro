@@ -17,7 +17,10 @@ class PeriodFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'description' => $this->faker->word,
+            'start_date' => $this->faker->date(),
+            'end_date' => $this->faker->date(),
+            'promotion' => $this->faker->word,
         ];
     }
 }
