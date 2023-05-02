@@ -5,15 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\teacher;
 use App\Http\Requests\StoreteacherRequest;
 use App\Http\Requests\UpdateteacherRequest;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TeacherController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $onlyCurrent = $request->get('onlyCurrent', true);
+        $currentState = currentState();
+        $teachersBuilder = Teacher::query();
+        $teachersBuilder->search($request->get('search', null));
+        if ($onlyCurrent) {
+            $teachersBuilder->where('period_id', $currentState->period_id);
+        }
+        $teachers = $teachersBuilder->paginate(10);
+        return Inertia::render('Teachers/Index', [
+            'teachers' => $teachers,
+        ]);
     }
 
     /**
@@ -21,7 +33,7 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Teachers/CreateOrEditTeacher');
     }
 
     /**
@@ -29,7 +41,7 @@ class TeacherController extends Controller
      */
     public function store(StoreteacherRequest $request)
     {
-        //
+        $request->validated();
     }
 
     /**
@@ -45,7 +57,10 @@ class TeacherController extends Controller
      */
     public function edit(teacher $teacher)
     {
-        //
+        return Inertia::render('Teachers/CreateOrEditTeacher', [
+            'isEdit' => true,
+            'teacher' => $teacher,
+        ]);
     }
 
     /**

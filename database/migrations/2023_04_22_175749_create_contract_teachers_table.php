@@ -13,16 +13,17 @@ return new class extends Migration
     {
         Schema::create('contract_teachers', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('teacher_id')->constrained();
-            $table->foreignId('period_id')->constrained();
-            $table->string('contract_number');
+            $table->string('observation')->nullable();
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('contract_file');
-            $table->string('contract_state');
+            $table->string('contract_file')->nullable();
+            $table->string('contract_state')->nullable();
             $table->string('contract_type');
-            $table->string('salary');
+            $table->string('salary')->nullable();
+            $table->foreignId('teacher_id')->constrained();
+            $table->foreignId('period_id')->constrained();
             $table->timestamps();
+            $table->unique(['period_id', 'teacher_id']);
         });
     }
 

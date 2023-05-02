@@ -1,15 +1,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import {FaChalkboardTeacher} from 'react-icons/fa';
-import {IoIosAdd} from 'react-icons/io';
-export default function Dashboard({ auth, currentState }: PageProps<{currentState: any}>) {
-    console.log(currentState);
+import { FaChalkboardTeacher } from 'react-icons/fa';
+import { IoIosAdd } from 'react-icons/io';
+import { Card, CardContent, IconButton, Typography } from '@mui/material';
+export default function Dashboard({ auth, currentState }: PageProps<{ currentState: any }>) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-
-        >
+        <>
             <Head title="Dashboard" />
             {/* 
             <div className="py-12">
@@ -20,39 +17,102 @@ export default function Dashboard({ auth, currentState }: PageProps<{currentStat
                 </div>
             </div> */}
 
-            <div className='text-gray-900 dark:text-gray-100 container mt-5'>
-                <div> 
+            <div className=' container mt-5'>
+                <div className='mb-5'>
+                    <header className='text-5xl'>
+                        Hola, <span className='text-emerald-600 capitalize'>{auth.user.name}</span>
+                    </header>
+                    <div>
+                        <small className='text-gray-500 text-2xl'>{auth.user.email}</small>
+                        <span></span>
+                    </div>
+                </div>
+                <div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
+                        <div className="items-start rounded-lg shadow-lg flex flex-col p-3 bg-white">
                             <span className='text-7xl'>{currentState.number_teachers}</span>
-                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Profesores <button className='mx-2 bg-slate-500/60 rounded-full'><IoIosAdd  size={30}/></button></div>
+                            <div className="px-2 flex items-center justify-between w-full">
+                                <div className='flex items-center'>
+                                    <FaChalkboardTeacher className="mr-2" />
+                                    Profesores
+                                </div>
+                                <div className='flex gap-1'>
+                                    <IconButton size='small' aria-label="add">
+                                        <i className="fa-solid fa-plus"></i>
+                                    </IconButton>
+                                    <IconButton size='small' aria-label="add">
+                                        <i className="fa-regular fa-eye"></i>
+                                    </IconButton>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
-                            <span className='text-7xl'>{currentState.number_students}</span>
-                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Total de Estudiantes</div>
-                        </div>
-
-                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
+                        <div className="items-start rounded-lg shadow-lg flex flex-col p-3 bg-white">
                             <span className='text-7xl'>{currentState.number_teachers}</span>
-                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Total de Profesores</div>
+                            <div className="px-2 flex items-center justify-between w-full">
+                                <div className='flex items-center'>
+                                    <FaChalkboardTeacher className="mr-2" />
+                                    Profesores
+                                </div>
+                                <div className='flex gap-1'>
+                                    <IconButton size='small' aria-label="add">
+                                        <i className="fa-solid fa-plus"></i>
+                                    </IconButton>
+                                    <IconButton size='small' aria-label="add">
+                                        <i className="fa-regular fa-eye"></i>
+                                    </IconButton>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="items-center bg-white dark:bg-gray-800 rounded-lg shadow-sm flex flex-col p-3">
+                        <div className="items-start rounded-lg shadow-lg flex flex-col p-3">
                             <span className='text-7xl'>{currentState.number_teachers}</span>
-                            <div className="px-2 flex items-center justify-center"><FaChalkboardTeacher size={30} className="mr-2" /> Total de Profesores</div>
+                            <div className="px-2 flex items-center justify-between w-full">
+                                <div className='flex items-center'>
+                                    <FaChalkboardTeacher className="mr-2" />
+                                    Profesores
+                                </div>
+                                <div className='flex gap-1'>
+                                    <IconButton size='small' aria-label="add">
+                                        <i className="fa-solid fa-plus"></i>
+                                    </IconButton>
+                                    <IconButton size='small' aria-label="look">
+                                        <Link href='/teachers'><i className="fa-regular fa-eye"></i></Link> 
+                                    </IconButton>
+                                </div>
+                            </div>
                         </div>
 
-                        
+                        <div className="items-start rounded-lg shadow-lg flex flex-col p-3">
+                            <span className='text-7xl'>{currentState.number_teachers}</span>
+                            <div className="px-2 flex items-center justify-between w-full">
+                                <div className='flex items-center'>
+                                    <FaChalkboardTeacher className="mr-2" />
+                                    Profesores
+                                </div>
+                                <div className='flex gap-1'>
+                                    <IconButton size='small' aria-label="add">
+                                        <i className="fa-solid fa-plus"></i>
+                                    </IconButton>
+                                    <IconButton size='small' aria-label="add">
+                                        <i className="fa-regular fa-eye"></i>
+                                    </IconButton>
+                                </div>
+                            </div>
+                        </div>
 
-                       
 
-                    
 
-                        
+
+
+
+
+
+
+
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }

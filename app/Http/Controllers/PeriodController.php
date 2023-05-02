@@ -2,18 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\period;
+use App\Models\Period;
 use App\Http\Requests\StoreperiodRequest;
 use App\Http\Requests\UpdateperiodRequest;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PeriodController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->get('search', null);
+        $periods = Period::search($search, 'description')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
+        return Inertia::render('Periods/Index', [
+            'success' => true,
+            'data' => $periods,
+        ]);
     }
 
     /**
@@ -29,7 +39,13 @@ class PeriodController extends Controller
      */
     public function store(StoreperiodRequest $request)
     {
-        //
+        $request->validated();
+        // $period = Period::create($request->all());
+        return redirect()->route('periods.index')->with([
+            'success' => true,
+            'message' => 'Period created successfully',
+            // 'data' => $period,
+        ]);
     }
 
     /**

@@ -22,7 +22,23 @@ class StoreteacherRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'first_name' => 'required|string|max:50',
+            'last_name' => 'required|string|max:50',
+            'email' => [
+                'required',
+                'string',
+                'email:rfc,dns',
+                'max:255',
+                'unique:teachers,email',
+            ],
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'doc_type' => 'required|string|max:20',
+            'doc_number' => 'required|string|max:20',
+            'birthday' => 'required|date',
+            'academic_title' => 'required|string|max:50',
+            'working_day' => 'required|string|max:50',
+            
         ];
     }
 }

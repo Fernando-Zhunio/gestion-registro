@@ -19,7 +19,8 @@ class Teacher extends Model
         'doc_number',
         'birthday',
         'academic_title',
-        'working_day'
+        'working_day',
+        'period_id',
     ];
 
     public function schedules()
@@ -31,4 +32,20 @@ class Teacher extends Model
     {
         return $this->hasOne('App\Models\ContractTeacher');
     }
+
+    public function Period()
+    {
+        return $this->belongsTo('App\Models\Period');
+    }
+
+    public function scopeSearch($query, $search) {
+        if(!empty($search)) {
+            $query->where([
+                ['first_name', 'like', '%'.$search.'%'],
+                ['last_last', 'like', '%'.$search.'%'],
+            ]);
+        }
+        return $query;
+    }
 }
+

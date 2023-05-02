@@ -18,8 +18,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $currentState = CurrentState::first();
-        // dd($currentState);
+        $currentState = currentState();
         return Inertia::render('Dashboard', [
             'currentState' => $currentState,
         ]);
