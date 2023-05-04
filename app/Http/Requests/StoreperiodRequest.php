@@ -11,7 +11,7 @@ class StoreperiodRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,7 +25,7 @@ class StoreperiodRequest extends FormRequest
             'description' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'promotion' => 'required|integer',
+            'promotion' => 'required|string',
         ];
     }
 }

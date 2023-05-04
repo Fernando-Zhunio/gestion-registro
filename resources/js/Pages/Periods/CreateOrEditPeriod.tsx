@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import { Period } from "./types/period.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import { router } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import DialogActions from "@mui/material/DialogActions";
 import dayjs from "dayjs";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { showToast } from "@/Helpers/alerts";
 
 interface CreateOrEditPeriodProps {
     state: "create" | "edit";
@@ -17,22 +18,20 @@ interface CreateOrEditPeriodProps {
     data?: Period;
     setIsOpen: (isOpen: boolean) => void;
 }
+
 export const CreateOrEditPeriod = ({
     isOpen,
     data,
     setIsOpen,
 }: CreateOrEditPeriodProps) => {
-    const [form, setForm] = useState<any>(
-        { ...data } || {
-            description: "",
-            start_date: "",
-            end_date: "",
-            promotion: "",
-        }
-    );
-    const [state, setState] = useState<"create" | "edit">(
-        data ? "edit" : "create"
-    );
+    const {data:form, setData:setForm, post, errors, put} = useForm<any>({
+        description: "",
+        start_date: "",
+        end_date: "",
+        promotion: "",
+    });
+
+    const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -59,7 +58,6 @@ export const CreateOrEditPeriod = ({
     }
 
     function handleChangeDate(key: string, value: any): void {
-        // value = value?.format("YYYY-MM-DD");
         setForm((values: any) => ({
             ...values,
             [key]: value,
@@ -68,11 +66,12 @@ export const CreateOrEditPeriod = ({
 
     function getFormValues() {
         console.log(form);
+        form.start_value
         return {
             values: {
                 description: form.description,
-                start_date: form.start_date?.format("YYYY-MM-DD"),
-                end_date: form.end_date?.format("YYYY-MM-DD"),
+                start_date: form.start_date?.format?.("YYYY-MM-DD"),
+                end_date: form.end_date?.format?.("YYYY/MM/DD"),
                 promotion: form.promotion,
             },
             isValid: Object.keys(form).every(
@@ -85,30 +84,43 @@ export const CreateOrEditPeriod = ({
     }
 
     function saveInServer() {
-        setIsLoading(true);
         const { values, isValid } = getFormValues();
-        if (isValid) {
+        // if (isValid) {
+            setIsLoading(true);
             if (state === "create") {
-                // axios.post("/periods", form).then((response) => {
-                //     setIsLoading(false);
-                //     console.log(response);
-                // });
-                router.post("/periods", values, {
+                post("/periods", {
                     preserveState: true,
-                    onSuccess: () => {
+                    onSuccess: (e) => {
+                        console.log({ e });
                         setIsLoading(false);
                         setIsOpen(false);
                     },
+                    onError: (e) => {
+                        console.log({ e });
+                        setIsLoading(false);
+                    },
                 });
             } else if (state === "edit") {
-                // axios.put(`/periods/${data?.id}`, form).then((response) => {
-                //     setIsLoading(false);
-                //     console.log(response);
-                // });
-                router.put(`/periods/${data?.id}`, values);
+                
+                put(`/periods/${data?.id}`, {
+                    preserveState: true,
+                    onSuccess: (e) => {
+                        console.log({ e });
+                        setIsLoading(false);
+                        setIsOpen(false);
+                    },
+                    onError: (e) => {
+                        console.log({ e });
+                        setIsLoading(false);
+                    },
+                });
             }
-        } else {
-        }
+        // } else {
+        //     showToast({
+        //         icon: "error",
+        //         text: "Todos los campos son requeridos",
+        //     });
+        // }
     }
 
     return (
@@ -120,23 +132,29 @@ export const CreateOrEditPeriod = ({
                 <form>
                     <div className="grid grid-cols-1 gap-5">
                         <TextField
+                        required
                             fullWidth
                             label="Descripción"
                             variant="filled"
                             value={form.description}
                             onChange={handlerSetForm}
                             id="description"
+                            error={Boolean(errors.description)}
+                            helperText={errors.description}
                         ></TextField>
 
                         <DatePicker
                             onChange={(value: any) =>
                                 handleChangeDate("start_date", value)
                             }
-                            className="w-full"
+                            className="w-full" 
                             slotProps={{
                                 textField: {
+                                    required:true,
                                     variant: "filled",
                                     fullWidth: true,
+                                    error:Boolean(errors.start_date),
+                                    helperText: errors.start_date
                                 },
                             }}
                             format="DD/MM/YYYY"
@@ -144,6 +162,7 @@ export const CreateOrEditPeriod = ({
                             value={form.start_date}
                             label="Inicio"
                             maxDate={form.end_date}
+                            
                         />
 
                         <DatePicker
@@ -153,8 +172,11 @@ export const CreateOrEditPeriod = ({
                             className="w-full"
                             slotProps={{
                                 textField: {
+                                    required:true,
                                     variant: "filled",
                                     fullWidth: true,
+                                    error:Boolean(errors.end_date),
+                                    helperText: errors.end_date
                                 },
                             }}
                             format="DD/MM/YYYY"
@@ -166,11 +188,14 @@ export const CreateOrEditPeriod = ({
 
                         <TextField
                             fullWidth
+                            required
                             label="Promoción"
                             variant="filled"
                             value={form.promotion}
                             id="promotion"
                             onChange={handlerSetForm}
+                            error={Boolean(errors.promotion)}
+                            helperText={errors.promotion}
                         ></TextField>
 
                         <div></div>
@@ -195,15 +220,6 @@ export const CreateOrEditPeriod = ({
                     </Button>
                 </DialogActions>
             </DialogCustom>
-
-            <Snackbar  autoHideDuration={6000} >
-                <Alert
-                    severity="success"
-                    sx={{ width: "100%" }}
-                >
-                    {}
-                </Alert>
-            </Snackbar>
         </div>
     );
 };

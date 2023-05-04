@@ -62,10 +62,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('periods')->group(function () {
-        Route::get('/', [PeriodController::class, 'index'])->name('period');
+        Route::get('/', [PeriodController::class, 'index'])->name('periods.index');
         // Route::get('/create', [PeriodController::class, 'create'])->name('period.create');
         Route::post('/', [PeriodController::class, 'store'])->name('period.store');
-        Route::put('/{id}', [PeriodController::class, 'update'])->name('period.update');
+        Route::put('/{period}', [PeriodController::class, 'update'])->name('period.update');
     });
 });
 

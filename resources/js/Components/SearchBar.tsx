@@ -1,5 +1,5 @@
 import { PaginatorEvent, ResponsePaginator } from "@/types/global";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { CircularProgress, TablePagination } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -43,13 +43,28 @@ const SearchBarComponent = ({
         pageSize: 10,
         length: 0,
     });
+    const {props} = usePage() as any;
+
     useEffect(() => {
+        setPaginator({
+            page: props.data.current_page - 1,
+            pageSize: props.data.per_page,
+            length: props.data.total,
+        })
+        setSearchText(getQueryParamSearch());
         if (notLoadDataOnInit && !pass) {
             setPass(true);
             return;
         };
         fetchUrl();
-    }, [paginator]);
+        console.log({ props });
+    }, []);
+    
+    function getQueryParamSearch() {
+        const urlParams = new URLSearchParams(window.location.search);
+        console.log({ urlParams: urlParams.get('search') });
+        return urlParams.get('search') || '';
+    }
 
     function handlerSetIsLoading(isLoading: boolean) {
         setIsLoading(isLoading);
@@ -64,26 +79,26 @@ const SearchBarComponent = ({
         onError && onError(error);
     }
 
-    async function fetchUrl() {
+    async function fetchUrl(page: number | null = null) {
         handlerSetIsLoading(true);
-        // axios.get(path).then((response) => {
-        //     handlerSetData(response.data);
-        //     handlerSetIsLoading(false);
-        // }).catch((error) => {
-        //     console.log({ error });
-        //     handlerSetError(error);
-        //     handlerSetIsLoading(false);
-        // });
-        console.log({ paginator })
         const params = {
             search: searchText,
-            page: paginator.page + 1,
+            page: page || paginator.page + 1,
             pageSize: paginator.pageSize,
         }
         router.get(path, params, {
             preserveState: true,
-            onSuccess: (data) => {
-                handlerSetData((data.props.data as any)?.data || []);
+            onSuccess: (data: any) => {
+                // handlerSetData((data.props.data as any)?.data || []);
+                // paginator = {
+                //     page: props.data.current_page
+                // }
+                console.log(data.props.data)
+                setPaginator({
+                    page: data.props.data.current_page - 1,
+                    pageSize: data.props.data.per_page,
+                    length: data.props.data.total,
+                })
                 handlerSetIsLoading(false);
             },
             onError: (error) => {
@@ -97,7 +112,7 @@ const SearchBarComponent = ({
     function handleChangePage(_event: any, page: number): void {
         console.log({ page });
         setPaginator((prevState) => ({ ...prevState, page }));
-        // fetchUrl();
+        fetchUrl(page + 1);
     }
 
     return (
@@ -113,6 +128,7 @@ const SearchBarComponent = ({
                             className="border-none outline-none focus:ring-0 bg-transparent"
                             placeholder={placeholder || "Buscador"}
                             onChange={(e) => setSearchText(e.target.value)}
+                            value={searchText}
                             onKeyUp={(e) => {
                                 if (e.key === "Enter") {
                                     onClickSearch();
@@ -133,10 +149,18 @@ const SearchBarComponent = ({
                     <TablePagination
                         rowsPerPageOptions={rowsPerPageOptions || [10, 25, 50]}
                         component="div"
-                        count={100}
+                        count={paginator.length}
                         rowsPerPage={paginator.pageSize}
                         page={paginator.page}
                         onPageChange={handleChangePage}
+                        onRowsPerPageChange={(event) => {
+                            setPaginator((prevState) => ({
+                                ...prevState,
+                                pageSize: parseInt(event.target.value, 10),
+                                page: 0,
+                            }));
+                            fetchUrl();
+                        }}
                     />
                 )}
             </div>

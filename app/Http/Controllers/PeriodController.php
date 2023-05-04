@@ -16,9 +16,10 @@ class PeriodController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search', null);
+        $pageSize = $request->get('pageSize', 10);
         $periods = Period::search($search, 'description')
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate($pageSize);
 
         return Inertia::render('Periods/Index', [
             'success' => true,
@@ -40,11 +41,13 @@ class PeriodController extends Controller
     public function store(StoreperiodRequest $request)
     {
         $request->validated();
-        // $period = Period::create($request->all());
-        return redirect()->route('periods.index')->with([
+        $data = $request->all();
+        $data['start_date'] = date('Y-m-d', strtotime($data['start_date']));
+        $data['end_date'] = date('Y-m-d', strtotime($data['end_date']));
+        $period = Period::create($data);
+        return to_route('periods.index', [
             'success' => true,
-            'message' => 'Period created successfully',
-            // 'data' => $period,
+            'data' => $period,
         ]);
     }
 
@@ -69,7 +72,15 @@ class PeriodController extends Controller
      */
     public function update(UpdateperiodRequest $request, period $period)
     {
-        //
+        $request->validated();
+        $data = $request->all();
+        $data['start_date'] = date('Y-m-d', strtotime($data['start_date']));
+        $data['end_date'] = date('Y-m-d', strtotime($data['end_date']));
+        $period->update($data);
+        return to_route('periods.index', [
+            'success' => true,
+            'data' => $period,
+        ]);
     }
 
     /**

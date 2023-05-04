@@ -13,14 +13,19 @@ import { CreateOrEditPeriod } from "./CreateOrEditPeriod";
 
 
 
-const PeriodsIndex = ({data: _data}: ResponsePaginator<Period>) => {
-    const [data, setData] = useState<Period[]>(_data.data);
+const PeriodsIndex = ({data}: ResponsePaginator<Period>) => {
+    // const [data, setData] = useState<Period[]>(_data.data);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dataEdit, setDataEdit] = useState<Period | undefined>(undefined);
     function openPeriod(row: Period | undefined): void {
         setDataEdit(row);
         setIsOpen(true);
     }
+
+    // console.log({_data})]
+    // function setData(data2: any) {
+    //     data.data = data2;
+    // }
 
 
     return (
@@ -29,7 +34,6 @@ const PeriodsIndex = ({data: _data}: ResponsePaginator<Period>) => {
                 path="/periods"
                 title="Periodos"
                 withPaginator={true}
-                onSetData={setData}
                 notLoadDataOnInit={true}
                 buttons={<>
                     <button onClick={() => openPeriod(undefined)} className="btn-custom btn-create">Crear periodo</button>
@@ -52,7 +56,7 @@ const PeriodsIndex = ({data: _data}: ResponsePaginator<Period>) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data.map((row) => (
+                            {data.data.map((row) => (
                                 <TableRow
                                     key={row.id}
                                     // sx={{

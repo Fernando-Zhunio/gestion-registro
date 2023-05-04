@@ -30,6 +30,7 @@
         "@mui/material": "^5.12.2",
         "@mui/x-date-pickers": "^6.3.0",
         "dayjs": "^1.11.7",
-        "react-icons": "^4.8.0"
+        "react-icons": "^4.8.0",
+        "sweetalert2": "^11.7.3"
     }
 }
