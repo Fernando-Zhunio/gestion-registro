@@ -11,7 +11,7 @@ class StoreteacherRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -27,18 +27,27 @@ class StoreteacherRequest extends FormRequest
             'email' => [
                 'required',
                 'string',
-                'email:rfc,dns',
+                'email',
                 'max:255',
                 'unique:teachers,email',
             ],
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
-            'doc_type' => 'required|string|max:20',
+            'doc_type' => 'required|string|in:CI,PASSPORT',
             'doc_number' => 'required|string|max:20',
             'birthday' => 'required|date',
             'academic_title' => 'required|string|max:50',
-            'working_day' => 'required|string|max:50',
-            
+            'working_day' => 'required|date',
+            'period_id' => 'required|integer|exists:periods,id',
+
+            'observation' => 'nullable|string|max:1000',
+            'start_date' => 'required_if:contract_type,undefined|date|before:end_date',
+            'end_date' => 'required_if:contract_type,undefined|date',
+            'contract_file' => 'nullable|string|max:255',
+            // 'contract_state' => 'required|string|in:ACTIVE,INACTIVE',
+            'contract_type' => 'required|string|in:defined,undefined',
+            'salary' => 'required|numeric',
+
         ];
     }
 }

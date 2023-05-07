@@ -24,7 +24,7 @@ const SearchBarComponent = ({
     path,
     title,
     placeholder,
-    notLoadDataOnInit,
+    notLoadDataOnInit = true,
     withPaginator,
     rowsPerPageOptions,
     onIsLoading,
@@ -93,7 +93,7 @@ const SearchBarComponent = ({
                 // paginator = {
                 //     page: props.data.current_page
                 // }
-                console.log(data.props.data)
+                // console.log(data.props.data)
                 setPaginator({
                     page: data.props.data.current_page - 1,
                     pageSize: data.props.data.per_page,

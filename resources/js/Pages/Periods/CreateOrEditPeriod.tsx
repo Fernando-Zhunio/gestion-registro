@@ -24,7 +24,13 @@ export const CreateOrEditPeriod = ({
     data,
     setIsOpen,
 }: CreateOrEditPeriodProps) => {
-    const {data:form, setData:setForm, post, errors, put} = useForm<any>({
+    const {
+        data: form,
+        setData: setForm,
+        post,
+        errors,
+        put,
+    } = useForm<any>({
         description: "",
         start_date: "",
         end_date: "",
@@ -66,7 +72,7 @@ export const CreateOrEditPeriod = ({
 
     function getFormValues() {
         console.log(form);
-        form.start_value
+        form.start_value;
         return {
             values: {
                 description: form.description,
@@ -86,35 +92,36 @@ export const CreateOrEditPeriod = ({
     function saveInServer() {
         const { values, isValid } = getFormValues();
         // if (isValid) {
-            setIsLoading(true);
-            if (state === "create") {
-                post("/periods", {
-                    preserveState: true,
-                    onSuccess: (e) => {
-                        console.log({ e });
-                        setIsLoading(false);
-                        setIsOpen(false);
-                    },
-                    onError: (e) => {
-                        console.log({ e });
-                        setIsLoading(false);
-                    },
-                });
-            } else if (state === "edit") {
-                
-                put(`/periods/${data?.id}`, {
-                    preserveState: true,
-                    onSuccess: (e) => {
-                        console.log({ e });
-                        setIsLoading(false);
-                        setIsOpen(false);
-                    },
-                    onError: (e) => {
-                        console.log({ e });
-                        setIsLoading(false);
-                    },
-                });
-            }
+        setIsLoading(true);
+        if (state === "create") {
+            post("/periods", {
+                preserveState: true,
+                onSuccess: (e) => {
+                    console.log({ e });
+                    setIsLoading(false);
+                    setIsOpen(false);
+                },
+                onError: (e) => {
+                    console.log({ e });
+                    setIsLoading(false);
+                },
+            });
+        } else if (state === "edit") {
+            put(`/periods/${data?.id}`, {
+                preserveState: true,
+                replace: false,
+                preserveScroll: true,
+                onSuccess: (e) => {
+                    console.log({ e });
+                    setIsLoading(false);
+                    setIsOpen(false);
+                },
+                onError: (e) => {
+                    console.log({ e });
+                    setIsLoading(false);
+                },
+            });
+        }
         // } else {
         //     showToast({
         //         icon: "error",
@@ -132,7 +139,7 @@ export const CreateOrEditPeriod = ({
                 <form>
                     <div className="grid grid-cols-1 gap-5">
                         <TextField
-                        required
+                            required
                             fullWidth
                             label="Descripción"
                             variant="filled"
@@ -147,14 +154,14 @@ export const CreateOrEditPeriod = ({
                             onChange={(value: any) =>
                                 handleChangeDate("start_date", value)
                             }
-                            className="w-full" 
+                            className="w-full"
                             slotProps={{
                                 textField: {
-                                    required:true,
+                                    required: true,
                                     variant: "filled",
                                     fullWidth: true,
-                                    error:Boolean(errors.start_date),
-                                    helperText: errors.start_date
+                                    error: Boolean(errors.start_date),
+                                    helperText: errors.start_date,
                                 },
                             }}
                             format="DD/MM/YYYY"
@@ -162,7 +169,6 @@ export const CreateOrEditPeriod = ({
                             value={form.start_date}
                             label="Inicio"
                             maxDate={form.end_date}
-                            
                         />
 
                         <DatePicker
@@ -172,11 +178,11 @@ export const CreateOrEditPeriod = ({
                             className="w-full"
                             slotProps={{
                                 textField: {
-                                    required:true,
+                                    required: true,
                                     variant: "filled",
                                     fullWidth: true,
-                                    error:Boolean(errors.end_date),
-                                    helperText: errors.end_date
+                                    error: Boolean(errors.end_date),
+                                    helperText: errors.end_date,
                                 },
                             }}
                             format="DD/MM/YYYY"

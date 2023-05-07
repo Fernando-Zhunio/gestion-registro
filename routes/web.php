@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('teachers')->group(function () {
         Route::get('/', [TeacherController::class, 'index'])->name('teacher');
         Route::get('/create', [TeacherController::class, 'create'])->name('teacher.create');
+        Route::post('/', [TeacherController::class, 'store'])->name('teacher.store');
     });
 
     Route::prefix('periods')->group(function () {

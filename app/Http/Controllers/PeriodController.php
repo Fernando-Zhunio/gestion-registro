@@ -77,10 +77,7 @@ class PeriodController extends Controller
         $data['start_date'] = date('Y-m-d', strtotime($data['start_date']));
         $data['end_date'] = date('Y-m-d', strtotime($data['end_date']));
         $period->update($data);
-        return to_route('periods.index', [
-            'success' => true,
-            'data' => $period,
-        ]);
+        return to_route('periods.index');
     }
 
     /**

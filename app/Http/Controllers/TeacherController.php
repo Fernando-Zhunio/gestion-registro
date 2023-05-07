@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\teacher;
 use App\Http\Requests\StoreteacherRequest;
 use App\Http\Requests\UpdateteacherRequest;
+use App\Models\ContractTeacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class TeacherController extends Controller
@@ -24,7 +26,8 @@ class TeacherController extends Controller
         }
         $teachers = $teachersBuilder->paginate(10);
         return Inertia::render('Teachers/Index', [
-            'teachers' => $teachers,
+            'success' => true,
+            'data' => $teachers,
         ]);
     }
 
@@ -33,7 +36,11 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Teachers/CreateOrEditTeacher');
+        $periods = \App\Models\Period::all();
+        return Inertia::render('Teachers/CreateOrEditTeacher', [
+            'isEdit' => false,
+            'periods' => $periods,
+        ]); 
     }
 
     /**
@@ -42,6 +49,39 @@ class TeacherController extends Controller
     public function store(StoreteacherRequest $request)
     {
         $request->validated();
+        DB::beginTransaction();
+
+        try {
+            $data = $request->all();
+            $teacher = Teacher::create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'address' => $data['address'],
+                'doc_type' => $data['doc_type'],
+                'doc_number' => $data['doc_number'],
+                'birthday' => date('Y-m-d', strtotime($data['birthday'])),
+                'academic_title' => $data['academic_title'],
+                'working_day' => $data['working_day'],
+                'period_id' => $data['period_id'],
+            ]);
+
+            $teacher->contractsTeacher()->save([
+                'observation' => $data['observation'],
+                'start_date' => date('Y-m-d', strtotime($data['start_date'])),
+                'end_date' => date('Y-m-d', strtotime($data['end_date'])),
+                'contract_file' => $data['contract_file'],
+                'contract_state' => $data['contract_state'],
+                'contract_type' => $data['contract_type'],
+                'salary' => $data['salary'],
+                'period_id' => $data['period_id'],
+            ]);
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw new \Exception($th->getMessage());
+        }
     }
 
     /**

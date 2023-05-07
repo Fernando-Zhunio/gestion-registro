@@ -20,7 +20,7 @@ class ContractTeacher extends Model
         'teacher_id',
     ];
 
-    public function Teacher()
+    public function teacher()
     {
         return $this->belongsTo('App\Models\Teacher');
     }

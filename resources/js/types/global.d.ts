@@ -10,11 +10,11 @@ declare global {
     var Ziggy: ZiggyConfig;
 }
 
-export interface CreateOrEditProps<T = any> {
-    isEdit?: boolean;
-    data?: T
-    metaData?: any;
-}
+// export interface CreateOrEditProps<T = any> {
+//     isEdit?: boolean;
+//     data?: T
+//     metaData?: any;
+// }
 
 export interface ResponseDataPaginator<T = any> {
     current_page: number;
