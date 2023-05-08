@@ -18,7 +18,7 @@ createInertiaApp({
         // resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob('./Pages/**/*.tsx'))
         const pages = import.meta.glob('./Pages/**/*.tsx', { eager: true });
         let page: any = pages[`./Pages/${name}.tsx`];
-        if (!page.default.layout) {
+        if (!page.default?.layout) {
             page.default.layout = isAuthenticated ?  (page: any) => {
                 return <Authenticated children={page}/>
             }: page.default.layout;

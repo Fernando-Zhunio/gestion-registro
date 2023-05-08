@@ -16,8 +16,11 @@ import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ITeacher } from "@/Models/teacher";
 import { IPeriod } from "@/Models/period";
-
-export const CreateOrEditTeacher = ({
+import { useFormValidation } from "@/Hooks/FormValidation";
+import { Validator } from "@/Classes/Validator";
+// import { useFormValidation } from "@/Hooks/FormValidation";
+// import { Validator } from "@/Classes/Validator";
+ const CreateOrEditTeacher = ({
     isEdit,
     teacher,
     periods,
@@ -54,23 +57,19 @@ export const CreateOrEditTeacher = ({
         contract_type: "",
         salary: "",
     });
-    // useEffect(() => {
-    //     console.log({ periods });
-    // });
+    const {errors: errorsValidator, handleChange} = useFormValidation(values, setValues)
 
-    function handleChange(e: any) {
-        const target = e?.target;
-        const key = target?.id || target?.name;
-        console.log({ target });
-        setValues((values: any) => ({
-            ...values,
-            [key]: target.value,
-        }));
-    }
+    // function handleChange(e: any) {
+    //     const target = e?.target;
+    //     const key = target?.id || target?.name;
+    //     setValues((values: any) => ({
+    //         ...values,
+    //         [key]: target.value,
+    //     }));
+    // }
 
     function handleChangeDate(key: string, value: any) {
         // value = value?.format("YYYY-MM-DD");
-        console.log({ value });
         setValues((values: any) => ({
             ...values,
             [key]: value,
@@ -78,7 +77,6 @@ export const CreateOrEditTeacher = ({
     }
 
     function handleChangeSimple(key: string, value: any) {
-        console.log({ values });
         setValues((values: any) => ({
             ...values,
             [key]: value,
@@ -107,7 +105,6 @@ export const CreateOrEditTeacher = ({
     }
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
             <div className="px-5">
                 <h1 className="title mb-4">
                     {isEdit
@@ -118,20 +115,21 @@ export const CreateOrEditTeacher = ({
                     <CardContent>
                         <form onSubmit={handlerSubmit} className="p-5">
                             <h3 className="text-2xl text-gray-500 mb-2">
-                                Datos del Maestro
+                                Datos del Maestro(a)
                             </h3>
                             <div className="grid md:grid-cols-3 gap-5">
                                 <div>
                                     <TextField
                                         fullWidth
-                                        required
                                         variant="filled"
                                         label="Nombres"
                                         value={values.first_name}
-                                        error
                                         id="first_name"
-                                        helperText="Nombres del profes@r (obligatorio)"
-                                        onChange={handleChange}
+                                        helperText={errorsValidator?.first_name}
+                                        error={Boolean(errorsValidator.first_name)}
+                                        onChange={(e) => {
+                                            handleChange('first_name', e.target.value, () => new Validator(e.target.value).required() );
+                                        }}
                                     ></TextField>
                                 </div>
                                 <div>
@@ -141,9 +139,10 @@ export const CreateOrEditTeacher = ({
                                         variant="filled"
                                         label="Apellidos"
                                         id="last_name"
+                                        helperText={errorsValidator?.last_name}
+                                        error={Boolean(errorsValidator.last_name)}
                                         value={values.last_name}
-                                        helperText="Apellidos del profesor (obligatorio)"
-                                        onChange={handleChange}
+                                        onChange={(e) => handleChange('last_name', e.target.value, () => new Validator(e.target.value).required() )}
                                     ></TextField>
                                 </div>
                                 <div>
@@ -154,9 +153,22 @@ export const CreateOrEditTeacher = ({
                                         label="Correo electrónico"
                                         type="email"
                                         id="email"
-                                        onChange={handleChange}
+                                        helperText={errorsValidator?.email}
+                                        error={Boolean(errorsValidator.email)}
+                                        onChange={(e) => handleChange('email', e.target.value, () => new Validator(e.target.value).required().email() )}
                                         value={values.email}
-                                        helperText="Correo electrónico del profesor (obligatorio)"
+                                    ></TextField>
+                                </div>
+                                <div className="md:col-span-3">
+                                    <TextField
+                                        className="w-full"
+                                        required
+                                        multiline
+                                        variant="filled"
+                                        label="Dirección"
+                                        value={values.address}
+                                        id="address"
+                                        // onChange={handleChange}
                                     ></TextField>
                                 </div>
                                 <div>
@@ -168,9 +180,10 @@ export const CreateOrEditTeacher = ({
                                         value={values.phone}
                                         type="number"
                                         id="phone"
-                                        onChange={handleChange}
+                                        // onChange={handleChange}
                                     ></TextField>
                                 </div>
+                                
                                 <div>
                                     <DatePicker
                                         onChange={(value: any) =>
@@ -182,6 +195,7 @@ export const CreateOrEditTeacher = ({
                                                 variant: "filled",
                                                 id: "birthday",
                                                 fullWidth: true,
+                                                required: true,
                                             },
                                         }}
                                         format="DD/MM/YYYY"
@@ -189,39 +203,6 @@ export const CreateOrEditTeacher = ({
                                         value={values.birthday}
                                         label="Año de nacimiento"
                                     />
-                                </div>
-                                <div>
-                                    <TextField
-                                        className="w-full"
-                                        required
-                                        variant="filled"
-                                        label="Dirección"
-                                        value={values.address}
-                                        id="address"
-                                        onChange={handleChange}
-                                    ></TextField>
-                                </div>
-                                <div>
-                                    <TextField
-                                        className="w-full"
-                                        required
-                                        variant="filled"
-                                        label="Titulo académico"
-                                        value={values.academic_title}
-                                        id="academic_title"
-                                        onChange={handleChange}
-                                    ></TextField>
-                                </div>
-                                <div>
-                                    <TextField
-                                        className="w-full"
-                                        required
-                                        variant="filled"
-                                        label="Titulo académico"
-                                        value={values.academic_title}
-                                        id="academic_title"
-                                        onChange={handleChange}
-                                    ></TextField>
                                 </div>
                                 <div>
                                     <DatePicker
@@ -236,6 +217,7 @@ export const CreateOrEditTeacher = ({
                                             textField: {
                                                 variant: "filled",
                                                 id: "working_day",
+                                                required: true,
                                             },
                                         }}
                                         disableFuture
@@ -244,119 +226,54 @@ export const CreateOrEditTeacher = ({
                                         defaultValue={new Date()}
                                     />
                                 </div>
-                            </div>
-                            <Divider className="py-3" />
-                            <h3 className="text-2xl text-gray-500 mt-4 mb-2">
-                                Datos del contrato
-                            </h3>
-                            <div className="grid md:grid-cols-3 gap-5">
+                               
+                                <div className="md:col-span-2">
+                                    <TextField
+                                        className="w-full"
+                                        required
+                                        variant="filled"
+                                        label="Titulo académico"
+                                        value={values.academic_title}
+                                        id="academic_title"
+                                        // onChange={handleChange}
+                                    ></TextField>
+                                </div>
                                 <div>
                                     <TextField
-                                        id="outlined-select-currency"
                                         select
                                         variant="filled"
                                         fullWidth={true}
-                                        label="Tipo de contrato"
-                                        defaultValue=""
-                                        value={values.contract_type}
+                                        label="Tipo de documento"
+                                        required
+                                        value={values.doc_type}
                                         onChange={(value) =>
                                             handleChangeSimple(
-                                                "contract_type",
+                                                "doc_type",
                                                 value.target.value
                                             )
                                         }
-                                        helperText="Tipo de contrato"
                                     >
-                                        <MenuItem value="undefined">
-                                            Indefinido
+                                        <MenuItem value="CI">
+                                            Cédula de identidad
                                         </MenuItem>
-                                        <MenuItem value="defined">
-                                            Definido
+                                        <MenuItem value="PASSPORT">
+                                            Pasaporte
                                         </MenuItem>
                                     </TextField>
                                 </div>
-                                {values.contract_type == "defined" && (
-                                    <>
-                                        <div>
-                                            <DatePicker
-                                                onChange={(value: any) =>
-                                                    handleChangeDate(
-                                                        "start_date",
-                                                        value
-                                                    )
-                                                }
-                                                className="w-full"
-                                                slotProps={{
-                                                    textField: {
-                                                        variant: "filled",
-                                                        id: "start_date",
-                                                        fullWidth: true,
-                                                    },
-                                                }}
-                                                maxDate={values.end_date}
-                                                format="DD/MM/YYYY"
-                                                disableFuture
-                                                value={values.start_date}
-                                                label="Inicio de contrato"
-                                            />
-                                        </div>
-                                        <div>
-                                            <DatePicker
-                                                onChange={(value: any) =>
-                                                    handleChangeDate(
-                                                        "end_date",
-                                                        value
-                                                    )
-                                                }
-                                                className="w-full"
-                                                slotProps={{
-                                                    textField: {
-                                                        variant: "filled",
-                                                        id: "end_date",
-                                                        fullWidth: true,
-                                                    },
-                                                }}
-                                                minDate={values.start_date}
-                                                format="DD/MM/YYYY"
-                                                disableFuture
-                                                value={values.end_date}
-                                                label="Fin de contrato"
-                                            />
-                                        </div>
-                                    </>
-                                )}
                                 <div>
                                     <TextField
                                         className="w-full"
                                         required
                                         variant="filled"
-                                        label="Salario"
-                                        value={values.salary}
-                                        id="salary"
+                                        label="Número de documento"
+                                        value={values.doc_number}
+                                        id="doc_number"
                                         type="number"
-                                        onChange={handleChange}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    $
-                                                </InputAdornment>
-                                            ),
-                                        }}
+                                        // onChange={handleChange}
                                     ></TextField>
                                 </div>
-                                <div>
-                                    <TextField
-                                        className="w-full"
-                                        variant="filled"
-                                        label="Observación"
-                                        multiline
-                                        value={values.observation}
-                                        helperText={!errors?.observation}
-                                        id="observation"
-                                        error={Boolean(errors.observation)}
-                                        onChange={handleChange}
-                                    ></TextField>
-                                </div>
+                                
                                 <div>
                                     <TextField
                                         id="outlined-select-currency"
@@ -372,6 +289,7 @@ export const CreateOrEditTeacher = ({
                                                 value.target.value
                                             )
                                         }
+                                        required
                                         // helperText="Tipo de contrato"
                                     >
                                         {periods?.map((period) => (
@@ -391,6 +309,125 @@ export const CreateOrEditTeacher = ({
                                     </TextField>
                                 </div>
                             </div>
+                            <Divider className="py-3" />
+                            <h3 className="text-2xl text-gray-500 mt-4 mb-2">
+                                Datos del contrato
+                            </h3>
+                            <div className="grid md:grid-cols-3 gap-5">
+                                <div>
+                                    <TextField
+                                        id="outlined-select-currency"
+                                        select
+                                        variant="filled"
+                                        fullWidth={true}
+                                        label="Tipo de contrato"
+                                        required
+                                        value={values.contract_type}
+                                        onChange={(value) =>
+                                            handleChangeSimple(
+                                                "contract_type",
+                                                value.target.value
+                                            )
+                                        }
+                                    >
+                                        <MenuItem value="undefined">
+                                            Indefinido
+                                        </MenuItem>
+                                        <MenuItem value="defined">
+                                            Definido
+                                        </MenuItem>
+                                    </TextField>
+                                </div>
+
+                                <div>
+                                    <DatePicker
+                                        onChange={(value: any) =>
+                                            handleChangeDate(
+                                                "start_date",
+                                                value
+                                            )
+                                        }
+                                        className="w-full"
+                                        slotProps={{
+                                            textField: {
+                                                variant: "filled",
+                                                id: "start_date",
+                                                fullWidth: true,
+                                                required:
+                                                    values.contract_type ==
+                                                    "defined",
+                                                disabled:
+                                                    values.contract_type !=
+                                                    "defined",
+                                            },
+                                        }}
+                                        maxDate={values.end_date}
+                                        format="DD/MM/YYYY"
+                                        disableFuture
+                                        disabled={values.contract_type !="defined"}
+                                        value={values.start_date}
+                                        label="Inicio de contrato"
+                                    />
+                                </div>
+                                <div>
+                                    <DatePicker
+                                        onChange={(value: any) =>
+                                            handleChangeDate("end_date", value)
+                                        }
+                                        className="w-full"
+                                        slotProps={{
+                                            textField: {
+                                                variant: "filled",
+                                                id: "end_date",
+                                                fullWidth: true,
+                                                required:
+                                                    values.contract_type ==
+                                                    "defined",
+                                                disabled:
+                                                    values.contract_type !=
+                                                    "defined",
+                                            },
+                                        }}
+                                        disabled={values.contract_type !="defined"}
+                                        minDate={values.start_date}
+                                        format="DD/MM/YYYY"
+                                        disableFuture
+                                        value={values.end_date}
+                                        label="Fin de contrato"
+                                    />
+                                </div>
+
+                                <div>
+                                    <TextField
+                                        className="w-full"
+                                        required
+                                        variant="filled"
+                                        label="Salario"
+                                        value={values.salary}
+                                        id="salary"
+                                        type="number"
+                                        // onChange={handleChange}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    $
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    ></TextField>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <TextField
+                                        className="w-full"
+                                        variant="filled"
+                                        label="Observación"
+                                        multiline
+                                        value={values.observation}
+                                        id="observation"
+                                        // onChange={handleChange}
+                                    ></TextField>
+                                </div>
+                            </div>
                             <div className="mt-5">
                                 <button
                                     disabled={isLoading}
@@ -404,8 +441,8 @@ export const CreateOrEditTeacher = ({
                     </CardContent>
                 </Card>
             </div>
-        </LocalizationProvider>
     );
 };
 
 export default CreateOrEditTeacher;
+

@@ -93,3 +93,9 @@
 .btn-c-edit {
     color: var(--btn-c-edit);
 }
+
+input:focus, textarea:focus, select:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
