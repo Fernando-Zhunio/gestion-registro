@@ -41,8 +41,9 @@ class StoreteacherRequest extends FormRequest
             'period_id' => 'required|integer|exists:periods,id',
 
             'observation' => 'nullable|string|max:1000',
-            'start_date' => 'required_if:contract_type,undefined|date|before:end_date',
-            'end_date' => 'required_if:contract_type,undefined|date',
+            'start_date' => 'required_if:contract_type,defined',
+            'start_date' => 'nullable|before:end_date|date',
+            'end_date' => 'required_if:contract_type,defined',
             'contract_file' => 'nullable|string|max:255',
             // 'contract_state' => 'required|string|in:ACTIVE,INACTIVE',
             'contract_type' => 'required|string|in:defined,undefined',

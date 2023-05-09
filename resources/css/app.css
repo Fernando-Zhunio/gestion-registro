@@ -99,3 +99,7 @@ input:focus, textarea:focus, select:focus {
     outline: none !important;
     box-shadow: none !important;
 }
+
+.swal2-popup.swal2-toast .swal2-html-container {
+    white-space: break-spaces;
+}

@@ -5,9 +5,10 @@ export class Validator {
         this.value = value;
         this.key = key;
     }
+
     private _validations: {isValid: boolean, message: string}[] = [];
     required(message: string = 'Este campo es requerido'): Validator {
-        const valid = this.value?.trim() !== '';
+        const valid = typeof this.value === 'string' ? this.value?.trim() !== '': this.value !== null && this.value !== undefined;
         console.log(this.value, valid);
         this._validations.push({isValid: valid, message});
         return this;

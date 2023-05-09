@@ -27,6 +27,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->renderExceptionValidation();
+    }
+
+    private function renderExceptionValidation()
+    {
+         // Maneja las excepciones de validación
+         $this->app->bind(ValidationException::class, function ($exception) {
+            $pre_errors = $exception->errors();
+            $errors = collect($pre_errors);
+
+            return response()->json([
+                'success' => false,
+                'data' => $errors->implode("0", "\n"),
+            ], 422);
+        });
     }
 }

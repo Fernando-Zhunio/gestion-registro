@@ -23,6 +23,11 @@ class Teacher extends Model
         'period_id',
     ];
 
+    public static $DOC_TYPES = [
+        'CI' => '1',
+        'PASSPORT' => '2',
+    ];
+
     public function schedules()
     {
         return $this->hasMany('App\Models\schedule');

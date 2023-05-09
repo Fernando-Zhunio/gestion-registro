@@ -59,7 +59,7 @@ class TeacherController extends Controller
                 'email' => $data['email'],
                 'phone' => $data['phone'],
                 'address' => $data['address'],
-                'doc_type' => $data['doc_type'],
+                'doc_type' => Teacher::$DOC_TYPES[$data['doc_type']],
                 'doc_number' => $data['doc_number'],
                 'birthday' => date('Y-m-d', strtotime($data['birthday'])),
                 'academic_title' => $data['academic_title'],
@@ -67,7 +67,7 @@ class TeacherController extends Controller
                 'period_id' => $data['period_id'],
             ]);
 
-            $teacher->contractsTeacher()->save([
+            $teacher->contractsTeacher()->create([
                 'observation' => $data['observation'],
                 'start_date' => date('Y-m-d', strtotime($data['start_date'])),
                 'end_date' => date('Y-m-d', strtotime($data['end_date'])),
@@ -77,6 +77,7 @@ class TeacherController extends Controller
                 'salary' => $data['salary'],
                 'period_id' => $data['period_id'],
             ]);
+            DB::commit();
 
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -99,7 +100,7 @@ class TeacherController extends Controller
     {
         return Inertia::render('Teachers/CreateOrEditTeacher', [
             'isEdit' => true,
-            'teacher' => $teacher,
+            'teacher' => $teacher->load('contractsTeacher'),
         ]);
     }
 

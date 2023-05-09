@@ -45,4 +45,19 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    // public function render($request, Throwable $exception)
+    // {
+    //     if ($exception instanceof \Illuminate\Validation\ValidationException) {
+    //         $pre_errors = $exception->errors();
+    //         $errors = collect($pre_errors);
+
+    //         return [
+    //             'success' => false,
+    //             'data' => $errors->implode("0", "\n"),
+    //         ];
+    //     }
+
+    //     return parent::render($request, $exception);
+    // }
 }

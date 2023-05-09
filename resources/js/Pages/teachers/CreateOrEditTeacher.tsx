@@ -18,6 +18,10 @@ import { ITeacher } from "@/Models/teacher";
 import { IPeriod } from "@/Models/period";
 import { useFormValidation } from "@/Hooks/FormValidation";
 import { Validator } from "@/Classes/Validator";
+import Swal from "sweetalert2";
+import { showToast } from "@/Helpers/alerts";
+import ConvertValidationError from "@/Helpers/convertValidationError";
+import dayjs from "dayjs";
 // import { useFormValidation } from "@/Hooks/FormValidation";
 // import { Validator } from "@/Classes/Validator";
  const CreateOrEditTeacher = ({
@@ -59,14 +63,38 @@ import { Validator } from "@/Classes/Validator";
     });
     const {errors: errorsValidator, handleChange} = useFormValidation(values, setValues)
 
-    // function handleChange(e: any) {
-    //     const target = e?.target;
-    //     const key = target?.id || target?.name;
-    //     setValues((values: any) => ({
-    //         ...values,
-    //         [key]: target.value,
-    //     }));
-    // }
+    useEffect(() => {
+        if (isEdit) {
+            console.log(teacher);
+            setValues({
+                ...teacher,
+                birthday: dayjs(teacher.birthday),
+                working_day: dayjs(teacher.working_day),
+            });
+        } else {
+            // setValues({
+            //     first_name: "",
+            //     last_name: "",
+            //     email: "",
+            //     phone: "",
+            //     address: "",
+            //     doc_type: "",
+            //     doc_number: "",
+            //     birthday: "",
+            //     academic_title: "",
+            //     working_day: "",
+            //     period_id: "",
+
+            //     observation: "",
+            //     start_date: "",
+            //     end_date: "",
+            //     contract_file: "",
+            //     contract_state: "",
+            //     contract_type: "",
+            //     salary: "",
+            // });
+        }
+    }, [])
 
     function handleChangeDate(key: string, value: any) {
         // value = value?.format("YYYY-MM-DD");
@@ -76,12 +104,12 @@ import { Validator } from "@/Classes/Validator";
         }));
     }
 
-    function handleChangeSimple(key: string, value: any) {
-        setValues((values: any) => ({
-            ...values,
-            [key]: value,
-        }));
-    }
+    // function handleChangeSimple(key: string, value: any) {
+    //     setValues((values: any) => ({
+    //         ...values,
+    //         [key]: value,
+    //     }));
+    // }
 
     function handlerSubmit(event: any): void {
         setIsLoading(true);
@@ -92,9 +120,16 @@ import { Validator } from "@/Classes/Validator";
             preserveScroll: true,
             onSuccess: () => {
                 router.get("/teachers");
-            },
-            onError: () => {
                 setIsLoading(false);
+            },
+            onError: (e: any) => {
+                console.log(e);
+                setIsLoading(false);
+                showToast({
+                    icon: "error",
+                    title: "Error",
+                    text: ConvertValidationError(e),
+                })
             },
         };
         if (isEdit) {
@@ -167,8 +202,10 @@ import { Validator } from "@/Classes/Validator";
                                         variant="filled"
                                         label="Dirección"
                                         value={values.address}
+                                        helperText={errorsValidator?.address}
+                                        error={Boolean(errorsValidator.address)}
                                         id="address"
-                                        // onChange={handleChange}
+                                        onChange={(e) => handleChange('address', e.target.value, () => new Validator(e.target.value).required() )}
                                     ></TextField>
                                 </div>
                                 <div>
@@ -178,16 +215,18 @@ import { Validator } from "@/Classes/Validator";
                                         variant="filled"
                                         label="Teléfono"
                                         value={values.phone}
+                                        helperText={errorsValidator?.phone}
+                                        error={Boolean(errorsValidator.phone)}
                                         type="number"
                                         id="phone"
-                                        // onChange={handleChange}
+                                        onChange={(e) => handleChange('phone', e.target.value, () => new Validator(e.target.value).required() )}
                                     ></TextField>
                                 </div>
                                 
                                 <div>
                                     <DatePicker
-                                        onChange={(value: any) =>
-                                            handleChangeDate("birthday", value)
+                                        onChange={
+                                            (value: any) => handleChange('birthday', value, () => new Validator(value).required() )
                                         }
                                         className="w-full"
                                         slotProps={{
@@ -196,6 +235,11 @@ import { Validator } from "@/Classes/Validator";
                                                 id: "birthday",
                                                 fullWidth: true,
                                                 required: true,
+                                                helperText: errorsValidator?.birthday,
+                                                error: Boolean(errorsValidator.birthday),
+                                                inputProps: {
+                                                    readOnly: true,
+                                                }
                                             },
                                         }}
                                         format="DD/MM/YYYY"
@@ -207,10 +251,7 @@ import { Validator } from "@/Classes/Validator";
                                 <div>
                                     <DatePicker
                                         onChange={(value: any) =>
-                                            handleChangeDate(
-                                                "working_day",
-                                                value
-                                            )
+                                            handleChange('working_day', value, () => new Validator(value).required() )
                                         }
                                         className="w-full"
                                         slotProps={{
@@ -218,9 +259,15 @@ import { Validator } from "@/Classes/Validator";
                                                 variant: "filled",
                                                 id: "working_day",
                                                 required: true,
+                                                helperText: errorsValidator?.working_day,
+                                                error: Boolean(errorsValidator.working_day),
+                                                inputProps: {
+                                                    readOnly: true,
+                                                }
                                             },
                                         }}
-                                        disableFuture
+                                        format="DD/MM/YYYY"
+                                        disabled={false}
                                         value={values.working_day}
                                         label="Fecha de ingreso"
                                         defaultValue={new Date()}
@@ -235,7 +282,9 @@ import { Validator } from "@/Classes/Validator";
                                         label="Titulo académico"
                                         value={values.academic_title}
                                         id="academic_title"
-                                        // onChange={handleChange}
+                                        helperText={errorsValidator?.academic_title}
+                                        error={Boolean(errorsValidator.academic_title)}
+                                        onChange={(e) => handleChange('academic_title', e.target.value, () => new Validator(e.target.value).required() )}
                                     ></TextField>
                                 </div>
                                 <div>
@@ -246,11 +295,9 @@ import { Validator } from "@/Classes/Validator";
                                         label="Tipo de documento"
                                         required
                                         value={values.doc_type}
-                                        onChange={(value) =>
-                                            handleChangeSimple(
-                                                "doc_type",
-                                                value.target.value
-                                            )
+                                        helperText={errorsValidator?.doc_type}
+                                        error={Boolean(errorsValidator.doc_type)}
+                                        onChange={(value) => handleChange('doc_type', value.target.value, () => new Validator(value.target.value).required() )
                                         }
                                     >
                                         <MenuItem value="CI">
@@ -270,7 +317,9 @@ import { Validator } from "@/Classes/Validator";
                                         value={values.doc_number}
                                         id="doc_number"
                                         type="number"
-                                        // onChange={handleChange}
+                                        helperText={errorsValidator?.doc_number}
+                                        error={Boolean(errorsValidator.doc_number)}
+                                        onChange={(e) => handleChange('doc_number', e.target.value, () => new Validator(e.target.value).required() )}
                                     ></TextField>
                                 </div>
                                 
@@ -283,14 +332,11 @@ import { Validator } from "@/Classes/Validator";
                                         label="Periodo"
                                         defaultValue=""
                                         value={values.period_id}
-                                        onChange={(value) =>
-                                            handleChangeSimple(
-                                                "period_id",
-                                                value.target.value
-                                            )
+                                        onChange={(value) => handleChange('period_id', value.target.value, () => new Validator(value.target.value).required() )
                                         }
                                         required
-                                        // helperText="Tipo de contrato"
+                                        helperText={errorsValidator?.period_id}
+                                        error={Boolean(errorsValidator.period_id)}
                                     >
                                         {periods?.map((period) => (
                                             <MenuItem
@@ -323,11 +369,7 @@ import { Validator } from "@/Classes/Validator";
                                         label="Tipo de contrato"
                                         required
                                         value={values.contract_type}
-                                        onChange={(value) =>
-                                            handleChangeSimple(
-                                                "contract_type",
-                                                value.target.value
-                                            )
+                                        onChange={(value) => handleChange('contract_type', value.target.value, () => new Validator(value.target.value).required() )
                                         }
                                     >
                                         <MenuItem value="undefined">
@@ -341,15 +383,13 @@ import { Validator } from "@/Classes/Validator";
 
                                 <div>
                                     <DatePicker
-                                        onChange={(value: any) =>
-                                            handleChangeDate(
-                                                "start_date",
-                                                value
-                                            )
+                                        onChange={(value: any) => handleChange('start_date', value, () => new Validator(value).required() )
                                         }
                                         className="w-full"
                                         slotProps={{
                                             textField: {
+                                                error: Boolean(errorsValidator.start_date),
+                                                helperText: errorsValidator?.start_date,
                                                 variant: "filled",
                                                 id: "start_date",
                                                 fullWidth: true,
@@ -359,6 +399,9 @@ import { Validator } from "@/Classes/Validator";
                                                 disabled:
                                                     values.contract_type !=
                                                     "defined",
+                                                inputProps: {
+                                                    readOnly: true,
+                                                },
                                             },
                                         }}
                                         maxDate={values.end_date}
@@ -371,12 +414,13 @@ import { Validator } from "@/Classes/Validator";
                                 </div>
                                 <div>
                                     <DatePicker
-                                        onChange={(value: any) =>
-                                            handleChangeDate("end_date", value)
+                                        onChange={(value: any) => handleChange('end_date', value, () => new Validator(value).required() )
                                         }
                                         className="w-full"
                                         slotProps={{
                                             textField: {
+                                                error: Boolean(errorsValidator.end_date),
+                                                helperText: errorsValidator?.end_date,
                                                 variant: "filled",
                                                 id: "end_date",
                                                 fullWidth: true,
@@ -386,6 +430,9 @@ import { Validator } from "@/Classes/Validator";
                                                 disabled:
                                                     values.contract_type !=
                                                     "defined",
+                                                inputProps: {
+                                                    readOnly: true,
+                                                },
                                             },
                                         }}
                                         disabled={values.contract_type !="defined"}
@@ -406,7 +453,9 @@ import { Validator } from "@/Classes/Validator";
                                         value={values.salary}
                                         id="salary"
                                         type="number"
-                                        // onChange={handleChange}
+                                        helperText={errorsValidator?.salary}
+                                        error={Boolean(errorsValidator.salary)}
+                                        onChange={(e) => handleChange('salary', e.target.value, () => new Validator(e.target.value).required() )}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
@@ -424,7 +473,9 @@ import { Validator } from "@/Classes/Validator";
                                         multiline
                                         value={values.observation}
                                         id="observation"
-                                        // onChange={handleChange}
+                                        helperText={errorsValidator?.observation}
+                                        error={Boolean(errorsValidator.observation)}
+                                        onChange={(e) => handleChange('observation', e.target.value, () => new Validator(e.target.value).required() )}
                                     ></TextField>
                                 </div>
                             </div>

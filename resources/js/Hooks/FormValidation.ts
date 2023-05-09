@@ -17,6 +17,10 @@ export const useFormValidation = (values: any, setValues: any) => {
     //     }
     //   }
     // }, [errors]);
+
+    const markAsTouched = useCallback((key: string) => {
+      
+    }, [errors]);
   
     const handleChange = useCallback((key: string, value: any, validators: (() => Validator) | null = null)=> {
       if (validators !== null) {
