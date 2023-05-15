@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Builders\BuilderForRoles;
 use App\Models\tuition;
 use App\Http\Requests\StoretuitionRequest;
 use App\Http\Requests\UpdatetuitionRequest;
+use Inertia\Inertia;
 
 class TuitionController extends Controller
 {
@@ -13,8 +15,12 @@ class TuitionController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $tuitions = BuilderForRoles::BuilderSearchClass(Tuition::class, 'tuition', ['name']);
+        return Inertia::render('Tuition/Index', [
+            'success' => true,
+            'data' => $tuitions,
+        ]);
+    }   
 
     /**
      * Show the form for creating a new resource.

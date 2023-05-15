@@ -81,7 +81,6 @@ const Sidebar = () => {
                 <ListItemIcon>
                     hjh
                 </ListItemIcon>
-                {/* <ListItemText primary={text} /> */}
                 <Link href="/teachers" as="button" type="button">Profesores</Link>
               </ListItemButton>
             </ListItem>
@@ -93,8 +92,37 @@ const Sidebar = () => {
                 <ListItemIcon>
                     hjh
                 </ListItemIcon>
-                {/* <ListItemText primary={text} /> */}
                 <Link href="/periods" as="button" type="button">Periodos</Link>
+              </ListItemButton>
+            </ListItem>
+        </List>
+        <List>
+            <ListItem  disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                    
+                </ListItemIcon>
+                <Link href="/courses" as="button" type="button">Cursos</Link>
+              </ListItemButton>
+            </ListItem>
+        </List>
+        <List>
+            <ListItem  disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                    
+                </ListItemIcon>
+                <Link href="/notes" as="button" type="button">Notas</Link>
+              </ListItemButton>
+            </ListItem>
+        </List>
+        <List>
+            <ListItem  disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                    
+                </ListItemIcon>
+                <Link href="/students" as="button" type="button">Estudiantes</Link>
               </ListItemButton>
             </ListItem>
         </List>

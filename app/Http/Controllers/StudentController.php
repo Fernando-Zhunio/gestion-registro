@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\student;
+use App\Builders\BuilderForRoles;
+use App\Const\ConstMiscellany;
+use App\Models\Student;
 use App\Http\Requests\StorestudentRequest;
 use App\Http\Requests\UpdatestudentRequest;
+use App\Models\Course;
+use Inertia\Inertia;
 
 class StudentController extends Controller
 {
@@ -13,7 +17,11 @@ class StudentController extends Controller
      */
     public function index()
     {
-        //
+        $students = BuilderForRoles::BuilderSearchClass(Student::class, 'first_name', ['last_name']);
+        return Inertia::render('Students/Index', [
+            'success' => true,
+            'data' => $students,
+        ]);
     }
 
     /**
@@ -21,7 +29,14 @@ class StudentController extends Controller
      */
     public function create()
     {
-        //
+        $genders = ConstMiscellany::getGendersSelect();
+        $courses = Course::all();
+        return Inertia::render('Students/CreateOrEditStudent', [
+            'success' => true,
+            'gender' => $genders,
+            'courses' => $courses,
+            'data' => '',
+        ]);
     }
 
     /**
@@ -29,7 +44,8 @@ class StudentController extends Controller
      */
     public function store(StorestudentRequest $request)
     {
-        //
+        $request->validated();
+        Student::create($request->all());
     }
 
     /**

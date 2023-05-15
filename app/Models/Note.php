@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class note extends Model
+class Note extends Model
 {
     use HasFactory;
 
@@ -20,7 +20,8 @@ class note extends Model
         'observation',
         'subject_id',
         'teacher_id',
-        'student_id'
+        'student_id',
+        'period_id'
     ];
 
     public function subject()

@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\NoteController;
+use App\Http\Controllers\TuitionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -68,6 +72,37 @@ Route::middleware('auth')->group(function () {
         // Route::get('/create', [PeriodController::class, 'create'])->name('period.create');
         Route::post('/', [PeriodController::class, 'store'])->name('period.store');
         Route::put('/{period}', [PeriodController::class, 'update'])->name('period.update');
+    });
+
+    Route::prefix('courses')->group(function () {
+        Route::get('/', [CourseController::class, 'index'])->name('courses.index');
+        Route::get('/create', [CourseController::class, 'create'])->name('courses.create');
+        Route::post('/', [CourseController::class, 'store'])->name('courses.store');
+        Route::put('/{course}', [CourseController::class, 'update'])->name('courses.update');
+        Route::delete('/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    });
+    Route::prefix('notes')->group(function () {
+        Route::get('/', [NoteController::class, 'index'])->name('notes.index');
+        Route::get('/create', [NoteController::class, 'create'])->name('notes.create');
+        Route::post('/', [NoteController::class, 'store'])->name('notes.store');
+        Route::put('/{note}', [NoteController::class, 'update'])->name('notes.update');
+        Route::delete('/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
+    });
+
+    Route::prefix('students')->group(function () {
+        Route::get('/', [StudentController::class, 'index'])->name('students.index');
+        Route::get('/create', [StudentController::class, 'create'])->name('students.create');
+        Route::post('/', [StudentController::class, 'store'])->name('students.store');
+        Route::put('/{student}', [StudentController::class, 'update'])->name('students.update');
+        Route::delete('/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+    });
+
+    Route::prefix('tuitions')->group(function () {
+        Route::get('/', [TuitionController::class, 'index'])->name('tuitions.index');
+        Route::get('/create', [TuitionController::class, 'create'])->name('tuitions.create');
+        Route::post('/', [TuitionController::class, 'store'])->name('tuitions.store');
+        Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
+        Route::delete('/{tuition}', [TuitionController::class, 'destroy'])->name('tuitions.destroy');
     });
 });
 

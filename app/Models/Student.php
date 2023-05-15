@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Search;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    use HasFactory;
+    use Search, HasFactory;
 
     protected $fillable = [
         'first_name',
@@ -19,6 +20,7 @@ class Student extends Model
         'doc_number',
         'birthday',
         'gender',
+        'photo',
         'previous_institution',
         'illness_or_disability',
         'course_id',

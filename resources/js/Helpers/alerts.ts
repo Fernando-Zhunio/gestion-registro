@@ -1,7 +1,7 @@
 import Swal, { SweetAlertOptions } from "sweetalert2";
 
 export function showAlert(options: SweetAlertOptions) {
-    Swal.fire(options);
+   return Swal.fire(options);
 }
 
 export function showToast(options: SweetAlertOptions) {
@@ -18,4 +18,8 @@ export function showToast(options: SweetAlertOptions) {
       })
       
       Toast.fire(options)
+}
+
+export function showQuestion(options: SweetAlertOptions) {
+    return Swal.fire(options);
 }

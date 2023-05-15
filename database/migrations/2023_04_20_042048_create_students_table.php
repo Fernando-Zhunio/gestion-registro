@@ -23,6 +23,7 @@ return new class extends Migration
             $table->date('birthday');
             $table->char('gender', 1);
             $table->string('previous_institution');
+            $table->string('photo');
             $table->string('illness_or_disability');
             $table->foreignId('course_id')->constrained('courses');
             $table->foreignId('representative_id')->constrained();

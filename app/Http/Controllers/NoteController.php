@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\note;
+use App\Builders\BuilderForRoles;
+use App\Models\Note;
 use App\Http\Requests\StorenoteRequest;
 use App\Http\Requests\UpdatenoteRequest;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class NoteController extends Controller
 {
@@ -13,7 +16,19 @@ class NoteController extends Controller
      */
     public function index()
     {
-        //
+        $builder = Note::query();
+
+        if (!empty($search)){
+            $builder->whereHas('student', function ($query) use ($search) {
+                $query->where('first_name', 'like', "%{$search}%");
+                $query->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+        $notes = BuilderForRoles::PaginateSearch($builder);
+        return Inertia::render('Notes/Index', [
+            'success' => true,
+            'data' => $notes,
+        ]);
     }
 
     /**

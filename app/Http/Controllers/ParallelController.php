@@ -5,15 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\parallel;
 use App\Http\Requests\StoreparallelRequest;
 use App\Http\Requests\UpdateparallelRequest;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ParallelController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->get('search', '');
+        $pageSize = $request->get('pageSize', 10);
+        $parallels = parallel::search($search)->paginate($pageSize);
+        return Inertia::render('Parallels/Index', [
+            'success' => true,
+            'data' => $parallels,
+        ]);
     }
 
     /**
