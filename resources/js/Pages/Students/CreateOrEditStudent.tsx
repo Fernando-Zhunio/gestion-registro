@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import { Student } from "./types/student.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import { router, useForm } from "@inertiajs/react";
+import { router, useForm as useFormInertia } from "@inertiajs/react";
 import DialogActions from "@mui/material/DialogActions";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import FormCreateOrEditStudent from "./Components/FormCreateOrEditStudent";
+import { useForm } from "react-hook-form";
+import SearchRepresentative from "@/Components/SearchRepresentative";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
@@ -31,7 +33,7 @@ const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
         errors,
         clearErrors,
         put,
-    } = useForm<any>({
+    } = useFormInertia<any>({
         first_name: null,
         last_name: null,
         email: null,
@@ -47,6 +49,7 @@ const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
         course_id: null,
         representative_id: null,
     });
+
 
     const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -107,6 +110,7 @@ const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
 
     return (
         <div className="Container">
+            <SearchRepresentative/>
             <div className="font-bold text-4xl mb-3">
                 {" "}
                 {state === "create" ? "Creando" : "Editando"} Estudiante

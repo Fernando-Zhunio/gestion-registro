@@ -95,11 +95,50 @@
 }
 
 input:focus, textarea:focus, select:focus {
-    border: none !important;
+    border: inherit !important;
+    /* border-color: #16bacf ; */
     outline: none !important;
     box-shadow: none !important;
 }
 
+.form-control {
+    border-radius: 0.375rem;
+    display: flex;
+    border: 1px solid #d1d1d1;
+}
+.form-control:focus {
+    border-color: #16bacf;
+    outline: #16bacf !important;
+    box-shadow: none !important;
+}
+
+.invalid-control {
+    border-color: #dc3545 !important;
+}
+
 .swal2-popup.swal2-toast .swal2-html-container {
     white-space: break-spaces;
+}
+
+.dialog-custom {
+    position: fixed;
+    background: #6b72804d;
+    height: 100vh;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dialog-custom-container {
+    width: auto;
+    min-width: 300px;
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 1px 1px 10px  rgba(0, 0, 0, 0.2);
+    height: calc(100vh - 2rem);
+    overflow: auto;
 }

@@ -30,11 +30,13 @@ class StudentController extends Controller
     public function create()
     {
         $genders = ConstMiscellany::getGendersSelect();
+        $docTypes = ConstMiscellany::getDocTypesSelect();
         $courses = Course::all();
         return Inertia::render('Students/CreateOrEditStudent', [
             'success' => true,
             'gender' => $genders,
             'courses' => $courses,
+            'docTypes' => $docTypes,
             'data' => '',
         ]);
     }

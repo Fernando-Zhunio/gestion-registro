@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Builders\BuilderForRoles;
 use App\Models\representative;
 use App\Http\Requests\StorerepresentativeRequest;
 use App\Http\Requests\UpdaterepresentativeRequest;
+use App\Models\Representative as ModelsRepresentative;
+use Inertia\Inertia;
 
 class RepresentativeController extends Controller
 {
@@ -13,7 +16,24 @@ class RepresentativeController extends Controller
      */
     public function index()
     {
-        //
+        $search = request('search', null);
+        $pageSize = request('pageSize', 10);
+        $representatives = ModelsRepresentative::search($search, 'first_name', ['last_name' => $search])->paginate($pageSize);
+        return Inertia::render('Representatives/Index', [
+            'success' => true,
+            'data' => $representatives,
+        ]);
+    }
+
+    public function indexApi()
+    {
+        $search = request('search', null);
+        $pageSize = request('pageSize', 10);
+        $representatives = ModelsRepresentative::search($search)->paginate($pageSize);
+        return response()->json([
+            'success' => true,
+            'data' => $representatives,
+        ]);
     }
 
     /**

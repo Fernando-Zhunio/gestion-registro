@@ -4,6 +4,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RepresentativeController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\NoteController;
@@ -103,6 +104,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [TuitionController::class, 'store'])->name('tuitions.store');
         Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
         Route::delete('/{tuition}', [TuitionController::class, 'destroy'])->name('tuitions.destroy');
+    });
+
+    Route::prefix('representatives')->group(function () {
+        Route::get('/', [RepresentativeController::class, 'index'])->name('representatives.index');
+        Route::get('/index-api', [RepresentativeController::class, 'indexApi'])->name('representatives.index-api');
+        Route::get('/create', [RepresentativeController::class, 'create'])->name('representatives.create');
+        Route::post('/', [RepresentativeController::class, 'store'])->name('representatives.store');
+        Route::put('/{representative}', [RepresentativeController::class, 'update'])->name('representatives.update');
+        Route::delete('/{representative}', [RepresentativeController::class, 'destroy'])->name('representatives.destroy');
     });
 });
 

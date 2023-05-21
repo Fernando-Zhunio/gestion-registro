@@ -29,7 +29,9 @@
         "@inertiajs/react": "^1.0.3",
         "@mui/material": "^5.12.2",
         "@mui/x-date-pickers": "^6.3.0",
+        "air-datepicker": "^3.3.5",
         "dayjs": "^1.11.7",
+        "react-hook-form": "^7.43.9",
         "react-icons": "^4.8.0",
         "sweetalert2": "^11.7.3"
     }
