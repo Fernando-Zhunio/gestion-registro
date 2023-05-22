@@ -7,8 +7,8 @@ trait Search {
         }
 
         if(!empty($moreColumns)) {
-            foreach($moreColumns as $column) {
-                $query->orWhere($column, 'like', '%'.$search.'%');
+            foreach($moreColumns as  $column) {
+                $query->orWhere($column, 'like', '%'.($search).'%');
             }
         }
         return $query;

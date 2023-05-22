@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             // $table->char('doc_type', 1);
             // $table->string('doc_number');
-            $table->char('status', 0);
-            $table->char('approved', 0);
+            $table->char('status', 1);
+            $table->char('approved', 1);
             $table->timestamps();
             $table->foreignId('student_id')->constrained('students');
             $table->foreignId('period_id')->constrained('periods');

@@ -2,7 +2,7 @@ import DialogCustom from "@/Components/DialogCustom";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useEffect, useState } from "react";
-import { Course } from "./types/course.types";
+import { ICourse } from "./types/course.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { router, useForm } from "@inertiajs/react";
@@ -15,7 +15,7 @@ import DialogActions from "@mui/material/DialogActions";
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
     isOpen: boolean;
-    data?: Course;
+    data?: ICourse;
     setIsOpen: (isOpen: boolean) => void;
 }
 

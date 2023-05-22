@@ -7,15 +7,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from "react";
-import { Student } from "./types/student.types";
+import { IStudent } from "./types/student.types";
 import {  ResponsePaginator } from "@/types/global";
 // import { CreateOrEditCourse } from "./CreateOrEditStudent";
 import { showAlert } from "@/Helpers/alerts";
 import { Link, useForm } from "@inertiajs/react";
 
-
-
-const SudentsIndex = ({data}: ResponsePaginator<Student>) => {
+const StudentsIndex = ({data}: ResponsePaginator<IStudent>) => {
     // const [isOpen, setIsOpen] = useState<boolean>(false);
     // const [dataEdit, setDataEdit] = useState<Student | undefined>(undefined);
     // function openPeriod(row: Student | undefined): void {
@@ -130,4 +128,4 @@ const SudentsIndex = ({data}: ResponsePaginator<Student>) => {
     );
 };
 
-export default SudentsIndex;
+export default StudentsIndex;

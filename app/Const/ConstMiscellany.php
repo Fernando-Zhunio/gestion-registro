@@ -1,18 +1,27 @@
 <?php
 namespace App\Const;
 class ConstMiscellany {
-    public const MALE = 'male';
-    public const FEMALE = 'female';
-    public const CI = 'CI';
-    public const PASSPORT = 'passport';
-    public const FOREIGNER_ID = 'foreigner_id';
+    public const MALE = '1';
+    public const FEMALE = '2';
+    public const CI = '1';
+    public const PASSPORT = '2';
+    public const FOREIGNER_ID = '3';
 
     public static function getGenders() {
         return [
             self::MALE,
             self::FEMALE
         ];
-    }
+    } 
+
+    // public static function findGenderDb($gender) {
+    //     $genders = [
+    //         self::MALE => 1,
+    //         self::FEMALE => 2
+    //     ];
+    //     return $genders[$gender] ?? null;
+        
+    // }
 
     public static function getDocTypes() {
         return [

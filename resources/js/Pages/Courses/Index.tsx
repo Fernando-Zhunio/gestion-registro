@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from "react";
-import { Course } from "./types/course.types";
+import { ICourse } from "./types/course.types";
 import {  ResponsePaginator } from "@/types/global";
 import { CreateOrEditCourse } from "./CreateOrEditCourse";
 import { showAlert } from "@/Helpers/alerts";
@@ -15,10 +15,10 @@ import { useForm } from "@inertiajs/react";
 
 
 
-const CoursesIndex = ({data}: ResponsePaginator<Course>) => {
+const CoursesIndex = ({data}: ResponsePaginator<ICourse>) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [dataEdit, setDataEdit] = useState<Course | undefined>(undefined);
-    function openPeriod(row: Course | undefined): void {
+    const [dataEdit, setDataEdit] = useState<ICourse | undefined>(undefined);
+    function openPeriod(row: ICourse | undefined): void {
         setDataEdit(row);
         setIsOpen(true);
     }

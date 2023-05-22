@@ -2,7 +2,7 @@ import DialogCustom from "@/Components/DialogCustom";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useEffect, useState } from "react";
-import { Period } from "./types/period.types";
+import { IPeriod } from "./types/period.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { router, useForm } from "@inertiajs/react";
@@ -15,7 +15,7 @@ import { showToast } from "@/Helpers/alerts";
 interface CreateOrEditPeriodProps {
     state: "create" | "edit";
     isOpen: boolean;
-    data?: Period;
+    data?: IPeriod;
     setIsOpen: (isOpen: boolean) => void;
 }
 

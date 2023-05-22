@@ -1,5 +1,5 @@
 import TextField from "@mui/material/TextField";
-import { Student } from "../types/student.types";
+import { IStudent } from "../types/student.types";
 import { usePage } from "@inertiajs/react";
 import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useRef, useState } from "react";
@@ -11,8 +11,8 @@ import localeEs from 'air-datepicker/locale/es';
 
 interface FormCreateOrEditStudentProps {
     handlerSetForm: (key: any, value: any) => void;
-    form: Student;
-    errors: Student;
+    form: IStudent;
+    errors: IStudent;
 }
 
 const FormCreateOrEditStudent = ({

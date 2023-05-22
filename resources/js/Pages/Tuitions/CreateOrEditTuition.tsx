@@ -2,29 +2,25 @@ import DialogCustom from "@/Components/DialogCustom";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useEffect, useState } from "react";
-import { IStudent } from "./types/student.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { router, useForm as useFormInertia } from "@inertiajs/react";
 import DialogActions from "@mui/material/DialogActions";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
-import FormCreateOrEditStudent from "./Components/FormCreateOrEditStudent";
+import FormCreateOrEditTuition from "./Components/FormCreateOrEditTuition";
 import { useForm } from "react-hook-form";
 import DialogSearch from "@/Components/DialogSearch";
-// import dayjs from "dayjs";
-// import Snackbar from "@mui/material/Snackbar";
-// import Alert from "@mui/material/Alert";
-// import { showToast } from "@/Helpers/alerts";
+import { ITuition } from "./types/tuition";
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
     isOpen: boolean;
-    data?: IStudent;
+    data?: ITuition;
     setIsOpen: (isOpen: boolean) => void;
 }
 
-const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
+const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
     const {
         data: form,
         setData: setForm,
@@ -50,6 +46,8 @@ const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
         representative_id: null,
     });
 
+    const [isOpenRepresentativeSelect, setIsOpenRepresentativeSelect] =
+        useState(false);
 
     const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -108,19 +106,34 @@ const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
         }
     }
 
+    const closeModalRepresentativeSelect = () => {
+        setIsOpenRepresentativeSelect(false);
+    };
+
     return (
         <div className="Container">
-            {/* <DialogSearch isOpen={true}/> */}
+            <DialogSearch
+                close={closeModalRepresentativeSelect}
+                isOpen={isOpenRepresentativeSelect}
+                placeholder="Buscador Estudiante"
+                path="/students"
+                columns={{ first_name: "Nombres", last_name: "Apellidos", doc_number: "DNI", photo: "Foto" }}
+            />
             <div className="font-bold text-4xl mb-3">
                 {" "}
-                {state === "create" ? "Creando" : "Editando"} Estudiante
+                {state === "create" ? "Creando" : "Editando"} Matricula
             </div>
             <Card>
                 <CardContent>
-                    <FormCreateOrEditStudent handlerSetForm={handlerSetForm} errors={errors as unknown as IStudent} form={form}></FormCreateOrEditStudent>
+                        <FormCreateOrEditTuition
+                            setIsOpen={setIsOpenRepresentativeSelect}
+                            handlerSetForm={handlerSetForm}
+                            errors={errors as unknown as any}
+                            form={form}
+                        ></FormCreateOrEditTuition>
                 </CardContent>
             </Card>
-            <DialogActions slot="slotAction">
+            {/* <DialogActions slot="slotAction">
                 <Button
                     disabled={isLoading}
                     onClick={saveInServer}
@@ -132,9 +145,9 @@ const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
                 <Button variant="contained" color="error">
                     Cerrar <i className="fa-solid fa-xmark ml-2"></i>
                 </Button>
-            </DialogActions>
+            </DialogActions> */}
         </div>
     );
 };
 
-export default CreateOrEditStudent;
+export default CreateOrEditTuition;

@@ -24,7 +24,8 @@ class Student extends Model
         'previous_institution',
         'illness_or_disability',
         'course_id',
-        'representative_id'
+        'representative_id',
+        'user_id'
     ];
 
     public function course()

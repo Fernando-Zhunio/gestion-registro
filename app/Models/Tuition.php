@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Search;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tuition extends Model
 {
-    use HasFactory;
+    use Search, HasFactory;
 
     protected $fillable = [
         // 'doc_type',
@@ -21,17 +22,17 @@ class Tuition extends Model
 
     public function student()
     {
-        return $this->belongsTo('App\Models\student');
+        return $this->belongsTo('App\Models\Student');
     }
 
     public function course()
     {
-        return $this->belongsTo('App\Models\course');
+        return $this->belongsTo('App\Models\Course');
     }
 
     public function period()
     {
-        return $this->belongsTo('App\Models\period');
+        return $this->belongsTo('App\Models\Period');
     }
 
 }

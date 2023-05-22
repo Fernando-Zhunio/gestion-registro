@@ -21,4 +21,9 @@ class Representative extends Model
         'occupation',
         'gender',
     ];
+
+    public function students()
+    {
+        return $this->hasMany('App\Models\Student');
+    }
 }

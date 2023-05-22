@@ -95,7 +95,7 @@
 }
 
 input:focus, textarea:focus, select:focus {
-    border: inherit !important;
+    /* border: inherit !important; */
     /* border-color: #16bacf ; */
     outline: none !important;
     box-shadow: none !important;

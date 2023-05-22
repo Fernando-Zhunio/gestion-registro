@@ -7,17 +7,17 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from "react";
-import { Period } from "./types/period.types";
+import { IPeriod } from "./types/period.types";
 import {  ResponsePaginator } from "@/types/global";
 import { CreateOrEditPeriod } from "./CreateOrEditPeriod";
 
 
 
-const PeriodsIndex = ({data}: ResponsePaginator<Period>) => {
+const PeriodsIndex = ({data}: ResponsePaginator<IPeriod>) => {
     // const [data, setData] = useState<Period[]>(_data.data);
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [dataEdit, setDataEdit] = useState<Period | undefined>(undefined);
-    function openPeriod(row: Period | undefined): void {
+    const [dataEdit, setDataEdit] = useState<IPeriod | undefined>(undefined);
+    function openPeriod(row: IPeriod | undefined): void {
         setDataEdit(row);
         setIsOpen(true);
     }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->string('address');
             $table->char('doc_type', 1);
             $table->string('doc_number')->unique();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->char('gender', 1);
             $table->string('previous_institution');
             $table->string('photo');
-            $table->string('illness_or_disability');
+            $table->string('illness_or_disability')->nullable();
             $table->foreignId('course_id')->constrained('courses');
             $table->foreignId('representative_id')->constrained();
             $table->foreignId('user_id')->constrained('users');

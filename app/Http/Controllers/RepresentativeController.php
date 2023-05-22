@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Builders\BuilderForRoles;
-use App\Models\representative;
 use App\Http\Requests\StorerepresentativeRequest;
 use App\Http\Requests\UpdaterepresentativeRequest;
-use App\Models\Representative as ModelsRepresentative;
+use App\Models\Representative;
 use Inertia\Inertia;
 
 class RepresentativeController extends Controller
@@ -18,7 +17,7 @@ class RepresentativeController extends Controller
     {
         $search = request('search', null);
         $pageSize = request('pageSize', 10);
-        $representatives = ModelsRepresentative::search($search, 'first_name', ['last_name' => $search])->paginate($pageSize);
+        $representatives = Representative::search($search, 'first_name', ['last_name', 'doc_type'])->paginate($pageSize);
         return Inertia::render('Representatives/Index', [
             'success' => true,
             'data' => $representatives,
@@ -29,7 +28,7 @@ class RepresentativeController extends Controller
     {
         $search = request('search', null);
         $pageSize = request('pageSize', 10);
-        $representatives = ModelsRepresentative::search($search)->paginate($pageSize);
+        $representatives = Representative::search($search)->paginate($pageSize);
         return response()->json([
             'success' => true,
             'data' => $representatives,
@@ -55,7 +54,7 @@ class RepresentativeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(representative $representative)
+    public function show(Representative $representative)
     {
         //
     }
@@ -63,7 +62,7 @@ class RepresentativeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(representative $representative)
+    public function edit(Representative $representative)
     {
         //
     }
@@ -71,7 +70,7 @@ class RepresentativeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdaterepresentativeRequest $request, representative $representative)
+    public function update(UpdaterepresentativeRequest $request, Representative $representative)
     {
         //
     }
@@ -79,7 +78,7 @@ class RepresentativeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(representative $representative)
+    public function destroy(Representative $representative)
     {
         //
     }

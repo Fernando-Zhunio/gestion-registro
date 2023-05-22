@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Http\Requests\StorestudentRequest;
 use App\Http\Requests\UpdatestudentRequest;
 use App\Models\Course;
+use App\Models\Period;
 use Inertia\Inertia;
 
 class StudentController extends Controller
@@ -17,10 +18,17 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = BuilderForRoles::BuilderSearchClass(Student::class, 'first_name', ['last_name']);
+        $genders = ConstMiscellany::getGendersSelect();
+        $docTypes = ConstMiscellany::getDocTypesSelect();
+        $courses = Course::all();
+        
+        // $students = BuilderForRoles::BuilderSearchClass(Student::class, 'first_name', ['last_name']);
         return Inertia::render('Students/Index', [
             'success' => true,
-            'data' => $students,
+            'gender' => $genders,
+            'courses' => $courses,
+            'docTypes' => $docTypes,
+            'data' => '',
         ]);
     }
 
