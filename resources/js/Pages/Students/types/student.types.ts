@@ -1,3 +1,5 @@
+import { ICourse } from "../../Courses/types/course.types";
+
 export interface IStudent {
     id: number;
     first_name: string;
@@ -14,4 +16,5 @@ export interface IStudent {
     course_id: number;
     representative_id: number;
     photo:string;
+    course?: ICourse;
 }

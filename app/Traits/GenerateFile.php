@@ -6,6 +6,6 @@ trait GenerateFile {
         $name = $name ?? time();
         $extension = $extension ?? $file->getClientOriginalExtension();
         $file->move($path, $name.'.'.$extension);
-        return $path.'/'.$name.'.'.$extension;
+        return '/'.$path.'/'.$name.'.'.$extension;
     }
 }

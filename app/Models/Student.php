@@ -37,4 +37,14 @@ class Student extends Model
     {
         return $this->belongsTo('App\Models\representative');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function tuitions()
+    {
+        return $this->hasMany('App\Models\Tuition');
+    }
 }

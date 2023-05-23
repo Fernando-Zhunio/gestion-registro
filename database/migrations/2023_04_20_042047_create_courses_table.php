@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->foreignId('next_course_id')->nullable()->constrained('courses');
             $table->string('nivel');
             $table->timestamps();
             $table->unique(['nivel']);

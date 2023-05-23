@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [TuitionController::class, 'store'])->name('tuitions.store');
         Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
         Route::delete('/{tuition}', [TuitionController::class, 'destroy'])->name('tuitions.destroy');
+        Route::get('/students', [TuitionController::class, 'students'])->name('tuitions.student');
     });
 
     Route::prefix('representatives')->group(function () {

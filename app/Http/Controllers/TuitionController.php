@@ -16,6 +16,7 @@ use App\Models\Student;
 use App\Traits\GenerateFile;
 use Dotenv\Exception\ValidationException;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class TuitionController extends Controller
@@ -34,6 +35,21 @@ class TuitionController extends Controller
             'data' => $tuitions,
         ]);
     }   
+
+    public function students(Request $request) {
+        $search = $request->get('search', null);
+        $pageSize = $request->get('pageSize', 10);
+        $currentPeriod = currentState()->period_id;
+        // return $currentPeriod;
+        $students = Student::search($search, 'first_name', ['last_name'])->whereHas('tuitions', function ($query) use ($currentPeriod) {
+            $query->where('period_id', $currentPeriod);
+        })->with('course')->paginate($pageSize);
+
+        return response()->json([
+            'success' => true,
+            'data' => $students,
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -66,15 +82,12 @@ class TuitionController extends Controller
         $request->validated();
         
         try {
-            // $data = $request->all();
             $dataRepresentative = $request->all()['representative'];
-            // $dataRepresentative['gender'] = ConstMiscellany::findGenderDb($dataRepresentative['gender']);
             $representative = Representative::create($request->all()['representative']);
             $user = $this->generateUserStudent($dataRepresentative['first_name'].' '.$dataRepresentative['last_name'], $dataRepresentative['email']);
             $dataStudent = $request->all()['student'];
             $currentPeriod = currentState()->period_id;
             $dataStudent['photo'] = $this->generateFile($dataStudent['photo']);
-            // return array_merge($dataStudent, ['representative_id' => $representative->id]);
             $student = Student::create(array_merge($dataStudent, ['representative_id' => $representative->id, 'user_id' => $user->id]));
             $tuition = Tuition::create([
                 'student_id' => $student->id,
@@ -89,7 +102,6 @@ class TuitionController extends Controller
             DB::rollBack();
             throw new ValidationException($e->getMessage());
         }
-        // return $request->all()->student;
     }
 
     private function generateUserStudent($name, $email) {

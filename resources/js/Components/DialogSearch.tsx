@@ -16,6 +16,7 @@ interface DialogSearchProps {
     path: string;
     body?: any;
     placeholder?: string;
+    onSelectRow: (row: any) => void;
 }
 export function DialogSearch({
     isOpen,
@@ -24,6 +25,7 @@ export function DialogSearch({
     body,
     path,
     placeholder,
+    onSelectRow,
 }: DialogSearchProps) {
     if (!isOpen) return null;
     const [data, setData] = useState([]);
@@ -42,11 +44,17 @@ export function DialogSearch({
             .then((data) => {
                 console.log(data);
                 setIsLoading(false);
+                setData(data.data.data);
                 // setRepresentatives(data)
             })
             .catch((error) => {
                 setIsLoading(false);
             });
+    }
+
+    function handlerSelectRow(row: any) {
+        onSelectRow(row);
+        close();
     }
     return (
         <div className="dialog-custom">
@@ -111,10 +119,10 @@ export function DialogSearch({
                             {body || (
                                 <TableBody>
                                     {data.map((row: any) => (
-                                        <TableRow>
+                                        <TableRow hover key={row["id"]} onClick={() => handlerSelectRow(row)}>
                                             {Object.keys(columns).map(
                                                 (column, index) => (
-                                                    <TableCell key={row["id"]}>
+                                                    <TableCell key={index}>
                                                         {row[column]}
                                                     </TableCell>
                                                 )
