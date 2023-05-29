@@ -3,11 +3,13 @@ import { router, useForm as useFormInertia } from "@inertiajs/react";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import FormCreateOrEditTuition from "./Components/FormCreateOrEditTuition";
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import DialogSearch from "@/Components/DialogSearch";
 import { ITuition } from "./types/tuition";
 import { IStudent } from "../Students/types/student.types";
 import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
+import { IRepresentative } from "../Representatives/types/representatives";
+import { set } from "react-hook-form";
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
@@ -17,102 +19,98 @@ interface CreateOrEditCourseProps {
 }
 
 const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
-    const {
-        data: form,
-        setData: setForm,
-        reset,
-        post,
-        errors,
-        clearErrors,
-        put,
-    } = useFormInertia<any>({
-        first_name: null,
-        last_name: null,
-        email: null,
-        phone: null,
-        address: null,
-        doc_type: null,
-        doc_number: null,
-        birthday: null,
-        gender: null,
-        photo: null,
-        previous_institution: null,
-        illness_or_disability: null,
-        course_id: null,
-        representative_id: null,
-    });
+    // const {
+    //     data: form,
+    //     setData: setForm,
+    //     reset,
+    //     post,
+    //     errors,
+    //     clearErrors,
+    //     put,
+    // } = useFormInertia<any>();
 
     const [student, setStudent] = useState<IStudent | null>(null);
+    const [representative, setRepresentative] = useState<IRepresentative | null>(null);
+    const [optionsSearch, setOptionsSearch] = useState({
+        placeholder: "Buscador Representante",
+        path: "/tuitions/representatives",
+        columns: {
+            first_name: "Nombres",
+            last_name: "Apellidos",
+            doc_number: "DNI",
+        },
+    });
 
     const [isOpenRepresentativeSelect, setIsOpenRepresentativeSelect] =
         useState(false);
 
-    const [state, setState] = useState<"create" | "edit">("create");
+    const [isEdit, setIsEdit] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const constDocTypes = useCallback(ConstDocTypes, []);
     const constGender = useCallback(ConstGender, []);
 
     useEffect(() => {
+        console.log({ data });
         if (data) {
-            setForm({
-                ...data,
-            });
-            setState("edit");
-        } else {
-            setForm({
-                name: "",
-                description: "",
-                nivel: "",
-            });
-            setState("create");
+            setIsEdit(true);
         }
         console.log({ data });
     }, [data]);
-
-    function handlerSetForm(key: string, value: any) {
-        setForm({ ...form, [key]: value });
-    }
-
-    function saveInServer() {
-        if (state === "create") {
-            post("/courses", {
-                preserveState: true,
-                onSuccess: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                    // setIsOpen(false);
-                    reset();
-                },
-                onError: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                },
-            });
-        } else if (state === "edit") {
-            put(`/students/${data?.id}`, {
-                preserveState: true,
-                replace: false,
-                preserveScroll: true,
-                onSuccess: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                    // setIsOpen(false);
-                },
-                onError: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                },
-            });
-        }
-    }
 
     const closeModalRepresentativeSelect = () => {
         setIsOpenRepresentativeSelect(false);
     };
 
-    function onSelectRow(row: IStudent) {
-        setStudent(row);
-        console.log({ row });
+    function onSelectRow(row: IStudent | IRepresentative) {
+        console.log({ row, optionsSearch });
+        if (optionsSearch.path === "/tuitions/representatives") {
+            console.log("representative");
+            setRepresentative(row as IRepresentative);
+        } else if (optionsSearch.path === "/tuitions/students") {
+            setStudent(row as IStudent);
+
+        }
+    }
+
+    function searchRepresentative() {
+        const optionsSearch = {
+            placeholder: "Buscador Representante",
+            path: "/tuitions/representatives",
+            columns: {
+                first_name: "Nombres",
+                last_name: "Apellidos",
+                doc_number: "DNI",
+            },
+        };
+        setOptionsSearch(optionsSearch);
+        setIsOpenRepresentativeSelect(true);
+    }
+
+    function searchStudent() {
+        const optionsSearch = {
+            placeholder: "Buscador Estudiante",
+            path: "/tuitions/students",
+            columns: {
+                first_name: "Nombres",
+                last_name: "Apellidos",
+                doc_number: "DNI",
+                photo: "Foto",
+            },
+        };
+        setOptionsSearch(optionsSearch);
+        setIsOpenRepresentativeSelect(true);
+    }
+
+    function openSearch(option: 'student' | 'representative' = 'student') {
+        if (option === 'student') {
+            searchStudent()
+        } else {
+            searchRepresentative()
+        }
+    }
+
+    function clearRepresentative() {
+        setRepresentative(null);
     }
 
     return (
@@ -120,19 +118,12 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
             <DialogSearch
                 close={closeModalRepresentativeSelect}
                 isOpen={isOpenRepresentativeSelect}
-                placeholder="Buscador Estudiante"
-                path="/tuitions/students"
-                columns={{
-                    first_name: "Nombres",
-                    last_name: "Apellidos",
-                    doc_number: "DNI",
-                    photo: "Foto",
-                }}
+                {...optionsSearch}
                 onSelectRow={onSelectRow}
             />
             <div className="font-bold text-4xl mb-3">
                 {" "}
-                {state === "create" ? "Creando" : "Editando"} Matricula
+                {!isEdit ? "Creando" : "Editando"} Matricula
             </div>
             <Card>
                 <CardContent>
@@ -188,7 +179,7 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                 </div>
                                 <div className="md:col-span-3">
                                     <h3 className="bold text-2xl">Sexo:</h3>
-                                    {constGender()[student.gender as any]}
+                                    {(constGender() as any)[student.gender as any]}
                                 </div>
                                 <div className="md:col-span-3">
                                     <h3 className="bold text-2xl">Teléfono:</h3>
@@ -198,7 +189,7 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                     <h3 className="bold text-2xl">
                                         Tipo de documento:
                                     </h3>
-                                    {constDocTypes()[student.doc_type as any]}
+                                    {(constDocTypes() as any)[student.doc_type as any]}
                                 </div>
                                 <div className="md:col-span-3">
                                     <h3 className="bold text-2xl">Curso:</h3>
@@ -230,10 +221,10 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                         </div>
                     ) : (
                         <FormCreateOrEditTuition
-                            setIsOpen={setIsOpenRepresentativeSelect}
-                            handlerSetForm={handlerSetForm}
-                            errors={errors as unknown as any}
-                            form={form}
+                            isEdit={isEdit}
+                            openSearch={openSearch}
+                            representative={representative}
+                            clearRepresentative={clearRepresentative}
                         ></FormCreateOrEditTuition>
                     )}
                 </CardContent>

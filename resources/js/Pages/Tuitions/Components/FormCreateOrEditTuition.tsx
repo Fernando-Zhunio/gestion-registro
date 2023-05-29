@@ -12,55 +12,86 @@ import FormStudent from "../../../Shared/FormStudent";
 import FormRepresentative from "../../../Shared/FormRepresentative";
 import { useForm as useFormInertia } from "@inertiajs/react";
 import { showToast } from "@/Helpers/alerts";
+import { IRepresentative } from "@/Pages/Representatives/types/representatives";
+import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
 
 interface FormCreateOrEditTuitionProps {
-    handlerSetForm: (key: any, value: any) => void;
-    form: any;
-    errors: any;
-    setIsOpen: (isOpen: boolean) => void;
+    // handlerSetForm: (key: any, value: any) => void;
+    // form: any;
+    // errors: any;
+    isEdit: boolean;
+    openSearch: (type?: "student" | "representative") => void;
+    representative?: IRepresentative | null;
+    clearRepresentative: () => void;
 }
 
+const representativeKeys = [
+    "id",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "address",
+    "doc_type",
+    "doc_number",
+    "occupation",
+    "gender",
+];
+
+const studentKeys = [
+    "id",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "address",
+    "doc_type",
+    "doc_number",
+    "birthday",
+    "gender",
+    "photo",
+    "previous_institution",
+    "illness_or_disability",
+    "course_id",
+    "representative_id",
+    "user_id",
+];
+
 const FormCreateOrEditTuition = ({
-    handlerSetForm,
-    form,
-    // errors: errorsInertia,
-    setIsOpen,
+    // handlerSetForm,
+    openSearch,
+    representative: representatives,
+    isEdit,
+    clearRepresentative,
 }: FormCreateOrEditTuitionProps) => {
     const { props } = usePage();
     const [isLoading, setIsLoading] = useState(false);
-    // const inputPhoto = useRef(null);
     const {
         register,
         formState: { errors },
+        setValue,
         handleSubmit,
     } = useForm();
 
-    // const { post, transform, setData } = useFormInertia();
-
     useEffect(() => {
-        new AirDatepicker("#birthday", {
-            locale: localeEs,
-        });
-        console.log({ props });
+        if (props.data) {
+            const { student } = (props as any).data;
+            console.log({ student });
+            studentKeys.forEach((key) => {
+                if (student.hasOwnProperty(key)) {
+                    setValue(key, student[key]);
+                }
+            });
+            const representative = student.representative;
+            representativeKeys.forEach((key) => {
+                if (representative.hasOwnProperty(key)) {
+                    setValue(`r_${key}`, representative[key]);
+                }
+            });
+        }
     }, []);
 
-    // function handleFileChange(key: string, e: any) {
-    //     const selectedFile = e.target.files[0];
-    //     console.log({ selectedFile });
-
-    //     if (selectedFile) {
-    //         handlerSetForm(key, selectedFile);
-
-    //         const reader = new FileReader();
-    //         reader.onload = () => {
-    //             setPreview(reader.result);
-    //         };
-    //         reader.readAsDataURL(selectedFile);
-    //     }
-    // }
-
     const onSubmit = (data: any) => {
-        // data.preventDefault();
         console.log(data);
         const groupData = Object.keys(data).reduce(
             (result: any, key: string) => {
@@ -75,20 +106,35 @@ const FormCreateOrEditTuition = ({
             { student: {}, representative: {} }
         );
         setIsLoading(true);
-        // setData(groupData);
         groupData.student.photo = groupData.student.photo[0];
-        console.log({ groupData });
-        router.post(route("tuitions.store"),groupData, {
+
+        const options = {
             forceFormData: true,
             onSuccess: () => {
                 setIsLoading(false);
             },
-            onError: (error) => {
+            onError: (error: any) => {
                 console.log({ error });
                 setIsLoading(false);
-                showToast({icon: "error", text: Object.values(error).join('\n') , title: "Error al crear el estudiante"});
+                showToast({
+                    icon: "error",
+                    text: Object.values(error).join("\n"),
+                    title: "Error al crear el estudiante",
+                });
             },
-        });
+        };
+        // if (isEdit) {
+        //     router.put(
+        //         route("tuitions.update", (props as any).data.id),
+        //         groupData,
+        //         options
+        //     );
+        // } else {
+            if (representatives) {
+                groupData['representative_id'] = representatives.id;
+            }
+            router.post(route("tuitions.store"), groupData, options);
+        // }
     };
 
     return (
@@ -99,13 +145,15 @@ const FormCreateOrEditTuition = ({
                         <h2 className=" text-slate-700 border-b-1 font-bold text-3xl">
                             Estudiante
                         </h2>
-                        <button
-                            onClick={(e) => setIsOpen(true)}
-                            type="button"
-                            className="px-3 py-1 bg-slate-600 text-white rounded-sm my-2 shadow-sm"
-                        >
-                            El estudiante ya existe
-                        </button>
+                        {!isEdit && (
+                            <button
+                                onClick={(e) => openSearch()}
+                                type="button"
+                                className="px-3 py-1 bg-slate-600 text-white rounded-sm my-2 shadow-sm"
+                            >
+                                El estudiante ya existe
+                            </button>
+                        )}
                     </div>
                     <hr />
                     <br />
@@ -117,31 +165,122 @@ const FormCreateOrEditTuition = ({
                             errors={errors as any}
                             genders={(props as any).genders}
                             // onSubmit={onSubmit}
-                            handlerSetForm={handlerSetForm}
-                            form={form}
+                            // handlerSetForm={handlerSetForm}
+                            img={(props as any)?.data.student?.photo}
+                            // form={form}
                         ></FormStudent>
                     </div>
                 </div>
 
-                <div className="border px-4 py-3 rounded-lg mt-5">
-                    <h2 className="col-span-12 text-slate-700 border-b-1 font-bold text-3xl">
-                        Representante
-                    </h2>
-                    <hr />
-                    <br />
-                    <div className="grid md:grid-cols-12 gap-4">
-                        <FormRepresentative
-                            register={register}
-                            courses={(props as any).courses}
-                            docTypes={(props as any).docTypes}
-                            errors={errors as any}
-                            genders={(props as any).genders}
-                            // onSubmit={onSubmit}
-                            handlerSetForm={handlerSetForm}
-                            form={form as any}
-                        ></FormRepresentative>
+                {!representatives ? (
+                    <div className="border px-4 py-3 rounded-lg mt-5">
+                        <div className="col-span-12 flex justify-between items-center">
+                            <h2 className=" text-slate-700 border-b-1 font-bold text-3xl">
+                                Representante
+                            </h2>
+                            {!isEdit && (
+                                <button
+                                    onClick={(e) =>
+                                        openSearch("representative")
+                                    }
+                                    type="button"
+                                    className="px-3 py-1 bg-slate-600 text-white rounded-sm my-2 shadow-sm"
+                                >
+                                    El representante ya existe
+                                </button>
+                            )}
+                        </div>
+                        <hr />
+                        <br />
+                        <div className="grid md:grid-cols-12 gap-4">
+                            <FormRepresentative
+                                register={register}
+                                courses={(props as any).courses}
+                                docTypes={(props as any).docTypes}
+                                errors={errors as any}
+                                genders={(props as any).genders}
+                                // onSubmit={onSubmit}
+                                // handlerSetForm={handlerSetForm}
+                                // form={form as any}
+                            ></FormRepresentative>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="col-span-12 border px-4 py-3 rounded-lg mt-5">
+                        <div className="col-span-12 flex justify-between items-center">
+                            <h2 className="flex items-center text-slate-700 border-b-1 font-bold text-3xl">
+                                Representante
+                            </h2>
+                            <button
+                                onClick={(e) => clearRepresentative()}
+                                type="button"
+                                className="px-3 py-1 bg-slate-600 text-white rounded-sm my-2 shadow-sm"
+                            >
+                                El representante no existe
+                            </button>
+                        </div>
+                        <hr />
+                        <br />
+                        <div className="grid md:grid-cols-12 gap-4">
+                            <div className="md:col-span-3">
+                                <h3 className="bold text-2xl">Nombres:</h3>
+                                {representatives.first_name}
+                            </div>
+                            <div className="md:col-span-3">
+                                <h3 className="bold text-2xl">Apellidos:</h3>
+                                {representatives.last_name}
+                            </div>
+                            <div className="md:col-span-3">
+                                <h3 className="bold text-2xl">
+                                    Correo electrónico:
+                                </h3>
+                                {representatives.email}
+                            </div>
+                            {/* <div className="md:col-span-3">
+                        <h3 className="bold text-2xl">
+                            Fecha de nacimiento:
+                        </h3>
+                        {student.birthday}
+                    </div> */}
+                            <div className="md:col-span-6">
+                                <h3 className="bold text-2xl">Dirección:</h3>
+                                {representatives.address}
+                            </div>
+                            <div className="md:col-span-3">
+                                <h3 className="bold text-2xl">Sexo:</h3>
+                                {
+                                    (ConstGender() as any)[
+                                        representatives.gender as any
+                                    ]
+                                }
+                            </div>
+                            <div className="md:col-span-3">
+                                <h3 className="bold text-2xl">Teléfono:</h3>
+                                {representatives.phone}
+                            </div>
+                            <div className="md:col-span-3">
+                                <h3 className="bold text-2xl">
+                                    Tipo de documento:
+                                </h3>
+                                {
+                                    (ConstDocTypes() as any)[
+                                        representatives.doc_type as any
+                                    ]
+                                }
+                            </div>
+                            <div className="md:col-span-3">
+                                <h3 className="bold text-2xl">
+                                    # de documento:
+                                </h3>
+                                {
+                                        representatives.doc_number  
+                                    
+                                }
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="border px-4 py-3 rounded-lg mt-5">
                     <h2 className="col-span-12 text-slate-700 border-b-1 font-bold text-3xl">
                         Otros Datos
@@ -176,7 +315,25 @@ const FormCreateOrEditTuition = ({
                             </select>
                             {errors?.r_gender?.type === "required" && (
                                 <small className="text-red-600">
-                                    El Genero es requerido
+                                    El Periodo es requerido
+                                </small>
+                            )}
+                        </div>
+                        <div className="md:col-span-4">
+                            <label htmlFor="email">*Correo electrónico:</label>
+                            <input
+                                id="email"
+                                type="text"
+                                placeholder="Ingrese un correo electrónico"
+                                className={`${
+                                    errors.email && "invalid-control"
+                                } form-control w-full `}
+                                {...register("email", { required: true })}
+                                aria-invalid={errors.email ? "true" : "false"}
+                            />
+                            {errors?.email?.type === "required" && (
+                                <small className="text-red-600">
+                                    El correo es requerido
                                 </small>
                             )}
                         </div>
@@ -188,7 +345,7 @@ const FormCreateOrEditTuition = ({
                         className="rounded-md bg-slate-800 text-white px-3 py-2"
                         type="submit"
                     >
-                        Generar matricula{" "}
+                        {isEdit ? "Actualizar" : "Generar"} matricula{" "}
                         <i className="fa-regular fa-paper-plane"></i>
                     </button>
                 </div>

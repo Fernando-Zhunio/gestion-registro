@@ -5,134 +5,202 @@ import { useEffect, useState } from "react";
 import { IStudent } from "./types/student.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import { router, useForm as useFormInertia } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import DialogActions from "@mui/material/DialogActions";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import FormCreateOrEditStudent from "./Components/FormCreateOrEditStudent";
 import { useForm } from "react-hook-form";
 import DialogSearch from "@/Components/DialogSearch";
+import FormStudent from "@/Shared/FormStudent";
+import { showToast } from "@/Helpers/alerts";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
 // import { showToast } from "@/Helpers/alerts";
-
+const studentKeys = [
+    "id",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "address",
+    "doc_type",
+    "doc_number",
+    "birthday",
+    "gender",
+    "photo",
+    "previous_institution",
+    "illness_or_disability",
+    "course_id",
+    "representative_id",
+    "user_id",
+];
 interface CreateOrEditCourseProps {
-    state: "create" | "edit";
-    isOpen: boolean;
     data?: IStudent;
-    setIsOpen: (isOpen: boolean) => void;
+    genders: any[];
+    courses: any[];
+    docTypes: any[];
+    periods: any[];
 }
 
-const CreateOrEditStudent = ({ data }: CreateOrEditCourseProps) => {
+const CreateOrEditStudent = ({
+    data,
+    genders,
+    courses,
+    docTypes,
+    periods,
+}: CreateOrEditCourseProps) => {
     const {
-        data: form,
-        setData: setForm,
-        reset,
-        post,
-        errors,
-        clearErrors,
-        put,
-    } = useFormInertia<any>({
-        first_name: null,
-        last_name: null,
-        email: null,
-        phone: null,
-        address: null,
-        doc_type: null,
-        doc_number: null,
-        birthday: null,
-        gender: null,
-        photo: null,
-        previous_institution: null,
-        illness_or_disability: null,
-        course_id: null,
-        representative_id: null,
-    });
+        register,
+        formState: { errors },
+        handleSubmit,
+        setValue,
+    } = useForm();
 
-
-    const [state, setState] = useState<"create" | "edit">("create");
+    const [isEdit, setIsEdit] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
+    // const [representative, setRepresentative] = useState<any>(null);
 
     useEffect(() => {
         if (data) {
-            setForm({
-                ...data,
+            setIsEdit(true);
+            const student: any = data;
+            console.log({ student });
+            studentKeys.forEach((key) => {
+                if (student.hasOwnProperty(key)) {
+                    setValue(key, student[key]);
+                }
             });
-            setState("edit");
-        } else {
-            setForm({
-                name: "",
-                description: "",
-                nivel: "",
-            });
-            setState("create");
+            console.log({ student });
+            onSelectRow(student.representative);
         }
         console.log({ data });
     }, [data]);
 
-    function handlerSetForm(key: string, value: any) {
-        setForm({ ...form, [key]: value });
+    function onSubmit(values: any) {
+        setIsLoading(true);
+        console.log({ values });
+        const options = {
+            forceFormData: !(typeof values.photo === "string" || !values.photo),
+            onSuccess: () => {
+                setIsLoading(false);
+            },
+            onError: (error: any) => {
+                console.log({ error });
+                setIsLoading(false);
+                showToast({
+                    icon: "error",
+                    text: Object.values(error).join("\n"),
+                    title: "Error al crear el estudiante",
+                });
+            },
+        };
+        if (typeof values.photo === "string" || !values.photo) {
+            delete values.photo;
+        } else {
+            values.photo = values.photo[0];
+        }
+        router.post(
+            route("students.update", data?.id),
+            { ...values, _method: "PUT" },
+            options
+        );
     }
 
-    function saveInServer() {
-        if (state === "create") {
-            post("/courses", {
-                preserveState: true,
-                onSuccess: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                    // setIsOpen(false);
-                    reset();
-                },
-                onError: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                },
-            });
-        } else if (state === "edit") {
-            put(`/students/${data?.id}`, {
-                preserveState: true,
-                replace: false,
-                preserveScroll: true,
-                onSuccess: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                    // setIsOpen(false);
-                },
-                onError: (e) => {
-                    console.log({ e });
-                    setIsLoading(false);
-                },
-            });
-        }
+    function closeModalRepresentativeSelect(): void {
+        setOpenDialog(false);
+    }
+
+    function onSelectRow(row: any): void {
+        console.log({ row });
+        setValue("representative", `${row?.first_name || ''} ${row?.last_name || ''}`);
+        setValue("representative_id", row?.id);
+        closeModalRepresentativeSelect();
     }
 
     return (
         <div className="Container">
-            {/* <DialogSearch isOpen={true}/> */}
+            <DialogSearch
+                close={closeModalRepresentativeSelect}
+                isOpen={isOpenDialog}
+                placeholder="Buscador Representante"
+                path="/tuitions/representatives"
+                columns={{
+                    first_name: "Nombres",
+                    last_name: "Apellidos",
+                    doc_number: "DNI",
+                }}
+                onSelectRow={onSelectRow}
+            />
             <div className="font-bold text-4xl mb-3">
-                {" "}
-                {state === "create" ? "Creando" : "Editando"} Estudiante
+                {!isEdit ? "Creando" : "Editando"} Estudiante
             </div>
             <Card>
                 <CardContent>
-                    <FormCreateOrEditStudent handlerSetForm={handlerSetForm} errors={errors as unknown as IStudent} form={form}></FormCreateOrEditStudent>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="grid md:grid-cols-12 gap-4">
+                            <FormStudent
+                                courses={courses}
+                                docTypes={docTypes}
+                                genders={genders}
+                                register={register}
+                                errors={errors}
+                                img={data?.photo}
+                                validators={{ photo: { required: false } }}
+                            ></FormStudent>
+                            {/* Nombres */}
+                            <div className="md:col-span-4">
+                                <label htmlFor="representative">
+                                    *Representante:
+                                </label>
+                                <div className="relative flex items-center">
+                                    <input
+                                        readOnly
+                                        id="representative"
+                                        type="text"
+                                        placeholder="Busque el representante"
+                                        className={`${
+                                            errors.representative &&
+                                            "invalid-control"
+                                        } form-control w-full pl-12`}
+                                        {...register("representative", {
+                                            required: true,
+                                        })}
+                                        aria-invalid={
+                                            errors.representative
+                                                ? "true"
+                                                : "false"
+                                        }
+                                    />
+                                    <button
+                                        onClick={() => setOpenDialog(true)}
+                                        type="button"
+                                        className="rounded-full absolute ml-2 bg-slate-200 w-8 h-8 "
+                                    >
+                                        <i className="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </div>
+                                {errors?.representative?.type ===
+                                    "required" && (
+                                    <small className="text-red-600">
+                                        Los representante es requerido
+                                    </small>
+                                )}
+                            </div>
+                        </div>
+                        <button
+                            // disabled={isLoading}
+                            className="rounded-md mt-3 bg-slate-800 text-white px-3 py-2"
+                            type="submit"
+                        >
+                            Guardar{" "}
+                            <i className="fa-regular fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
                 </CardContent>
             </Card>
-            <DialogActions slot="slotAction">
-                <Button
-                    disabled={isLoading}
-                    onClick={saveInServer}
-                    variant="contained"
-                    color="success"
-                >
-                    Guardar <i className="fa-regular fa-paper-plane ml-2"></i>
-                </Button>
-                <Button variant="contained" color="error">
-                    Cerrar <i className="fa-solid fa-xmark ml-2"></i>
-                </Button>
-            </DialogActions>
         </div>
     );
 };

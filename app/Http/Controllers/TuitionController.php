@@ -34,9 +34,10 @@ class TuitionController extends Controller
             'success' => true,
             'data' => $tuitions,
         ]);
-    }   
+    }
 
-    public function students(Request $request) {
+    public function students(Request $request)
+    {
         $search = $request->get('search', null);
         $pageSize = $request->get('pageSize', 10);
         $currentPeriod = currentState()->period_id;
@@ -50,6 +51,20 @@ class TuitionController extends Controller
             'data' => $students,
         ]);
     }
+
+    public function representatives(Request $request)
+    {
+        $search = $request->get('search', null);
+        $pageSize = $request->get('pageSize', 10);
+        // $currentPeriod = currentState()->period_id;
+        $students = Representative::search($search, 'first_name', ['last_name'])->paginate($pageSize);
+
+        return response()->json([
+            'success' => true,
+            'data' => $students,
+        ]);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -69,7 +84,6 @@ class TuitionController extends Controller
             'courses' => $courses,
             'docTypes' => $docTypes,
             'period' => [$period],
-
         ]);
     }
 
@@ -80,16 +94,33 @@ class TuitionController extends Controller
     {
         DB::beginTransaction();
         $request->validated();
-        
+
         try {
-            $dataRepresentative = $request->all()['representative'];
-            $representative = Representative::create($request->all()['representative']);
-            $user = $this->generateUserStudent($dataRepresentative['first_name'].' '.$dataRepresentative['last_name'], $dataRepresentative['email']);
-            $dataStudent = $request->all()['student'];
+            $representative_id = null;
+            if ($request->has('representative_id') && !empty($request->representative_id)) {
+                $representative_id = $request->representative_id;
+            } else {
+                $dataRepresentative = $request->all()['representative'];
+                $request->validate([
+                    'first_name' => 'required|string|max:255',
+                    'last_name' => 'required|string|max:255',
+                    'email' => 'required|email|unique:students,email',
+                    'phone' => 'required|string|max:255',
+                    'address' => 'required|string|max:1000',
+                    'doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
+                    'doc_number' => 'required|string|unique:representatives,doc_number|max:255',
+                    'gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
+                    'occupation' => 'required|string|max:255',
+                ], $dataRepresentative);
+                $representative = Representative::create($request->all()['representative']);
+                $representative_id = $representative->id;
+            }
+            $requestStudent = $request->all()['student'];
+            $user = $this->generateUserStudent($requestStudent['first_name'] . ' ' . $requestStudent['last_name'], $requestStudent['email']);
             $currentPeriod = currentState()->period_id;
-            $dataStudent['photo'] = $this->generateFile($dataStudent['photo']);
-            $student = Student::create(array_merge($dataStudent, ['representative_id' => $representative->id, 'user_id' => $user->id]));
-            $tuition = Tuition::create([
+            $requestStudent['photo'] = $this->generateFile($requestStudent['photo']);
+            $student = Student::create(array_merge($requestStudent, ['representative_id' => $representative_id, 'user_id' => $user->id]));
+            Tuition::create([
                 'student_id' => $student->id,
                 'period_id' => $currentPeriod,
                 'course_id' => $student->course_id,
@@ -104,7 +135,8 @@ class TuitionController extends Controller
         }
     }
 
-    private function generateUserStudent($name, $email) {
+    private function generateUserStudent($name, $email)
+    {
         $user = User::create([
             'name' => $name,
             'email' => $email,
@@ -127,16 +159,55 @@ class TuitionController extends Controller
      */
     public function edit(Tuition $tuition)
     {
-        //
+        $tuition->load(['student', 'student.representative', 'period', 'course']);
+        $currentPeriod = currentState()->period_id;
+        $period = Period::find($currentPeriod);
+        $courses = Course::all();
+        $genders = ConstMiscellany::getGendersSelect();
+        $docTypes = ConstMiscellany::getDocTypesSelect();
+        $courses = Course::all();
+        return Inertia::render('Tuitions/CreateOrEditTuition', [
+            'success' => true,
+            'data' => $tuition,
+            'genders' => $genders,
+            'courses' => $courses,
+            'docTypes' => $docTypes,
+            'period' => [$period],
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatetuitionRequest $request, Tuition $tuition)
-    {
-        //
-    }
+    // public function update(UpdatetuitionRequest $request, Tuition $tuition)
+    // {
+    //     DB::beginTransaction();
+    //     $request->validated();
+
+    //     try {
+    //         $dataRepresentative = $request->all()['representative'];
+    //         $representative = Representative::create($request->all()['representative']);
+    //         $user = $this->generateUserStudent($dataRepresentative['first_name'].' '.$dataRepresentative['last_name'], $dataRepresentative['email']);
+    //         $dataStudent = $request->all()['student'];
+    //         $currentPeriod = currentState()->period_id;
+    //         if (isset($dataStudent['photo'])) {
+    //             $dataStudent['photo'] = $this->generateFile($dataStudent['photo']);
+    //         }
+    //         $student = Student::create(array_merge($dataStudent, ['representative_id' => $representative->id, 'user_id' => $user->id]));
+    //         Tuition::create([
+    //             'student_id' => $student->id,
+    //             'period_id' => $currentPeriod,
+    //             'course_id' => $student->course_id,
+    //             // 'status' => '1',
+    //             // 'approved' => '1'
+    //         ]);
+    //         DB::commit();
+    //         return to_route('tuitions.index');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         throw new ValidationException($e->getMessage());
+    //     }
+    // }
 
     /**
      * Remove the specified resource from storage.

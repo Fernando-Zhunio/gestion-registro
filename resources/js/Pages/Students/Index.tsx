@@ -51,15 +51,12 @@ const StudentsIndex = ({data}: ResponsePaginator<IStudent>) => {
     }
 
     return (
-        <div className="container">
+        <div className="">
             <SearchBarComponent
                 path="/students"
                 title="Estudiantes"
                 withPaginator={true}
                 notLoadDataOnInit={true}
-                buttons={<>
-                    <Link href="/students/create" className="btn-custom btn-create">Crear Matricula de estudiante</Link>
-                </>}
             >
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -70,7 +67,8 @@ const StudentsIndex = ({data}: ResponsePaginator<IStudent>) => {
                                     color: 'gray'
                                 }
                             }}>
-                                <TableCell>id</TableCell>
+                                <TableCell>Imagen</TableCell>
+                                <TableCell>Id</TableCell>
                                 <TableCell>Nombres</TableCell>
                                 <TableCell>Apellidos</TableCell>
                                 <TableCell>Correo</TableCell>
@@ -82,6 +80,7 @@ const StudentsIndex = ({data}: ResponsePaginator<IStudent>) => {
                                 <TableCell>Institución Anterior</TableCell>
                                 <TableCell>Curso</TableCell>
                                 <TableCell>Representante</TableCell>
+                                <TableCell>Acciones</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -89,6 +88,9 @@ const StudentsIndex = ({data}: ResponsePaginator<IStudent>) => {
                                 <TableRow
                                     key={row.id}
                                 >
+                                    <TableCell>
+                                        <img src={row.photo} alt="imagen" />
+                                    </TableCell>
                                     <TableCell>
                                         {row.id}
                                     </TableCell>
@@ -107,12 +109,12 @@ const StudentsIndex = ({data}: ResponsePaginator<IStudent>) => {
                                     <TableCell>{row.representative_id}</TableCell>
                                     <TableCell>
                                        <div className="flex gap-1">
-                                         <Link href={"/students/"+ row.id}  className="btn-icon btn-c-edit">
+                                         <Link href={"/students/"+ row.id + '/edit'}  className="btn-icon btn-c-edit">
                                              <i className="fas fa-edit"></i>
                                          </Link>
-                                         <button onClick={() => deleteCourse(row.id)} className="btn-icon btn-c-edit">
+                                         {/* <button onClick={() => deleteCourse(row.id)} className="btn-icon btn-c-edit">
                                          <i className="fa-solid fa-trash text-red-600"></i>
-                                         </button>
+                                         </button> */}
                                        </div>
                                     </TableCell>
                                     

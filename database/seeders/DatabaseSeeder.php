@@ -33,8 +33,11 @@ class DatabaseSeeder extends Seeder
 
         CurrentState::factory()->create();
 
-        // create specialties
-        
-
+        $this->call(
+            [
+                SpecialtySeeder::class,
+                CourseSeeder::class,
+            ]
+        );
     }
 }

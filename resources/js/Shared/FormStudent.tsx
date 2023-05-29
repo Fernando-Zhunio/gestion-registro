@@ -6,26 +6,29 @@ import localeEs from "air-datepicker/locale/es";
 import { IStudent } from "@/Pages/Students/types/student.types";
 
 interface FormRepresentativeProps {
-    handlerSetForm: (key: any, value: any) => void;
+    // handlerSetForm: (key: any, value: any) => void;
     onSubmit?: (data: any) => void;
-    form: IStudent;
+    // form: IStudent;
     errors: any;
     genders: { label: string; value: string }[];
     courses: { id: number; name: string; nivel: string }[];
     docTypes: { label: string; value: string }[];
     register: any
-
+    img?: string,
+    validators?: {[key: string]: any}
 }
 
-export default function FormRepresentative({
-    handlerSetForm,
+export default function FormStudent({
+    // handlerSetForm,
     // onSubmit,
-    form,
+    // form,
     errors,
     genders,
     courses,
     docTypes,
     register,
+    img = "/img/avatar.png",
+    validators
 }: FormRepresentativeProps) {
     // const {
     //     register,
@@ -33,12 +36,24 @@ export default function FormRepresentative({
     //     handleSubmit,
     // } = useForm();
     const [preview, setPreview] = useState<any>(null);
+    const [_validators, setValidator] = useState<any>({
+        photo: { required: true },
+    });
 
     useEffect(() => {
         new AirDatepicker('#birthday', {
             locale: localeEs,
             dateFormat: 'yyyy-MM-dd',
-        }) 
+        })
+
+        if (validators) {
+                setValidator((prevState: any) => {
+                    return {
+                        ...prevState,
+                        ...validators
+                    }
+                })
+        }
     }, []);
 
     function handleFileChange(key: string, e: any) {
@@ -46,7 +61,7 @@ export default function FormRepresentative({
         console.log({ selectedFile });
 
         if (selectedFile) {
-            handlerSetForm(key, selectedFile);
+            // handlerSetForm(key, selectedFile);
 
             const reader = new FileReader();
             reader.onload = () => {
@@ -97,25 +112,7 @@ export default function FormRepresentative({
                 )}
             </div>
 
-             {/* correo electronico - email */}
-             <div className="md:col-span-4">
-                <label htmlFor="email">*Correo electronico:</label>
-                <input
-                    id="email"
-                    type="text"
-                    placeholder="Ingrese un correo electrónico"
-                    className={`${
-                        errors.email && "invalid-control"
-                    } form-control w-full `}
-                    {...register("email", { required: true })}
-                    aria-invalid={errors.email ? "true" : "false"}
-                />
-                {errors?.email?.type === "required" && (
-                    <small className="text-red-600">
-                        El correo es requerido
-                    </small>
-                )}
-            </div>
+            
 
             {/* Foto - photo */}
             <div className="md:col-span-4">
@@ -123,7 +120,7 @@ export default function FormRepresentative({
                     <div className="shrink-0">
                         <img
                             className="h-16 w-16 object-cover rounded-full"
-                            src={preview || "/img/avatar.png"}
+                            src={preview || img}
                             alt="Current profile photo"
                         />
                     </div>
@@ -132,7 +129,7 @@ export default function FormRepresentative({
                         <input
                             type="file"
                             {...register("photo", {
-                                required: true,
+                                required: _validators?.photo?.required,
                                 onChange: (e: any) => handleFileChange("photo", e),
                             })}
                             className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"

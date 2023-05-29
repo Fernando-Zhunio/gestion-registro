@@ -11,9 +11,12 @@ class Course extends Model
     use Search, HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
         'description',
-        'nivel'
+        'nivel',
+        'next_course_id',
+        'specialty_id',
     ];
 
     // protected static function getJourneys()

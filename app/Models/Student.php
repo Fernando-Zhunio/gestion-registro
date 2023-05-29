@@ -33,6 +33,11 @@ class Student extends Model
         return $this->belongsTo('App\Models\course');
     }
 
+    // public function nextCourse()
+    // {
+    //     return $this->hasManyThrough('App\Models\Course', 'App\Models\Course', 'id', 'next_course_id');
+    // }
+
     public function representative()
     {
         return $this->belongsTo('App\Models\representative');

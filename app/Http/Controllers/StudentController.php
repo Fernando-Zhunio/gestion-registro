@@ -9,6 +9,7 @@ use App\Http\Requests\StorestudentRequest;
 use App\Http\Requests\UpdatestudentRequest;
 use App\Models\Course;
 use App\Models\Period;
+use App\Traits\GenerateFile;
 use Inertia\Inertia;
 
 class StudentController extends Controller
@@ -16,19 +17,22 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
+    use GenerateFile;
     public function index()
     {
         $genders = ConstMiscellany::getGendersSelect();
         $docTypes = ConstMiscellany::getDocTypesSelect();
         $courses = Course::all();
-        
-        // $students = BuilderForRoles::BuilderSearchClass(Student::class, 'first_name', ['last_name']);
+        $builder = Student::query();
+        $builder->with('course');
+        $students = BuilderForRoles::PaginateSearch($builder, 'first_name', ['last_name', 'doc_number']);
+        // BuilderSearchClass(Student::class, 'first_name', ['last_name']);
         return Inertia::render('Students/Index', [
             'success' => true,
             'gender' => $genders,
             'courses' => $courses,
             'docTypes' => $docTypes,
-            'data' => '',
+            'data' => $students,
         ]);
     }
 
@@ -37,16 +41,6 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $genders = ConstMiscellany::getGendersSelect();
-        $docTypes = ConstMiscellany::getDocTypesSelect();
-        $courses = Course::all();
-        return Inertia::render('Students/CreateOrEditStudent', [
-            'success' => true,
-            'gender' => $genders,
-            'courses' => $courses,
-            'docTypes' => $docTypes,
-            'data' => '',
-        ]);
     }
 
     /**
@@ -71,7 +65,21 @@ class StudentController extends Controller
      */
     public function edit(student $student)
     {
-        //
+        $student->load('representative');
+        $currentPeriod = currentState()->period_id;
+        $period = Period::find($currentPeriod);
+        $courses = Course::all();
+        $genders = ConstMiscellany::getGendersSelect();
+        $docTypes = ConstMiscellany::getDocTypesSelect();
+        $courses = Course::all();
+        return Inertia::render('Students/CreateOrEditStudent', [
+            'success' => true,
+            'data' => $student,
+            'genders' => $genders,
+            'courses' => $courses,
+            'docTypes' => $docTypes,
+            'periods' => [$period],
+        ]);
     }
 
     /**
@@ -79,7 +87,13 @@ class StudentController extends Controller
      */
     public function update(UpdatestudentRequest $request, student $student)
     {
-        //
+        $request->validated();
+        $dataStudent = $request->all();
+        if ($request->hasFile('photo')) {
+            $dataStudent['photo'] = $this->generateFile($dataStudent['photo']);
+        }
+        $student->update($dataStudent);
+        return redirect()->route('students.index');
     }
 
     /**

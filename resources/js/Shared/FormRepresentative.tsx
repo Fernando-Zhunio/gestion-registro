@@ -5,9 +5,9 @@ import localeEs from "air-datepicker/locale/es";
 import { IRepresentative } from "@/Pages/Representatives/types/representatives";
 
 interface FormRepresentativeProps {
-    handlerSetForm: (key: any, value: any) => void;
+    // handlerSetForm: (key: any, value: any) => void;
     // onSubmit: (data: any) => void;
-    form: IRepresentative;
+    // form: IRepresentative;
     errors: any;
     genders: { label: string; value: string }[];
     courses: { id: number; name: string; nivel: string }[];

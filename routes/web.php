@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [StudentController::class, 'index'])->name('students.index');
         Route::get('/create', [StudentController::class, 'create'])->name('students.create');
         Route::post('/', [StudentController::class, 'store'])->name('students.store');
+        Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
         Route::put('/{student}', [StudentController::class, 'update'])->name('students.update');
         Route::delete('/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
     });
@@ -101,10 +102,12 @@ Route::middleware('auth')->group(function () {
     Route::prefix('tuitions')->group(function () {
         Route::get('/', [TuitionController::class, 'index'])->name('tuitions.index');
         Route::get('/create', [TuitionController::class, 'create'])->name('tuitions.create');
+        // Route::get('{tuition}/edit', [TuitionController::class, 'edit'])->name('tuitions.edit');
         Route::post('/', [TuitionController::class, 'store'])->name('tuitions.store');
-        Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
+        // Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
         Route::delete('/{tuition}', [TuitionController::class, 'destroy'])->name('tuitions.destroy');
         Route::get('/students', [TuitionController::class, 'students'])->name('tuitions.student');
+        Route::get('/representatives', [TuitionController::class, 'representatives'])->name('tuitions.representatives');
     });
 
     Route::prefix('representatives')->group(function () {
