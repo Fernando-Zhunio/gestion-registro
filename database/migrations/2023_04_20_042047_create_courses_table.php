@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('nivel');
+            $table->boolean('status')->default(true);
             $table->timestamps();
             $table->foreignId('next_course_id')->nullable()->constrained('courses');
             $table->foreignId('specialty_id')->nullable()->constrained('specialties');

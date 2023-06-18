@@ -7,21 +7,19 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from "react";
-import { IParallel } from "./types/parallel.types";
+import { ISubject } from "./types/subject.types";
 import {  ResponsePaginator } from "@/types/global";
-import { CreateOrEditCourse } from "./CreateOrEditParallel";
+// import { CreateOrEditCourse } from "./CreateOrEditStudent";
 import { showAlert } from "@/Helpers/alerts";
-import { useForm } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 
-
-
-const Index = ({data}: ResponsePaginator<IParallel>) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [dataEdit, setDataEdit] = useState<IParallel | undefined>(undefined);
-    function openPeriod(row: IParallel | undefined): void {
-        setDataEdit(row);
-        setIsOpen(true);
-    }
+const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
+    // const [isOpen, setIsOpen] = useState<boolean>(false);
+    // const [dataEdit, setDataEdit] = useState<Student | undefined>(undefined);
+    // function openPeriod(row: Student | undefined): void {
+    //     setDataEdit(row);
+    //     setIsOpen(true);
+    // }
     const {  delete: _deleteCourse } = useForm()
 
     function deleteCourse(id: number): void {
@@ -53,15 +51,15 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
     }
 
     return (
-        <div className="container">
+        <div className="">
             <SearchBarComponent
-                path="/parallels"
-                title="Paralelos"
+                path="/subjects"
+                title="Materias"
                 withPaginator={true}
                 notLoadDataOnInit={true}
                 buttons={<>
-                    <button onClick={() => openPeriod(undefined)} className="btn-custom btn-create">Crear Paralelo</button>
-                </>}
+                    <Link href="/subjects/create" className="btn-custom btn-create">Crear Matricula</Link>
+                </>}   
             >
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -72,11 +70,13 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                                     color: 'gray'
                                 }
                             }}>
-                                <TableCell>id</TableCell>
+                                <TableCell>ID</TableCell>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
-                                <TableCell>Total registrados</TableCell>
-                                <TableCell>Total de cupos</TableCell>
+                                <TableCell>Nivel</TableCell>
+                                <TableCell>Horas</TableCell>
+                                <TableCell>Estado</TableCell>
+                                <TableCell>Curso</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -84,6 +84,7 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                                 <TableRow
                                     key={row.id}
                                 >
+                                    
                                     <TableCell>
                                         {row.id}
                                     </TableCell>
@@ -91,16 +92,16 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                                         {row.name}
                                     </TableCell>
                                     <TableCell>{row.description}</TableCell>
-                                    <TableCell>{row.registered}</TableCell>
-                                    <TableCell>{row.quota}</TableCell>
+                                    <TableCell>{row.nivel}</TableCell>
+                                    <TableCell>{row.status}</TableCell>
+                                    {/* <TableCell>{row.doc_type}</TableCell> */}
+                                    <TableCell>{row.course?.name}</TableCell>
+
                                     <TableCell>
                                        <div className="flex gap-1">
-                                         <button onClick={() => openPeriod(row)} className="btn-icon btn-c-edit">
+                                         <Link href={"/students/"+ row.id + '/edit'}  className="btn-icon btn-c-edit">
                                              <i className="fas fa-edit"></i>
-                                         </button>
-                                         <button onClick={() => deleteCourse(row.id)} className="btn-icon btn-c-edit">
-                                         <i className="fa-solid fa-trash text-red-600"></i>
-                                         </button>
+                                         </Link>
                                        </div>
                                     </TableCell>
                                     
@@ -111,9 +112,9 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                 </TableContainer>
             </SearchBarComponent>
 
-            <CreateOrEditCourse setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/>
+            {/* <CreateOrEditCourse setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/> */}
         </div>
     );
 };
 
-export default Index;
+export default StudentsIndex;

@@ -9,6 +9,7 @@ use App\Models\Period;
 use App\Models\Tuition;
 use App\Http\Requests\StoretuitionRequest;
 use App\Http\Requests\UpdatetuitionRequest;
+use App\Models\Parallel;
 use App\Models\Representative;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -33,6 +34,14 @@ class TuitionController extends Controller
         return Inertia::render('Tuitions/Index', [
             'success' => true,
             'data' => $tuitions,
+        ]);
+    }
+
+    public function parallelsIndex(Request $request) {
+        $parallels = Parallel::where('course_id', $request->course_id)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $parallels,
         ]);
     }
 
@@ -87,6 +96,15 @@ class TuitionController extends Controller
         ]);
     }
 
+    private function validateParallel($courses_id, $parallel_id)
+    {
+        $parallel = Parallel::where('course_id', $courses_id)->where('id', $parallel_id)->first();
+        if (!$parallel) {
+            throw ValidationException::withMessages([
+                'parallel_id' => 'El paralelo no existe en el curso seleccionado',
+            ]);
+        }
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -94,7 +112,7 @@ class TuitionController extends Controller
     {
         DB::beginTransaction();
         $request->validated();
-
+        $this->validateParallel($request->course_id, $request->parallel_id);
         try {
             $representative_id = null;
             if ($request->has('representative_id') && !empty($request->representative_id)) {
@@ -162,6 +180,7 @@ class TuitionController extends Controller
         $tuition->load(['student', 'student.representative', 'period', 'course']);
         $currentPeriod = currentState()->period_id;
         $period = Period::find($currentPeriod);
+        $parallels = Parallel::where('course_id', $tuition->course_id)->get();
         $courses = Course::all();
         $genders = ConstMiscellany::getGendersSelect();
         $docTypes = ConstMiscellany::getDocTypesSelect();
@@ -172,6 +191,7 @@ class TuitionController extends Controller
             'genders' => $genders,
             'courses' => $courses,
             'docTypes' => $docTypes,
+            'parallels' => $parallels,
             'period' => [$period],
         ]);
     }

@@ -9,6 +9,7 @@ interface SearchBarProps {
     title: string;
     placeholder?: string;
     notLoadDataOnInit?: boolean;
+    width?: 1|2|3|4|5|6|7|8|9;
     params?: any;
     // paramsPage
     onIsLoading?: (isLoading: boolean) => void;
@@ -27,6 +28,7 @@ const SearchBarComponent = ({
     notLoadDataOnInit = true,
     withPaginator,
     rowsPerPageOptions,
+    width = 2,
     onIsLoading,
     onSetData,
     onError,
@@ -117,10 +119,10 @@ const SearchBarComponent = ({
 
     return (
         <div>
-            <div className="flex items-center justify-between position-sticky">
-                <div className="flex items-center gap-2">
+            <div className="flex flex-grow gap-2 items-center justify-between position-sticky">
+                <div className="flex flex-grow items-center gap-2">
                     <h2 className="text-3xl">{title}</h2>
-                    <div className="search-bar bg-white shadow-sm rounded-md px-2 flex items-center">
+                    <div style={{'flexGrow': `0.${width || 2}`}} className="search-bar bg-white shadow-sm rounded-md px-2 flex items-center">
                         <button onClick={onClickSearch} className="btn-search">
                             <i className="fa-solid fa-search text-gray-500"></i>
                         </button>

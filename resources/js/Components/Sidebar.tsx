@@ -146,6 +146,27 @@ const Sidebar = () => {
               </ListItemButton>
             </ListItem>
         </List>
+        <List>
+            <ListItem  disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                    
+                </ListItemIcon>
+                <Link href="/subjects" as="button" type="button">Materias</Link>
+              </ListItemButton>
+            </ListItem>
+        </List>
+
+        <List>
+            <ListItem  disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                    
+                </ListItemIcon>
+                <Link href="/parallels" as="button" type="button">Paralelos</Link>
+              </ListItemButton>
+            </ListItem>
+        </List>
       </Drawer>
     )
 };

@@ -1,3 +1,4 @@
+import { IParallel } from "@/Pages/Parallels/types/parallel.types";
 import { ICourse } from "../../Courses/types/course.types";
 
 export interface IStudent {
@@ -17,4 +18,6 @@ export interface IStudent {
     representative_id: number;
     photo:string;
     course?: ICourse;
+    parallel_id: number;
+    parallel?: IParallel;
 }

@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('description');
             $table->integer('quota');
-            $table->integer('registered');
+            $table->integer('registered')->default(0)->nullable();
             $table->timestamps();
+            $table->foreignId('course_id')->constrained('courses');
+
         });
     }
 

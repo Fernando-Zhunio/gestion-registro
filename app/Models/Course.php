@@ -15,6 +15,7 @@ class Course extends Model
         'name',
         'description',
         'nivel',
+        'status',
         'next_course_id',
         'specialty_id',
     ];

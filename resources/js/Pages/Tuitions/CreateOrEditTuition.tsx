@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { router, useForm as useFormInertia } from "@inertiajs/react";
+
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
 import FormCreateOrEditTuition from "./Components/FormCreateOrEditTuition";
@@ -9,7 +9,6 @@ import { ITuition } from "./types/tuition";
 import { IStudent } from "../Students/types/student.types";
 import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
 import { IRepresentative } from "../Representatives/types/representatives";
-import { set } from "react-hook-form";
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
@@ -19,16 +18,6 @@ interface CreateOrEditCourseProps {
 }
 
 const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
-    // const {
-    //     data: form,
-    //     setData: setForm,
-    //     reset,
-    //     post,
-    //     errors,
-    //     clearErrors,
-    //     put,
-    // } = useFormInertia<any>();
-
     const [student, setStudent] = useState<IStudent | null>(null);
     const [representative, setRepresentative] = useState<IRepresentative | null>(null);
     const [optionsSearch, setOptionsSearch] = useState({
@@ -45,7 +34,6 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
         useState(false);
 
     const [isEdit, setIsEdit] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const constDocTypes = useCallback(ConstDocTypes, []);
     const constGender = useCallback(ConstGender, []);
 

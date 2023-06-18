@@ -28,6 +28,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained('courses');
             $table->foreignId('representative_id')->constrained();
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('parallel_id')->constrained('parallels');
             $table->timestamps();
         });
     }

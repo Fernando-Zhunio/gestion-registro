@@ -29,7 +29,7 @@ class StorestudentRequest extends FormRequest
             'email' => 'required|email|unique:students,email',
             'phone' => 'required|string|max:255',
             'address' => 'required|string|max:1000',
-            'doc_type' => 'required|string|max:255|in:' . ConstDocuments::CI . ',' . ConstDocuments::PASSPORT . ',' . ConstDocuments::FOREIGNER_ID,
+            'doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
             'doc_number' => 'required|string',
             'birthday' => 'required|date',
             'gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
@@ -37,6 +37,7 @@ class StorestudentRequest extends FormRequest
             'previous_institution' => 'required|string|max:255',
             'illness_or_disability' => 'required|string|max:255',
             'course_id' => 'required|integer|exists:courses,id',
+            'parallel_id' => 'required|integer|exists:parallels,id',
             'representative_id' => 'required|integer|exists:representatives,id',
         ];
     }

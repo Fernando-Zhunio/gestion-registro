@@ -1,5 +1,5 @@
 import axios, { type AxiosRequestConfig } from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 enum Methods {
     GET = 'GET',
@@ -7,19 +7,24 @@ enum Methods {
     PUT = 'PUT',
     DELETE = 'DELETE'
 }
-export const useFetch = (url: string, method: Methods = Methods.GET, info: Omit<AxiosRequestConfig<any>, 'url'|'method'> = {}) => {
+export const useFetch = (url: string, method: Methods = Methods.GET, info: Omit<AxiosRequestConfig<any>, 'url'|'method'> = {}, initLoad: boolean = true) => {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState<any>(false);
     useEffect(() => {
-        async function fetchUrl() {
-            setLoading(true);
-            const response = await axios({...info, url, method});
-            setLoading(false);
-            setData(response.data);
-        }
-        fetchUrl();
+        
+       initLoad && fetchUrl();
 
     }, [])
 
-    return {data, loading};
+    const fetchUrl = useCallback(async function fetchUrl(options:{url?: string, method?: Methods, info?: Omit<AxiosRequestConfig<any>, 'url'|'method'> } = {}) {
+            setLoading(true);
+            const url1 = options?.url || url;
+            const _info = options?.info || info;
+            const response = await axios({..._info, url: url1, method});
+            setLoading(false);
+            setData(response.data);
+            return response.data;
+        }, [])
+
+    return {data, loading, fetchUrl};
 }

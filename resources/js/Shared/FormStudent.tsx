@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import localeEs from "air-datepicker/locale/es";
 // import { IRepresentative } from "@/Pages/Representatives/types/representatives";
 import { IStudent } from "@/Pages/Students/types/student.types";
+import { IParallel } from "@/Pages/Parallels/types/parallel.types";
+import { useFetch } from "@/Hooks/UseFetch";
 
 interface FormRepresentativeProps {
     // handlerSetForm: (key: any, value: any) => void;
@@ -39,6 +41,16 @@ export default function FormStudent({
     const [_validators, setValidator] = useState<any>({
         photo: { required: true },
     });
+    const { fetchUrl } = useFetch('/tuitions/parallels', 'GET' as any, {}, false);
+
+    const [parallels, setParallels] = useState<IParallel[]>([]);
+
+    async function getParallelsByCourse(courseId: number) {
+        console.log({ courseId });
+        const parallels = await fetchUrl({info: {params: {course_id: courseId}}});
+        console.log({ data: parallels.data });
+        setParallels(parallels.data);
+    }
 
     useEffect(() => {
         new AirDatepicker('#birthday', {
@@ -221,6 +233,7 @@ export default function FormStudent({
                         errors.course_id && "invalid-control"
                     } form-control w-full `}
                     {...register("course_id", { required: true })}
+                    onChange={($event: any) => getParallelsByCourse($event.target.value)}
                 >
                     {courses?.map((item: any) => {
                         return (
@@ -316,6 +329,30 @@ export default function FormStudent({
                     className={`form-control w-full`}
                     {...register("illness_or_disability")}
                 />
+            </div>
+
+             {/* paralelo - parallel_id */}
+             <div className="md:col-span-3">
+                <label htmlFor="course_id">Paralelo</label>
+                <select
+                    className={`${
+                        errors.course_id && "invalid-control"
+                    } form-control w-full `}
+                    {...register("parallel_id", { required: true })}
+                >
+                    {parallels?.map((item: any) => {
+                        return (
+                            <option key={item.id} value={item.id}>
+                                {item.name} - {item.nivel}
+                            </option>
+                        );
+                    })}
+                </select>
+                {errors?.course_id?.type === "required" && (
+                    <small className="text-red-600">
+                        El curso es requerido
+                    </small>
+                )}
             </div>
         </>
     );

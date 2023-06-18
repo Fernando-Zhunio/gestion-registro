@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\subject;
+use App\Builders\BuilderForRoles;
 use App\Http\Requests\StoresubjectRequest;
 use App\Http\Requests\UpdatesubjectRequest;
+use App\Models\Subject;
+use Inertia\Inertia;
 
 class SubjectController extends Controller
 {
@@ -13,7 +15,11 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        //
+        $subjects = BuilderForRoles::BuilderSearchClass(Subject::class, 'name');
+        return Inertia::render('Subjects/Index', [
+            'success' => true,
+            'data' => $subjects,
+        ]);
     }
 
     /**
@@ -21,7 +27,7 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        //
+        Inertia::render('Subjects/Create');
     }
 
     /**
@@ -29,29 +35,33 @@ class SubjectController extends Controller
      */
     public function store(StoresubjectRequest $request)
     {
-        //
+        
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(subject $subject)
+    public function show(Subject $subject)
     {
-        //
+        
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(subject $subject)
+    public function edit(Subject $subject)
     {
-        //
+        $subject->load('course');
+        return Inertia::render('Subjects/Edit', [
+            'success' => true,
+            'data' => $subject,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatesubjectRequest $request, subject $subject)
+    public function update(UpdatesubjectRequest $request, Subject $subject)
     {
         //
     }
@@ -59,7 +69,7 @@ class SubjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(subject $subject)
+    public function destroy(Subject $subject)
     {
         //
     }

@@ -11,7 +11,7 @@ class UpdateparallelRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateparallelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'quota' => 'required|integer',
+            'registered' => 'required|integer',
+            'course_id' => 'required|integer|exists:courses,id',
         ];
     }
 }

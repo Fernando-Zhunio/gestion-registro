@@ -48,14 +48,13 @@ class ParallelObserver
     // }
 
 
-    public function updating(Parallel $parallel): void
-    {
-        $parallelDb = Parallel::find($parallel->id);
-        if ($parallelDb->registered < $parallelDb->quota) {
-            $parallel->quota++;
-        } else {
-            throw new \Exception('No se puede actualizar el paralelo, ya que la cantidad de estudiantes registrados alcanzó el cupo máximo.');
-        }
-    }
+    // public function updating(Parallel $parallel): void
+    // {
+    //     $parallelDb = Parallel::find($parallel->id);
+    //     if ($parallelDb->registered > $parallelDb->quota) {
+    //         // $parallel->quota++;
+    //         throw new \Exception('No se puede agregar este estudiante a este paralelo, ya que la cantidad de estudiantes registrados alcanzó el cupo máximo.');
+    //     }
+    // }
 
 }

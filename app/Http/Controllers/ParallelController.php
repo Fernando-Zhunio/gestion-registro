@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\parallel;
 use App\Http\Requests\StoreparallelRequest;
 use App\Http\Requests\UpdateparallelRequest;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -24,6 +25,17 @@ class ParallelController extends Controller
         ]);
     }
 
+    public function courses(Request $request)
+    {
+        $search = $request->get('search', '');
+        $pageSize = $request->get('pageSize', 10);
+        $courses = Course::where('status', true)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $courses,
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -37,7 +49,9 @@ class ParallelController extends Controller
      */
     public function store(StoreparallelRequest $request)
     {
-        //
+        $request->validated();
+        parallel::create($request->all());
+        return to_route('parallels.index');
     }
 
     /**
@@ -61,7 +75,9 @@ class ParallelController extends Controller
      */
     public function update(UpdateparallelRequest $request, parallel $parallel)
     {
-        //
+        $request->validated();
+        $parallel->update($request->all());
+        return to_route('parallels.index');
     }
 
     /**

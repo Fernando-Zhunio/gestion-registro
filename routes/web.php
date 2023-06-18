@@ -8,6 +8,8 @@ use App\Http\Controllers\RepresentativeController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\ParallelController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TuitionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -102,6 +104,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('tuitions')->group(function () {
         Route::get('/', [TuitionController::class, 'index'])->name('tuitions.index');
         Route::get('/create', [TuitionController::class, 'create'])->name('tuitions.create');
+        Route::get('/parallels', [TuitionController::class, 'parallelsIndex'])->name('tuitions.parallels');
         // Route::get('{tuition}/edit', [TuitionController::class, 'edit'])->name('tuitions.edit');
         Route::post('/', [TuitionController::class, 'store'])->name('tuitions.store');
         // Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
@@ -117,6 +120,23 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [RepresentativeController::class, 'store'])->name('representatives.store');
         Route::put('/{representative}', [RepresentativeController::class, 'update'])->name('representatives.update');
         Route::delete('/{representative}', [RepresentativeController::class, 'destroy'])->name('representatives.destroy');
+    });
+
+    Route::prefix('subjects')->group(function () {
+        Route::get('/', [SubjectController::class, 'index'])->name('subjects.index');
+        Route::get('/create', [SubjectController::class, 'create'])->name('subjects.create');
+        Route::post('/', [SubjectController::class, 'store'])->name('subjects.store');
+        Route::put('/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
+        Route::delete('/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
+    });
+
+    Route::prefix('parallels')->group(function () {
+        Route::get('/', [ParallelController::class, 'index'])->name('parallels.index');
+        Route::get('/create', [ParallelController::class, 'create'])->name('parallels.create');
+        Route::get('/courses', [ParallelController::class, 'courses'])->name('parallels.courses');
+        Route::post('/', [ParallelController::class, 'store'])->name('parallels.store');
+        Route::put('/{parallel}', [ParallelController::class, 'update'])->name('parallels.update');
+        Route::delete('/{parallel}', [ParallelController::class, 'destroy'])->name('parallels.destroy');
     });
 });
 
