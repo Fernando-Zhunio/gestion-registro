@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\Student;
 use App\Traits\GenerateFile;
-use Dotenv\Exception\ValidationException;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class TuitionController extends Controller
 {
@@ -37,7 +37,8 @@ class TuitionController extends Controller
         ]);
     }
 
-    public function parallelsIndex(Request $request) {
+    public function parallelsIndex(Request $request)
+    {
         $parallels = Parallel::where('course_id', $request->course_id)->get();
         return response()->json([
             'success' => true,
@@ -99,44 +100,44 @@ class TuitionController extends Controller
     private function validateParallel($courses_id, $parallel_id)
     {
         $parallel = Parallel::where('course_id', $courses_id)->where('id', $parallel_id)->first();
+        // dd($parallel);
         if (!$parallel) {
-            throw ValidationException::withMessages([
-                'parallel_id' => 'El paralelo no existe en el curso seleccionado',
-            ]);
+            validationException(
+                'parallel_id',
+                'El paralelo no existe en el curso seleccionado',
+            );
         }
     }
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoretuitionRequest $request)
+    public function store(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
-        $request->validated();
-        $this->validateParallel($request->course_id, $request->parallel_id);
+        $requestStudent = $request->all()['student'];
+        // dd($requestStudent);
+        $request->validate($this->rulesStudent());
+        $representative_id = null;
+        $requestRepresentative = $request->all()['representative'];
+        // dd($request->all());
+
+        $this->validateParallel($requestStudent['course_id'], $requestStudent['parallel_id']);
+        if ($request->has('representative_id') && !empty($request->representative_id)) {
+            $representative_id = $request->representative_id;
+        } else {
+            $request->validate($this->rulesRepresentative());
+        }
         try {
-            $representative_id = null;
-            if ($request->has('representative_id') && !empty($request->representative_id)) {
-                $representative_id = $request->representative_id;
-            } else {
-                $dataRepresentative = $request->all()['representative'];
-                $request->validate([
-                    'first_name' => 'required|string|max:255',
-                    'last_name' => 'required|string|max:255',
-                    'email' => 'required|email|unique:students,email',
-                    'phone' => 'required|string|max:255',
-                    'address' => 'required|string|max:1000',
-                    'doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
-                    'doc_number' => 'required|string|unique:representatives,doc_number|max:255',
-                    'gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
-                    'occupation' => 'required|string|max:255',
-                ], $dataRepresentative);
-                $representative = Representative::create($request->all()['representative']);
+            if (!$representative_id) {
+                $representative = Representative::create($requestRepresentative);
                 $representative_id = $representative->id;
             }
-            $requestStudent = $request->all()['student'];
+
             $user = $this->generateUserStudent($requestStudent['first_name'] . ' ' . $requestStudent['last_name'], $requestStudent['email']);
             $currentPeriod = currentState()->period_id;
             $requestStudent['photo'] = $this->generateFile($requestStudent['photo']);
+            unset($requestStudent['email']);
             $student = Student::create(array_merge($requestStudent, ['representative_id' => $representative_id, 'user_id' => $user->id]));
             Tuition::create([
                 'student_id' => $student->id,
@@ -151,6 +152,41 @@ class TuitionController extends Controller
             DB::rollBack();
             throw new ValidationException($e->getMessage());
         }
+    }
+
+    public function rulesStudent(): array
+    {
+        return [
+            'student.first_name' => 'required|string|max:255',
+            'student.last_name' => 'required|string|max:255',
+            'student.email' => 'required|email|unique:users,email',
+            'student.phone' => 'nullable|digits:10|max:255',
+            'student.address' => 'required|string|max:1000',
+            'student.doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
+            'student.doc_number' => 'required|string|unique:students,doc_number|max:255',
+            'student.birthday' => 'required|date',
+            'student.gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
+            'student.photo' => 'required|file|max:1024|mimes:jpeg,jpg,png',
+            'student.previous_institution' => 'required|string|max:255',
+            'student.illness_or_disability' => 'nullable|string|max:255',
+            'student.course_id' => 'required|integer|exists:courses,id',
+            'student.representative_id' => 'nullable|integer|exists:representatives,id',
+        ];
+    }
+
+    private function rulesRepresentative()
+    {
+        return [
+            'representative.first_name' => 'required|string|max:255',
+            'representative.last_name' => 'required|string|max:255',
+            'representative.email' => 'required|email|unique:representatives,email',
+            'representative.phone' => 'required|string|max:255',
+            'representative.address' => 'required|string|max:1000',
+            'representative.doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
+            'representative.doc_number' => 'required|string|unique:representatives,doc_number|max:255',
+            'representative.gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
+            'representative.occupation' => 'required|string|max:255',
+        ];
     }
 
     private function generateUserStudent($name, $email)

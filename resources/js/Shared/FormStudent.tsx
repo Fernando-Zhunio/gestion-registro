@@ -297,7 +297,7 @@ export default function FormStudent({
             {/* anterior institucion - previous_institution */}
             <div className="md:col-span-4">
                 <label htmlFor="previous_institution">
-                    *Anterior institución:
+                    Anterior institución:
                 </label>
                 <input
                     id="previous_institution"

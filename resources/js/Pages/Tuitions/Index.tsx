@@ -12,7 +12,7 @@ import { ResponsePaginator } from "@/types/global";
 
 export default function IndexTuitions({data}: ResponsePaginator<ITuition>) {
     return (
-        <div className="container">
+        <div>
             <SearchBarComponent
                 path="/tuitions"
                 title="Matriculas"

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\parallel;
+use App\Models\Student;
 use App\Observers\ParallelObserver;
+use App\Observers\StudentObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -28,6 +30,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Parallel::observe(ParallelObserver::class);
+        Student::observe(StudentObserver::class);
     }
 
     /**

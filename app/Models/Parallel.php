@@ -14,8 +14,25 @@ class Parallel extends Model
         'name',
         'description',
         'quota',
-        'registered',
+        // 'registered',
         'course_id',
     ];
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
+
+    // public function scopeStudentByPeriodCount($query, $periodId)
+    // {
+    //     return $query->withCount('students')->whereHas('students.tuitions', function ($query) use ($periodId) {
+    //         $query->where('period_id', $periodId);
+    //     });
+    // }
 
 }

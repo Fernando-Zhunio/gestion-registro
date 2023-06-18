@@ -25,7 +25,7 @@ class StoretuitionRequest extends FormRequest
         return [
             'student.first_name' => 'required|string|max:255',
             'student.last_name' => 'required|string|max:255',
-            'student.email' => 'required|email|unique:students,email',
+            'student.email' => 'required|email|unique:users,email',
             'student.phone' => 'nullable|digits:10|max:255',
             'student.address' => 'required|string|max:1000',
             'student.doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
@@ -37,7 +37,6 @@ class StoretuitionRequest extends FormRequest
             'student.illness_or_disability' => 'nullable|string|max:255',
             'student.course_id' => 'required|integer|exists:courses,id',
             'representative_id' => 'nullable|integer|exists:representatives,id',
-            // 'student.representative_id' => 'required|integer|exists:representatives,id',
 
             
             
