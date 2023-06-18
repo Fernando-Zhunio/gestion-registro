@@ -42,21 +42,27 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+        // $this->reportable(function (Throwable $e) {
+        //     //
+        // });
+        // parent::report($exception);
+    }
+
+    public function report(Throwable  $exception)
+    {
+        parent::report($exception);
     }
 
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof ValidationException) {
-            $pre_errors = $exception->errors();
-            $errors = collect($pre_errors);
-            return response()->json([
-                'success' => false,
-                'data' => $errors->implode("0", "\n")
-            ], 422);
-        }
+        // if ($exception instanceof ValidationException) {
+        //     $pre_errors = $exception->errors();
+        //     $errors = collect($pre_errors);
+        //     return response()->json([
+        //         'success' => false,
+        //         'data' => $errors->implode("0", "\n")
+        //     ], 422);
+        // }
 
         return parent::render($request, $exception);
     }

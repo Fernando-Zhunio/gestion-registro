@@ -97,32 +97,31 @@ class TuitionController extends Controller
         ]);
     }
 
-    private function validateParallel($courses_id, $parallel_id)
-    {
-        $parallel = Parallel::where('course_id', $courses_id)->where('id', $parallel_id)->first();
-        // dd($parallel);
-        if (!$parallel) {
-            validationException(
-                'parallel_id',
-                'El paralelo no existe en el curso seleccionado',
-            );
-        }
-    }
+    // private function validateParallel($courses_id, $parallel_id)
+    // {
+    //     $parallel = Parallel::where('course_id', $courses_id)->where('id', $parallel_id)->first();
+    //     // dd($parallel);
+    //     if (!$parallel) {
+    //         validationException(
+    //             'parallel_id',
+    //             'El paralelo no existe en el curso seleccionado',
+    //         );
+    //     }
+    // }
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        DB::beginTransaction();
         $requestStudent = $request->all()['student'];
+        // validateParallel($request->parallel_id, $request->course_id);
+        validateParallel( $requestStudent['parallel_id'], $requestStudent['course_id']);
+        DB::beginTransaction();
         // dd($requestStudent);
         $request->validate($this->rulesStudent());
         $representative_id = null;
         $requestRepresentative = $request->all()['representative'];
-        // dd($request->all());
 
-        $this->validateParallel($requestStudent['course_id'], $requestStudent['parallel_id']);
         if ($request->has('representative_id') && !empty($request->representative_id)) {
             $representative_id = $request->representative_id;
         } else {
@@ -150,7 +149,10 @@ class TuitionController extends Controller
             return to_route('tuitions.index');
         } catch (\Exception $e) {
             DB::rollBack();
-            throw new ValidationException($e->getMessage());
+             validationException(
+                'student',
+                'No se pudo crear la matricula intentelo nuevamente',
+            );
         }
     }
 

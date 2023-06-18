@@ -50,13 +50,9 @@ class ParallelObserver
     // }
 
 
-    public function updating(Parallel $parallel): void
+    public function updating(int $parallel_id): void
     {
-        // $parallelDb = Parallel::find($parallel->id);
-        // if ($parallelDb->registered > $parallelDb->quota) {
-        //     // $parallel->quota++;
-        //     throw new \Exception('No se puede agregar este estudiante a este paralelo, ya que la cantidad de estudiantes registrados alcanzó el cupo máximo.');
-        // }
+        $parallel = Parallel::find($parallel_id);
         $currentState = currentState();
         $countStudents = Student::where('parallel_id', $parallel->id)->whereHas('tuitions', function ($query) use( $currentState) {
             $query->where('period_id', $currentState->period_id);

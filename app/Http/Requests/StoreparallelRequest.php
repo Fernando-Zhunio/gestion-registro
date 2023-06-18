@@ -22,7 +22,7 @@ class StoreparallelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:parallels,name',
             'description' => 'required|string|max:1000',
             'quota' => 'required|integer',
             // 'registered' => 'nullable|integer',
