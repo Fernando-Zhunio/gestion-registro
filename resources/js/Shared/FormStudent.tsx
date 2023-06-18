@@ -15,9 +15,9 @@ interface FormRepresentativeProps {
     genders: { label: string; value: string }[];
     courses: { id: number; name: string; nivel: string }[];
     docTypes: { label: string; value: string }[];
-    register: any
-    img?: string,
-    validators?: {[key: string]: any}
+    register: any;
+    img?: string;
+    validators?: { [key: string]: any };
 }
 
 export default function FormStudent({
@@ -30,7 +30,7 @@ export default function FormStudent({
     docTypes,
     register,
     img = "/img/avatar.png",
-    validators
+    validators,
 }: FormRepresentativeProps) {
     // const {
     //     register,
@@ -41,30 +41,37 @@ export default function FormStudent({
     const [_validators, setValidator] = useState<any>({
         photo: { required: true },
     });
-    const { fetchUrl } = useFetch('/tuitions/parallels', 'GET' as any, {}, false);
+    const { fetchUrl } = useFetch(
+        "/tuitions/parallels",
+        "GET" as any,
+        {},
+        false
+    );
 
     const [parallels, setParallels] = useState<IParallel[]>([]);
 
     async function getParallelsByCourse(courseId: number) {
         console.log({ courseId });
-        const parallels = await fetchUrl({info: {params: {course_id: courseId}}});
+        const parallels = await fetchUrl({
+            info: { params: { course_id: courseId } },
+        });
         console.log({ data: parallels.data });
         setParallels(parallels.data);
     }
 
     useEffect(() => {
-        new AirDatepicker('#birthday', {
+        new AirDatepicker("#birthday", {
             locale: localeEs,
-            dateFormat: 'yyyy-MM-dd',
-        })
+            dateFormat: "yyyy-MM-dd",
+        });
 
         if (validators) {
-                setValidator((prevState: any) => {
-                    return {
-                        ...prevState,
-                        ...validators
-                    }
-                })
+            setValidator((prevState: any) => {
+                return {
+                    ...prevState,
+                    ...validators,
+                };
+            });
         }
     }, []);
 
@@ -124,8 +131,6 @@ export default function FormStudent({
                 )}
             </div>
 
-            
-
             {/* Foto - photo */}
             <div className="md:col-span-4">
                 <div className="flex items-center space-x-6">
@@ -142,7 +147,8 @@ export default function FormStudent({
                             type="file"
                             {...register("photo", {
                                 required: _validators?.photo?.required,
-                                onChange: (e: any) => handleFileChange("photo", e),
+                                onChange: (e: any) =>
+                                    handleFileChange("photo", e),
                             })}
                             className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
                         />
@@ -233,7 +239,9 @@ export default function FormStudent({
                         errors.course_id && "invalid-control"
                     } form-control w-full `}
                     {...register("course_id", { required: true })}
-                    onChange={($event: any) => getParallelsByCourse($event.target.value)}
+                    onChange={($event: any) =>
+                        getParallelsByCourse($event.target.value)
+                    }
                 >
                     {courses?.map((item: any) => {
                         return (
@@ -319,9 +327,7 @@ export default function FormStudent({
             </div>
 
             <div className="md:col-span-4">
-                <label htmlFor="illness_or_disability">
-                    Discapacidad:
-                </label>
+                <label htmlFor="illness_or_disability">Discapacidad:</label>
                 <input
                     id="illness_or_disability"
                     type="text"
@@ -331,8 +337,8 @@ export default function FormStudent({
                 />
             </div>
 
-             {/* paralelo - parallel_id */}
-             <div className="md:col-span-3">
+            {/* paralelo - parallel_id */}
+            <div className="md:col-span-3">
                 <label htmlFor="course_id">Paralelo</label>
                 <select
                     className={`${

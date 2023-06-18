@@ -9,6 +9,10 @@ import { ITuition } from "./types/tuition";
 import { IStudent } from "../Students/types/student.types";
 import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
 import { IRepresentative } from "../Representatives/types/representatives";
+import { IParallel } from "../Parallels/types/parallel.types";
+import { useFetch } from "@/Hooks/UseFetch";
+import { useForm } from "react-hook-form";
+import { usePage } from "@inertiajs/react";
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
@@ -19,7 +23,8 @@ interface CreateOrEditCourseProps {
 
 const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
     const [student, setStudent] = useState<IStudent | null>(null);
-    const [representative, setRepresentative] = useState<IRepresentative | null>(null);
+    const [representative, setRepresentative] =
+        useState<IRepresentative | null>(null);
     const [optionsSearch, setOptionsSearch] = useState({
         placeholder: "Buscador Representante",
         path: "/tuitions/representatives",
@@ -36,6 +41,14 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const constDocTypes = useCallback(ConstDocTypes, []);
     const constGender = useCallback(ConstGender, []);
+    const {
+        register,
+        formState: { errors },
+        setValue,
+        handleSubmit,
+    } = useForm();
+
+    const { props: {courses} } = usePage<any>();
 
     useEffect(() => {
         console.log({ data });
@@ -56,7 +69,6 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
             setRepresentative(row as IRepresentative);
         } else if (optionsSearch.path === "/tuitions/students") {
             setStudent(row as IStudent);
-
         }
     }
 
@@ -89,17 +101,35 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
         setIsOpenRepresentativeSelect(true);
     }
 
-    function openSearch(option: 'student' | 'representative' = 'student') {
-        if (option === 'student') {
-            searchStudent()
+    function openSearch(option: "student" | "representative" = "student") {
+        if (option === "student") {
+            searchStudent();
         } else {
-            searchRepresentative()
+            searchRepresentative();
         }
     }
 
     function clearRepresentative() {
         setRepresentative(null);
     }
+
+    const [parallels, setParallels] = useState<IParallel[]>([]);
+    const { fetchUrl } = useFetch(
+        "/tuitions/parallels",
+        "GET" as any,
+        {},
+        false
+    );
+
+    async function getParallelsByCourse(courseId: number) {
+        console.log({ courseId });
+        const parallels = await fetchUrl({
+            info: { params: { course_id: courseId } },
+        });
+        console.log({ data: parallels.data });
+        setParallels(parallels.data);
+    }
+
 
     return (
         <div className="Container">
@@ -116,7 +146,7 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
             <Card>
                 <CardContent>
                     {student ? (
-                        <div className="col-span-12 border px-4 py-3 rounded-lg mt-5">
+                        <form className="col-span-12 border px-4 py-3 rounded-lg mt-5">
                             <div className="col-span-12 flex justify-between items-center">
                                 <h2 className="flex items-center text-slate-700 border-b-1 font-bold text-3xl">
                                     <img
@@ -167,7 +197,11 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                 </div>
                                 <div className="md:col-span-3">
                                     <h3 className="bold text-2xl">Sexo:</h3>
-                                    {(constGender() as any)[student.gender as any]}
+                                    {
+                                        (constGender() as any)[
+                                            student.gender as any
+                                        ]
+                                    }
                                 </div>
                                 <div className="md:col-span-3">
                                     <h3 className="bold text-2xl">Teléfono:</h3>
@@ -177,7 +211,11 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                     <h3 className="bold text-2xl">
                                         Tipo de documento:
                                     </h3>
-                                    {(constDocTypes() as any)[student.doc_type as any]}
+                                    {
+                                        (constDocTypes() as any)[
+                                            student.doc_type as any
+                                        ]
+                                    }
                                 </div>
                                 <div className="md:col-span-3">
                                     <h3 className="bold text-2xl">Curso:</h3>
@@ -195,6 +233,68 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                     </h3>
                                     {student.illness_or_disability || "Ninguna"}
                                 </div>
+                                <div className="md:col-span-3">
+                                    <label htmlFor="course_id">Curso</label>
+                                    <select
+                                        className={`${
+                                            errors.course_id &&
+                                            "invalid-control"
+                                        } form-control w-full `}
+                                        {...register("course_id", {
+                                            required: true,
+                                        })}
+                                        onChange={($event: any) =>
+                                            getParallelsByCourse(
+                                                $event.target.value
+                                            )
+                                        }
+                                    >
+                                        {courses?.map((item: any) => {
+                                            return (
+                                                <option
+                                                    key={item.id}
+                                                    value={item.id}
+                                                >
+                                                    {item.name} - {item.nivel}
+                                                </option>
+                                            );
+                                        })}
+                                    </select>
+                                    {errors?.course_id?.type === "required" && (
+                                        <small className="text-red-600">
+                                            El curso es requerido
+                                        </small>
+                                    )}
+                                </div>
+                                {/* paralelo - parallel_id */}
+                                <div className="md:col-span-3">
+                                    <label htmlFor="course_id">Paralelo</label>
+                                    <select
+                                        className={`${
+                                            errors.course_id &&
+                                            "invalid-control"
+                                        } form-control w-full `}
+                                        {...register("parallel_id", {
+                                            required: true,
+                                        })}
+                                    >
+                                        {parallels?.map((item: any) => {
+                                            return (
+                                                <option
+                                                    key={item.id}
+                                                    value={item.id}
+                                                >
+                                                    {item.name} - {item.nivel}
+                                                </option>
+                                            );
+                                        })}
+                                    </select>
+                                    {errors?.course_id?.type === "required" && (
+                                        <small className="text-red-600">
+                                            El curso es requerido
+                                        </small>
+                                    )}
+                                </div>
                                 <div className="col-span-12 my-3">
                                     <button
                                         // disabled={isLoading}
@@ -206,7 +306,7 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     ) : (
                         <FormCreateOrEditTuition
                             isEdit={isEdit}
