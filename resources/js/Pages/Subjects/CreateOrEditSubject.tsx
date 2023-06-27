@@ -45,7 +45,7 @@ const CreateOrEditSubject = ({ isEdit, data }: CreateOrEditSubjectProps) => {
 
   
     useEffect(() => {
-        setValue("course_id", '');
+        setValue("course_id", '4');
     }, []);
     const onSubmit = (data: any) => {
         console.log(data);

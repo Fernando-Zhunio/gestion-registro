@@ -79,11 +79,10 @@ FormCourseProps) {
                     id="description"
                     type="text"
                     placeholder="Ingrese la descripción"
-                    className={`${
-                        errors.description && "invalid-control"
-                    } form-control w-full `}
-                    {...register("description", { required: true })}
-                    aria-invalid={errors.description ? "true" : "false"}
+                    className={`
+                     form-control w-full `}
+                    {...register("description")}
+                  
                 ></textarea>
                 {/* {errors?.description?.type === "required" && (
                     <small description="text-red-600">
