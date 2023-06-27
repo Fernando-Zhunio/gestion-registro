@@ -125,6 +125,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('subjects')->group(function () {
         Route::get('/', [SubjectController::class, 'index'])->name('subjects.index');
         Route::get('/create', [SubjectController::class, 'create'])->name('subjects.create');
+        Route::get('/courses/search', [SubjectController::class, 'coursesSearch'])->name('subjects.courses');
         Route::post('/', [SubjectController::class, 'store'])->name('subjects.store');
         Route::put('/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
         Route::delete('/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');

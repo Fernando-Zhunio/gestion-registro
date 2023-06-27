@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->string('nivel');
-            $table->time('hours');
-            $table->char('status', 1);
+            // $table->string('nivel');
+            // $table->time('hours');
+            $table->char('status', 1)->nullable();
             $table->foreignId('course_id')->constrained('courses');
             $table->timestamps();
         });

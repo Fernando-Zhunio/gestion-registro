@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Builders\BuilderForRoles;
 use App\Http\Requests\StoresubjectRequest;
 use App\Http\Requests\UpdatesubjectRequest;
+use App\Models\Course;
 use App\Models\Subject;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SubjectController extends Controller
@@ -22,12 +24,28 @@ class SubjectController extends Controller
         ]);
     }
 
+    public function coursesSearch(Request $request)
+    {
+        $pageSize = $request->get('pageSize', 10);
+        $search = $request->get('search', '');
+        $courses = Course::search($search)->paginate($pageSize);
+        return response()->json([
+            'success' => true,
+            'data' => $courses,
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        Inertia::render('Subjects/Create');
+        return Inertia::render('Subjects/CreateOrEditSubject', [
+            'isEdit' => false,
+            'data' => [
+                'courses' => Course::where('status', 'A')->get(),
+            ],
+        ]);
     }
 
     /**

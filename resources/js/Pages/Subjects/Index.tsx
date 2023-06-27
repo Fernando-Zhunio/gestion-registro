@@ -58,7 +58,7 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                 withPaginator={true}
                 notLoadDataOnInit={true}
                 buttons={<>
-                    <Link href="/subjects/create" className="btn-custom btn-create">Crear Matricula</Link>
+                    <Link href="/subjects/create" className="btn-custom btn-create">Crear Curso</Link>
                 </>}   
             >
                 <TableContainer component={Paper}>
@@ -73,8 +73,8 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                                 <TableCell>ID</TableCell>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
-                                <TableCell>Nivel</TableCell>
-                                <TableCell>Horas</TableCell>
+                                {/* <TableCell>Nivel</TableCell> */}
+                                {/* <TableCell>Horas</TableCell> */}
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Curso</TableCell>
                             </TableRow>
@@ -92,7 +92,7 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                                         {row.name}
                                     </TableCell>
                                     <TableCell>{row.description}</TableCell>
-                                    <TableCell>{row.nivel}</TableCell>
+                                    {/* <TableCell>{row.nivel}</TableCell> */}
                                     <TableCell>{row.status}</TableCell>
                                     {/* <TableCell>{row.doc_type}</TableCell> */}
                                     <TableCell>{row.course?.name}</TableCell>

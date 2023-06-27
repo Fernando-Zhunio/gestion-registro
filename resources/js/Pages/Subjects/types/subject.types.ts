@@ -4,8 +4,8 @@ export interface ISubject {
     id: number;
     name: string;
     description: string;
-    nivel: string;
-    hours: number;
+    // nivel: string;
+    // hours: number;
     status: string;
     course_id: number;
     course?: ICourse;
