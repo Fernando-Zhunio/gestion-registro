@@ -31,6 +31,7 @@ const CreateOrEditSubject = ({
     isOpen,
     setIsOpen,
 }: CreateOrEditSubjectProps) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     // const [optionsSearch, setOptionsSearch] = useState({
     //     placeholder: "Buscador Paralelos",
     //     path: "subjects/parallels",
@@ -49,15 +50,26 @@ const CreateOrEditSubject = ({
         setValue,
         handleSubmit,
         setError,
+        reset,
     } = useForm();
 
     useEffect(() => {
-        // setValue("course_id", null);
-        // 
         register("course_id", {required: true});
     }, []);
     const onSubmit = (data: any) => {
-        console.log(data);
+        router.post(route("subjects.store"), data, {
+            preserveState: true,
+            onSuccess: (e) => {
+                console.log({ e });
+                setIsLoading(false);
+                setIsOpen(false);
+                reset();
+            },
+            onError: (e) => {
+                console.log({ e });
+                setIsLoading(false);
+            },
+        });
     };
 
     return (
