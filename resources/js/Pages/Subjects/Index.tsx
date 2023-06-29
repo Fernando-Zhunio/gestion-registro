@@ -12,14 +12,15 @@ import {  ResponsePaginator } from "@/types/global";
 // import { CreateOrEditCourse } from "./CreateOrEditStudent";
 import { showAlert } from "@/Helpers/alerts";
 import { Link, useForm } from "@inertiajs/react";
+import CreateOrEditSubject from "./CreateOrEditSubject";
 
 const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
-    // const [isOpen, setIsOpen] = useState<boolean>(false);
-    // const [dataEdit, setDataEdit] = useState<Student | undefined>(undefined);
-    // function openPeriod(row: Student | undefined): void {
-    //     setDataEdit(row);
-    //     setIsOpen(true);
-    // }
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [dataEdit, setDataEdit] = useState<ISubject | undefined>(undefined);
+    function openDialog(row: ISubject | undefined): void {
+        setDataEdit(row);
+        setIsOpen(true);
+    }
     const {  delete: _deleteCourse } = useForm()
 
     function deleteCourse(id: number): void {
@@ -57,9 +58,9 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                 title="Materias"
                 withPaginator={true}
                 notLoadDataOnInit={true}
-                buttons={<>
-                    <Link href="/subjects/create" className="btn-custom btn-create">Crear Curso</Link>
-                </>}   
+                buttons={
+                    <button onClick={() => openDialog(undefined)} className="btn-custom btn-create">Crear Materia</button>
+                }   
             >
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -112,7 +113,8 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                 </TableContainer>
             </SearchBarComponent>
 
-            {/* <CreateOrEditCourse setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/> */}
+            <CreateOrEditSubject setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/>
+
         </div>
     );
 };

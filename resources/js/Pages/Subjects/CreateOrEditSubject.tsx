@@ -18,11 +18,19 @@ import { set, useForm } from "react-hook-form";
 import { Card, CardContent } from "@mui/material";
 
 interface CreateOrEditSubjectProps {
-    isEdit: boolean;
-    data?: IPeriod;
+    // isEdit: boolean;
+    data?: ISubject;
+    state: "create" | "edit";
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
 }
 
-const CreateOrEditSubject = ({ isEdit, data }: CreateOrEditSubjectProps) => {
+const CreateOrEditSubject = ({
+    data,
+    state,
+    isOpen,
+    setIsOpen,
+}: CreateOrEditSubjectProps) => {
     // const [optionsSearch, setOptionsSearch] = useState({
     //     placeholder: "Buscador Paralelos",
     //     path: "subjects/parallels",
@@ -40,16 +48,17 @@ const CreateOrEditSubject = ({ isEdit, data }: CreateOrEditSubjectProps) => {
         formState: { errors },
         setValue,
         handleSubmit,
-        
+        setError,
     } = useForm();
 
-  
     useEffect(() => {
-        setValue("course_id", '4');
+        // setValue("course_id", null);
+        // 
+        register("course_id", {required: true});
     }, []);
     const onSubmit = (data: any) => {
         console.log(data);
-    }
+    };
 
     return (
         <div>
@@ -59,31 +68,47 @@ const CreateOrEditSubject = ({ isEdit, data }: CreateOrEditSubjectProps) => {
                 {...optionsSearch}
                 onSelectRow={onSelectRow}
             /> */}
-            <div className="font-bold text-4xl mb-3">
-                {" "}
-                {!isEdit ? "Creando" : "Editando"} Materia
-            </div>
-            <Card style={{overflow: 'inherit'}}>
-                <CardContent>
-                    <form onSubmit={handleSubmit(onSubmit)}  className="grid md:grid-cols-12 gap-4">
+            <DialogCustom
+                open={isOpen}
+                title={`${state === "create" ? "Creando" : "Editando"} Materia`}
+            >
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <hr />
+                    <div className="grid md:grid-cols-12 gap-4 py-3">
                         <FormSubject
                             errors={errors}
                             register={register}
                             setValue={setValue}
                         ></FormSubject>
-                        <div className="col-span-12 my-3">
-                    <button
-                        // disabled={isLoading}
-                        className="rounded-md bg-slate-800 text-white px-3 py-2"
-                        type="submit"
-                    >
-                        {isEdit ? "Actualizar" : "Crear"} materia{" "}
-                        <i className="fa-regular fa-paper-plane"></i>
-                    </button>
-                </div>
-                    </form>
-                </CardContent>
-            </Card>
+                        {/* <div className="col-span-12 my-3">
+                                <button
+                                    // disabled={isLoading}
+                                    className="rounded-md bg-slate-800 text-white px-3 py-2"
+                                    type="submit"
+                                >
+                                     Guardar
+                                    <i className="fa-regular fa-paper-plane"></i>
+                                </button>
+                            </div> */}
+                    </div>
+                    <hr />
+                    <DialogActions slot="slotAction">
+                        <button
+                            type="submit"
+                            className="rounded-md bg-slate-800 text-white px-3 py-2"
+                        >
+                            Guardar{" "}
+                            <i className="fa-regular fa-paper-plane ml-2"></i>
+                        </button>
+                        <button
+                            className="rounded-md bg-red-800 text-white px-3 py-2"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            Cerrar <i className="fa-solid fa-xmark ml-2"></i>
+                        </button>
+                    </DialogActions>
+                </form>
+            </DialogCustom>
         </div>
     );
 };

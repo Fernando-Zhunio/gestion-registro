@@ -2,6 +2,8 @@ import { useFetch } from "@/Hooks/UseFetch";
 import { ICourse } from "@/Pages/Courses/types/course.types";
 import { ResponsePaginator } from "@/types/global";
 import AsyncSelect from "react-select/async";
+import { components, InputProps } from "react-select";
+import { useForm, Controller } from 'react-hook-form';
 
 interface FormCourseProps {
     // handlerSetForm: (key: any, value: any) => void;
@@ -54,22 +56,43 @@ FormCourseProps) {
         <>
             {/* Nombres */}
             <div className="md:col-span-6">
-                <label htmlFor="name">*Nombres:</label>
-                <input
-                    id="name"
-                    type="text"
-                    placeholder="Ingrese el nombre"
-                    className={`${
-                        errors.name && "invalid-control"
-                    } form-control w-full `}
-                    {...register("name", { required: true })}
-                    aria-invalid={errors.name ? "true" : "false"}
-                />
-                {errors?.name?.type === "required" && (
-                    <small className="text-red-600">
-                        El nombre es requerido
-                    </small>
-                )}
+                <div className="md:col-span-12">
+                    <label htmlFor="name">*Nombres:</label>
+                    <input
+                        id="name"
+                        type="text"
+                        placeholder="Ingrese el nombre"
+                        className={`${
+                            errors.name && "invalid-control"
+                        } form-control w-full `}
+                        {...register("name", { required: true })}
+                        aria-invalid={errors.name ? "true" : "false"}
+                    />
+                    {errors?.name?.type === "required" && (
+                        <small className="text-red-600">
+                            El nombre es requerido
+                        </small>
+                    )}
+                </div>
+                <div className="md:col-span-12 mt-3">
+                    <label htmlFor="course_id">*Curso:</label>
+                    <AsyncSelect
+                        onChange={(e: any) => {
+                            console.log({ e });
+                            setValue("course_id", e?.value);
+                        }}
+                        className="w-full"
+                        cacheOptions
+                        defaultOptions
+                        loadOptions={loadOptionsCourse}
+                    />
+                    {errors?.course_id?.type === "required" && (
+                        <small className="text-red-600">
+                            El curso es requerido
+                        </small>
+                    )}
+                </div>
+                {/* <select hidden {...register("course_id", { required: true })}></select> */}
             </div>
 
             {/* Descripción */}
@@ -82,7 +105,6 @@ FormCourseProps) {
                     className={`
                      form-control w-full `}
                     {...register("description")}
-                  
                 ></textarea>
                 {/* {errors?.description?.type === "required" && (
                     <small description="text-red-600">
@@ -110,23 +132,13 @@ FormCourseProps) {
                     </small>
                 )}
             </div> */}
-            <div className="md:col-span-6">
+            {/* <div className="md:col-span-6">
                 <label htmlFor="course_id">*Curso:</label>
-                {/* <input
-                    id="course_id"
-                    type="text"
-                    placeholder="Ingrese el curso"
-                    className={`${
-                        errors.course_id && "invalid-control"
-                    } form-control w-full `}
-                    {...register("name", { required: true })}
-                    aria-invalid={errors.course_id ? "true" : "false"}
-                /> */}
                 <AsyncSelect
-                onChange={(e) => {
-                    console.log({e});
-                    setValue("course_id", e?.value);
-                }}
+                    onChange={(e) => {
+                        console.log({ e });
+                        setValue("course_id", e?.value);
+                    }}
                     // {...register("course_id", { required: true })}
                     className="w-full"
                     cacheOptions
@@ -138,7 +150,8 @@ FormCourseProps) {
                         El curso es requerido
                     </small>
                 )}
-            </div>
+            </div> */}
+
         </>
     );
 }
