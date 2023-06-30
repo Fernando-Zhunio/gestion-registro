@@ -20,17 +20,16 @@ import { Card, CardContent } from "@mui/material";
 interface CreateOrEditSubjectProps {
     // isEdit: boolean;
     data?: ISubject;
-    state: "create" | "edit";
-    isOpen: boolean;
+    // state: "create" | "edit";
     setIsOpen: (isOpen: boolean) => void;
 }
 
 const CreateOrEditSubject = ({
     data,
-    state,
-    isOpen,
+    // state,
     setIsOpen,
 }: CreateOrEditSubjectProps) => {
+    const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     // const [optionsSearch, setOptionsSearch] = useState({
     //     placeholder: "Buscador Paralelos",
@@ -44,6 +43,28 @@ const CreateOrEditSubject = ({
     // const [isOpenRepresentativeSelect, setIsOpenRepresentativeSelect] =
     // useState(false);
 
+    useEffect(() => {
+        
+        register("course_id", { required: true });
+        if (data) {
+            console.log({ data });
+            // Object.keys(data).forEach((key) => {
+            //     setValue(key, (data as any)[key]);
+            // });
+
+            setValue("course_id", data.course_id);
+            setValue("name", data.name);
+            setValue("description", data.description);
+            setValue("status", data.status == '1' ? true : false);
+            console.log({ data });
+            setState("edit");
+        } else {
+            // reset()
+            console.log({ data });
+            setState("create");
+        }
+    }, []);
+
     const {
         register,
         formState: { errors },
@@ -51,43 +72,68 @@ const CreateOrEditSubject = ({
         handleSubmit,
         setError,
         reset,
+        control,
     } = useForm();
 
     useEffect(() => {
-        register("course_id", {required: true});
+        
     }, []);
-    const onSubmit = (data: any) => {
-        router.post(route("subjects.store"), data, {
-            preserveState: true,
-            onSuccess: (e) => {
-                console.log({ e });
-                setIsLoading(false);
-                setIsOpen(false);
-                reset();
-            },
-            onError: (e) => {
-                console.log({ e });
-                setIsLoading(false);
-            },
-        });
+
+    const onSubmit = (_data: any) => {
+        if (state === "create") {
+            router.post("/subjects", _data, {
+                preserveState: true,
+                onSuccess: (e) => {
+                    console.log({ e });
+                    setIsLoading(false);
+                    setIsOpen(false);
+                    reset();
+                },
+                onError: (e) => {
+                    showToast({
+                        icon: "error",
+                        text: Object.values(e).join("\n"),
+                        title: "Error al crear el estudiante",
+                    });
+                    setIsLoading(false);
+                },
+            });
+        } else if (state === "edit") {
+            console.log({ data });
+            router.put(`/subjects/${data?.id}`, _data, {
+                preserveState: true,
+                replace: false,
+                preserveScroll: true,
+                onSuccess: (e) => {
+                    console.log({ e });
+                    setIsLoading(false);
+                    setIsOpen(false);
+                },
+                onError: (e) => {
+                    showToast({
+                        icon: "error",
+                        text: Object.values(e).join("\n"),
+                        title: "Error al crear el estudiante",
+                    });
+                    setIsLoading(false);
+                },
+            });
+        }
     };
 
     return (
         <div>
-            {/* <DialogSearch
-                close={closeModalRepresentativeSelect}
-                isOpen={isOpenRepresentativeSelect}
-                {...optionsSearch}
-                onSelectRow={onSelectRow}
-            /> */}
             <DialogCustom
-                open={isOpen}
+                open={true}
                 title={`${state === "create" ? "Creando" : "Editando"} Materia`}
             >
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <hr />
                     <div className="grid md:grid-cols-12 gap-4 py-3">
                         <FormSubject
+                        data={data}
+                            control={control}
+                            isEdit={state === "edit"}
                             errors={errors}
                             register={register}
                             setValue={setValue}
@@ -107,12 +153,14 @@ const CreateOrEditSubject = ({
                     <DialogActions slot="slotAction">
                         <button
                             type="submit"
+                            disabled={isLoading}
                             className="rounded-md bg-slate-800 text-white px-3 py-2"
                         >
                             Guardar{" "}
                             <i className="fa-regular fa-paper-plane ml-2"></i>
                         </button>
                         <button
+                            type="button"
                             className="rounded-md bg-red-800 text-white px-3 py-2"
                             onClick={() => setIsOpen(false)}
                         >

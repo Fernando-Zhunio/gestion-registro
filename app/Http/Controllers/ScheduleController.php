@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\schedule;
 use App\Http\Requests\StorescheduleRequest;
 use App\Http\Requests\UpdatescheduleRequest;
+use Inertia\Inertia;
 
 class ScheduleController extends Controller
 {
@@ -13,7 +15,13 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        //
+        
+        return Inertia::render('Schedules/Index', [
+            'success' => true,
+            'data' => [
+                'schedules' => Schedule::all(),
+            ],
+        ]);
     }
 
     /**
@@ -21,7 +29,12 @@ class ScheduleController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Schedules/CreateOrEditSchedule', [
+            'isEdit' => false,
+            'data' => [
+                'courses' => Course::where('status', 'A')->get(),
+            ],
+        ]);
     }
 
     /**

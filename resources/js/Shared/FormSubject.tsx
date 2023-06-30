@@ -2,8 +2,8 @@ import { useFetch } from "@/Hooks/UseFetch";
 import { ICourse } from "@/Pages/Courses/types/course.types";
 import { ResponsePaginator } from "@/types/global";
 import AsyncSelect from "react-select/async";
-import { components, InputProps } from "react-select";
-import { useForm, Controller } from 'react-hook-form';
+// import { components, InputProps } from "react-select";
+import { useForm, Controller } from "react-hook-form";
 
 interface FormCourseProps {
     // handlerSetForm: (key: any, value: any) => void;
@@ -15,6 +15,9 @@ interface FormCourseProps {
     // docTypes: { label: string; value: string }[];
     register: any;
     setValue: any;
+    isEdit: boolean
+    control: any
+    data: any
     // img?: string;
     // validators?: { [key: string]: any };
 }
@@ -25,6 +28,9 @@ export default function FormSubject({
     // docTypes,
     setValue,
     register,
+    isEdit,
+    control,
+    data
 }: // img = "/img/avatar.png",
 // validators
 FormCourseProps) {
@@ -76,16 +82,29 @@ FormCourseProps) {
                 </div>
                 <div className="md:col-span-12 mt-3">
                     <label htmlFor="course_id">*Curso:</label>
-                    <AsyncSelect
-                        onChange={(e: any) => {
-                            console.log({ e });
-                            setValue("course_id", e?.value);
-                        }}
-                        className="w-full"
-                        cacheOptions
-                        defaultOptions
-                        loadOptions={loadOptionsCourse}
-                    />
+                    <Controller
+                        control={control}
+                        name="course_id"
+                        defaultValue={data?.course_id}
+                        render={({  }) => (
+                            <AsyncSelect
+                                onChange={(e: any) => {
+                                    console.log({ e });
+                                    setValue("course_id", e?.value);
+                                }}
+                                // value='data?.course_id'
+                                
+                                className="w-full"
+                                defaultValue={data ? {
+                                    value: data.course.id,
+                                    label: data.course.name,
+                                }: null}
+                                
+                                loadOptions={loadOptionsCourse}
+                            />
+
+                        )}
+                    ></Controller>
                     {errors?.course_id?.type === "required" && (
                         <small className="text-red-600">
                             El curso es requerido
@@ -97,22 +116,36 @@ FormCourseProps) {
 
             {/* Descripción */}
             <div className="md:col-span-6">
-                <label htmlFor="description">*Descripción:</label>
-                <textarea
-                    id="description"
-                    type="text"
-                    placeholder="Ingrese la descripción"
-                    className={`
-                     form-control w-full `}
-                    {...register("description")}
-                ></textarea>
-                {/* {errors?.description?.type === "required" && (
-                    <small description="text-red-600">
-                        El nombre es requerido
-                    </small>
-                )} */}
+                <div>
+                    <label htmlFor="description">*Descripción:</label>
+                    <textarea
+                        id="description"
+                        type="text"
+                        placeholder="Ingrese la descripción"
+                        className={`
+                         form-control w-full `}
+                        {...register("description")}
+                    ></textarea>
+                    {/* {errors?.description?.type === "required" && (
+                        <small description="text-red-600">
+                            El nombre es requerido
+                        </small>
+                    )} */}
+                </div>
+                {isEdit &&  <div className="center mt-3">
+                    <label htmlFor="name">Estado:</label>
+                    <input
+                        id="name"
+                        type="checkbox"
+                        placeholder="Ingrese el nombre"
+                        className={`${
+                            errors.name && "invalid-control"
+                        } form-control  `}
+                        {...register("status")}
+                    />
+                   
+                </div>}
             </div>
-
             {/* Curso */}
             {/* <div className="md:col-span-6">
                 <label htmlFor="name">*Curso:</label>
@@ -151,7 +184,6 @@ FormCourseProps) {
                     </small>
                 )}
             </div> */}
-
         </>
     );
 }

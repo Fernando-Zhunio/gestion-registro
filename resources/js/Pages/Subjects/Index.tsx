@@ -21,11 +21,11 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
         setDataEdit(row);
         setIsOpen(true);
     }
-    const {  delete: _deleteCourse } = useForm()
+    const {  delete: _deleteSubject } = useForm()
 
-    function deleteCourse(id: number): void {
+    function deleteSubject(id: number): void {
         showAlert({
-            title: '¿Estás seguro de eliminar este curso?',
+            title: '¿Estás seguro de eliminar esta materia?',
             text: 'Esta acción no se puede deshacer',
             icon: 'warning',
             showCancelButton: true,
@@ -33,7 +33,7 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                _deleteCourse(`/courses/${id}`, {
+                _deleteSubject(`/courses/${id}`, {
                     preserveScroll: true,
                     onSuccess: () => {
                         showAlert({
@@ -78,6 +78,7 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                                 {/* <TableCell>Horas</TableCell> */}
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Curso</TableCell>
+                                <TableCell>Acciones</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -94,15 +95,18 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                                     </TableCell>
                                     <TableCell>{row.description}</TableCell>
                                     {/* <TableCell>{row.nivel}</TableCell> */}
-                                    <TableCell>{row.status}</TableCell>
+                                    <TableCell>{row.status == '1' ? 'Activo' : 'Inactivo'}</TableCell>
                                     {/* <TableCell>{row.doc_type}</TableCell> */}
                                     <TableCell>{row.course?.name}</TableCell>
 
                                     <TableCell>
-                                       <div className="flex gap-1">
-                                         <Link href={"/students/"+ row.id + '/edit'}  className="btn-icon btn-c-edit">
+                                    <div className="flex gap-1">
+                                         <button onClick={() => openDialog(row)} className="btn-icon btn-c-edit">
                                              <i className="fas fa-edit"></i>
-                                         </Link>
+                                         </button>
+                                         <button onClick={() => deleteSubject(row.id)} className="btn-icon btn-c-edit">
+                                         <i className="fa-solid fa-trash text-red-600"></i>
+                                         </button>
                                        </div>
                                     </TableCell>
                                     
@@ -113,7 +117,7 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                 </TableContainer>
             </SearchBarComponent>
 
-            <CreateOrEditSubject setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/>
+            {isOpen && <CreateOrEditSubject setIsOpen={setIsOpen}  data={dataEdit || undefined}/>}
 
         </div>
     );

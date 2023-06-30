@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepresentativeController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\NoteController;
@@ -138,6 +139,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [ParallelController::class, 'store'])->name('parallels.store');
         Route::put('/{parallel}', [ParallelController::class, 'update'])->name('parallels.update');
         Route::delete('/{parallel}', [ParallelController::class, 'destroy'])->name('parallels.destroy');
+    });
+
+    Route::prefix('/schedules')->group(function () {
+        Route::get('/', [ScheduleController::class, 'index'])->name('schedules.index');
+        Route::get('/create', [ScheduleController::class, 'create'])->name('schedules.create');
+        Route::post('/', [ScheduleController::class, 'store'])->name('schedules.store');
+        Route::put('/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+        Route::delete('/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
     });
 });
 

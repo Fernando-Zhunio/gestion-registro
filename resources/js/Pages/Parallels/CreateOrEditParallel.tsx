@@ -71,9 +71,9 @@ export const CreateOrEditCourse = ({
         // setForm({ ...form, [e.target.id]: e.target.value });
     }
 
-    function onSubmit(data: any) {
+    function onSubmit(_data: any) {
         if (state === "create") {
-            router.post("/parallels", data, {
+            router.post("/parallels", _data, {
                 preserveState: true,
                 onSuccess: (e) => {
                     console.log({ e });
@@ -92,7 +92,7 @@ export const CreateOrEditCourse = ({
                 },
             });
         } else if (state === "edit") {
-            router.put(`/parallels/${data?.id}`, data, {
+            router.put(`/parallels/${data?.id}`, _data, {
                 preserveState: true,
                 replace: false,
                 preserveScroll: true,

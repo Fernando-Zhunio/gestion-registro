@@ -29,6 +29,7 @@
         "@inertiajs/react": "^1.0.3",
         "@mui/material": "^5.12.2",
         "@mui/x-date-pickers": "^6.3.0",
+        "@syncfusion/ej2-react-schedule": "^22.1.36",
         "air-datepicker": "^3.3.5",
         "dayjs": "^1.11.7",
         "react-hook-form": "^7.43.9",

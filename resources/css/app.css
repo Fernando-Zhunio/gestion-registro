@@ -1,6 +1,15 @@
+@import "/node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "/node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "/node_modules/@syncfusion/ej2-calendars/styles/material.css";
+@import "/node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
+@import "/node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "/node_modules/@syncfusion/ej2-navigations/styles/material.css";
+@import "/node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "/node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 :root {
     --sidebar-width: 200px;
@@ -179,4 +188,14 @@ input:focus, textarea:focus, select:focus {
     border-radius: 10px !important;
     box-shadow: 1px 1px 10px  rgba(0, 0, 0, 0.2) !important;
     overflow: hidden;
+}
+
+.table-schedule {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-schedule td, .table-schedule th {
+    border: 1px solid #ddd;
+    padding: 8px;
 }

@@ -15,9 +15,12 @@ class SubjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $subjects = BuilderForRoles::BuilderSearchClass(Subject::class, 'name');
+        // $subjects = BuilderForRoles::BuilderSearchClass(Subject::class, 'name');
+        $pageSize = $request->get('pageSize', 10);
+        $search = $request->get('search', null);
+        $subjects = Subject::search($search)->with('course')->paginate($pageSize);
         return Inertia::render('Subjects/Index', [
             'success' => true,
             'data' => $subjects,
@@ -53,7 +56,12 @@ class SubjectController extends Controller
      */
     public function store(StoresubjectRequest $request)
     {
-        
+        // dd($request->all());
+        // $request->validated();
+        $dataCreate = $request->all();
+        $dataCreate['status'] = '1';
+        Subject::create($dataCreate);
+        return to_route('subjects.index');
         
     }
 
@@ -82,7 +90,9 @@ class SubjectController extends Controller
      */
     public function update(UpdatesubjectRequest $request, Subject $subject)
     {
-        //
+        $request->validated();
+        $subject->update($request->all());
+        return to_route('subjects.index');
     }
 
     /**

@@ -11,7 +11,7 @@ class UpdatesubjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,14 @@ class UpdatesubjectRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+            return [
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string|max:255',
+                // 'nivel' => 'required|string|max:255',
+                // 'hours' => 'required|time|max:255',
+                'status' => 'boolean',
+                'course_id' => 'required|integer',
+            ];
+        
     }
 }

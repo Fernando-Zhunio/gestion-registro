@@ -22,7 +22,12 @@ class StoresubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            // 'nivel' => 'required|string|max:255',
+            // 'hours' => 'required|time|max:255',
+            // 'status' => 'required|string|max:1',
+            'course_id' => 'required|integer',
         ];
     }
 }
