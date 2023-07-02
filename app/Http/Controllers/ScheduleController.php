@@ -6,6 +6,8 @@ use App\Models\Course;
 use App\Models\schedule;
 use App\Http\Requests\StorescheduleRequest;
 use App\Http\Requests\UpdatescheduleRequest;
+use App\Models\Parallel;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ScheduleController extends Controller
@@ -22,6 +24,14 @@ class ScheduleController extends Controller
                 'schedules' => Schedule::all(),
             ],
         ]);
+    }
+
+    public function parallelSearch(Request $response)
+    {
+        $search = $response->get('search', null);
+        $pageSize = $response->get('pageSize', null);
+        $parallels = Parallel::search($search)->paginate($pageSize);
+        return response()->json(['data' => $parallels]);
     }
 
     /**

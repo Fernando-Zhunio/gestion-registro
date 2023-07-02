@@ -1,3 +1,4 @@
+import { ResponsePaginator } from "@/types/global";
 import {
     ScheduleComponent,
     Day,
@@ -8,6 +9,10 @@ import {
     Inject,
 } from "@syncfusion/ej2-react-schedule";
 import { useEffect, useRef, useState } from "react";
+import AsyncSelect from "react-select/async";
+import { IParallel } from "../Parallels/types/parallel.types";
+import { useFetch } from "@/Hooks/UseFetch";
+import { ISchedule } from "./types/schedules.type";
 
 function generarColorAleatorio() {
     // Generar componentes de color RGB aleatorios entre 0 y 255
@@ -20,79 +25,98 @@ function generarColorAleatorio() {
 
     return colorHex;
 }
+const SCHEDULE_DATE: ISchedule = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: [],
 
-const IndexSchedule = () => {
+};
+
+const getPrefixDayForIndex = (index: number) => {
+    const days = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
+    return days[index];
+}
+const IndexSchedule = ({data}: ResponsePaginator<{parallels:IParallel}>) => {
     const tableRef = useRef<any>(null);
-    // const [cellIndex, setCellIndex] = useState<number | null>(null);
-    // const data = [
-    //     {
-    //         Id: 1,
-    //         Subject: "Meeting",
-    //         StartTime: new Date(2023, 1, 15, 10, 0),
-    //         EndTime: new Date(2023, 1, 15, 12, 30),
-    //     },
-    // ];
     const [partition, setPartition] = useState<any[]>([]);
     const [typePartition, setTypePartition] = useState<string>("minutes");
     useEffect(() => {
-        for (let index = 0; index < 24; index++) {
+        for (let index = 6; index < 24; index++) {
             if (typePartition == "minutes") {
-                for (let index2 = 0; index2 < 60; index2 = index2 + 10) {
+                for (let index2 = 0; index2 < 60; index2 = index2 + 15) {
                     const time = `${String(index).padStart(2, "0")}:${String(
                         index2
                     ).padStart(2, "0")}`;
-                    console.log({ time });
+                    // console.log({ time });
                     setPartition((state) => [...state, time]);
                 }
             }
         }
     }, []);
 
+    const [schedules, setSchedules] = useState<ISchedule>(SCHEDULE_DATE);
+
     let isMouseDown = false;
     let initialCell: { parentNode: { rowIndex: any }; cellIndex: any } | null =
         null;
+        let endCell: { parentNode: { rowIndex: any }; cellIndex: any } | null =
+        null;
     let overlayDiv!: HTMLDivElement;
-    let selectedColumnIndex: number | null = null;
+    let overlayChild!: HTMLDivElement;
     let isMovementStarted = false;
 
     const onMouseDown = (e: any) => {
-        // console.log({ e });
+        console.log({ mouseDown: e });
         isMouseDown = true;
         document.body.style.pointerEvents = "none";
         initialCell = e.target;
         overlayDiv = document.createElement("div");
+        overlayChild = document.createElement("div");
+        overlayChild.classList.add("schedules-overlay-child");
+        overlayDiv.appendChild(overlayChild);
         overlayDiv.classList.add("schedules-overlay");
-        overlayDiv.style.backgroundColor = generarColorAleatorio();
+        overlayDiv.setAttribute("draggable", "false");
+
+        overlayDiv.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+        });
+        // overlayDiv.style.backgroundColor = '' //generarColorAleatorio();
         tableRef.current?.appendChild(overlayDiv);
         const hour = partition[initialCell?.parentNode.rowIndex];
-        console.log({ cellIndex: initialCell?.cellIndex, hour });
+        // console.log({ cellIndex: initialCell?.cellIndex, hour });
     };
 
     const onMouseMove = (e: any) => {
         // console.log({ e });
         isMovementStarted = true;
-        if (isMouseDown) {
+        if (isMouseDown && e.target?.localName == 'td') {
             updateOverlaySize(e);
         }
     };
 
     const onMouseUp = (e: any) => {
+        endCell = e.target;
         isMouseDown = false;
-        initialCell = null;
-        overlayDiv.style.pointerEvents;
+        overlayDiv.style.pointerEvents = "all";
         document.body.style.pointerEvents = "all";
-        console.log({ overlayDiv });
-        tableRef.current?.removeChild(overlayDiv);
+        addHtmlTimeForSelection();
+        console.log({ mouseUp: overlayDiv });
+        // tableRef.current?.removeChild(overlayDiv);
         isMovementStarted = false;
-        const hour = partition[e.target?.parentNode.rowIndex];
-        console.log({ cellIndex: e.target?.cellIndex, hour });
+        const hour = partition[endCell?.parentNode.rowIndex];
+        console.log({ cellIndex: endCell?.cellIndex, hour });
+        initialCell = null;
     };
 
-    function updateOverlaySize(event: { target: any }) {
+    const updateOverlaySize = (event: { target: any }) => {
         let currentCell = event.target;
+        var currentRowIndex = currentCell.parentNode.rowIndex;
         let initialRowIndex = initialCell?.parentNode.rowIndex;
         var initialCellIndex = initialCell?.cellIndex;
-        var currentRowIndex = currentCell.parentNode.rowIndex;
         var currentCellIndex = currentCell.cellIndex;
 
         var startRow = Math.min(initialRowIndex, currentRowIndex);
@@ -128,50 +152,102 @@ const IndexSchedule = () => {
         // celdasNoSeleccionadas.forEach(function (celda: any) {
         //     celda.style.pointerEvents = "none";
         // });
+    };
+
+    const { fetchUrl } = useFetch("/schedules/parallels/search");
+    const loadOptionsCourse = async (inputValue: string) => {
+        const response = await fetchUrl<ResponsePaginator<IParallel>>({
+            info: {
+                params: {
+                    search: inputValue,
+                },
+            },
+        });
+        const data = response.data.data;
+        console.log({ response, data });
+        const data2 = data.map((course: { id: any; name: any }) => {
+            return {
+                value: course.id,
+                label: course.name,
+            };
+        });
+        return data2;
+    };
+
+    function addHtmlTimeForSelection() {
+        const startDate = initialCell?.cellIndex;
+        const endDate = endCell?.cellIndex;
+        const startHour = partition[initialCell?.parentNode.rowIndex -1];
+        const endHour = partition[endCell?.parentNode.rowIndex -1];
+        if(!startDate || !endDate || !startHour || !endHour) {
+            tableRef.current?.removeChild(overlayDiv);
+        };
+
+        let textHtml = `${startHour} - ${endHour}`
+        if (startDate !== endDate) {
+            const minDate = Math.min(startDate, endDate);
+            const maxDate = Math.max(startDate, endDate);
+            textHtml += ` | ${getPrefixDayForIndex(minDate -1)} - ${getPrefixDayForIndex(maxDate -1)}`
+        }
+        overlayChild.innerHTML = textHtml;
     }
+
+
+
     return (
         <div>
             <div>
                 <div>
-                    <nav>
-                        <span>Junio 25</span>
-                        <span>Semana</span>
-                    </nav>
-                    <div className="">
+                    <div className="col-span-6 my-3">
+                    <AsyncSelect
+                        onChange={(e: any) => {
+                            console.log({ e });
+                            // setValue("course_id", e?.value);
+                        }}
+                        className="w-full"
+                        loadOptions={loadOptionsCourse}
+                    />
+                    </div>
+                    <div className="rounded-xl border shadow-lg overflow-hidden bg-white mt-6">
                         <table
                             ref={tableRef}
-                            className="table-auto table-schedule relative"
+                            className="table-auto table-schedule relative user-select-none"
                             onMouseMove={onMouseMove}
-                                onMouseDown={onMouseDown}
-                                onMouseUp={onMouseUp}
+                            onMouseDown={onMouseDown}
+                            onMouseUp={onMouseUp}
                         >
                             <thead className="pointer-events-none">
-                                <td>Horas</td>
-                                <td>Lunes</td>
-                                <td>Martes</td>
-                                <td>Miércoles</td>
-                                <td>Jueves</td>
-                                <td>Viernes</td>
-                                <td>Sábado</td>
-                                <td>Domingo</td>
+                                <tr>
+                                    <th>Horas</th>
+                                    <th>Lunes</th>
+                                    <th>Martes</th>
+                                    <th>Miércoles</th>
+                                    <th>Jueves</th>
+                                    <th>Viernes</th>
+                                    <th>Sábado</th>
+                                    <th>Domingo</th>
+                                </tr>
                             </thead>
-                            <tbody
-                                className="schedules"
-                                
-                            >
+                            <tbody draggable="false" className="schedules user-select-none">
                                 {partition.map((item, index) => {
                                     return (
-                                        <tr key={index} data-hour={item}>
+                                        <tr
+                                        
+                                            draggable="false"
+                                            key={index}
+                                            data-hour={item}
+                                            className="user-select-none text-center text-sm text-slate-800"
+                                        >
                                             <td className="pointer-events-none user-select-none">
                                                 {item}
                                             </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td draggable="false"></td>
+                                            <td draggable="false"></td>
+                                            <td draggable="false"></td>
+                                            <td draggable="false"></td>
+                                            <td draggable="false"></td>
+                                            <td draggable="false"></td>
+                                            <td draggable="false"></td>
                                         </tr>
                                     );
                                 })}

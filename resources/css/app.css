@@ -211,8 +211,9 @@ input:focus, textarea:focus, select:focus {
     left: 0;
     pointer-events: none; /* Evita que el div capture los eventos del mouse y permita interactuar con la tabla */
      /* Cambia el color de fondo para resaltar la selección */
-    opacity: .5; /* Cambia la opacidad para ajustar la visibilidad de la selección */
+    /* opacity: .5; */
     z-index: 1; /* Asegura que el div se muestre por encima de la tabla */
+    padding: 5px
   }
 
 .user-select-none {
@@ -220,4 +221,16 @@ input:focus, textarea:focus, select:focus {
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
+}
+
+.schedules-overlay-child {
+    background-color: #dfecff;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
