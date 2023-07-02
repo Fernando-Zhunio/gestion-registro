@@ -199,3 +199,25 @@ input:focus, textarea:focus, select:focus {
     border: 1px solid #ddd;
     padding: 8px;
 }
+
+.schedules {
+    position: relative; /* Establece una posición relativa para poder posicionar el div */
+    pointer-events: all;
+  }
+
+  .schedules-overlay {
+    position: absolute; /* Establece una posición absoluta para superponer el div encima de la tabla */
+    top: 0;
+    left: 0;
+    pointer-events: none; /* Evita que el div capture los eventos del mouse y permita interactuar con la tabla */
+     /* Cambia el color de fondo para resaltar la selección */
+    opacity: .5; /* Cambia la opacidad para ajustar la visibilidad de la selección */
+    z-index: 1; /* Asegura que el div se muestre por encima de la tabla */
+  }
+
+.user-select-none {
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
