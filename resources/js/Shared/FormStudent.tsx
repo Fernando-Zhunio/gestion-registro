@@ -217,6 +217,7 @@ export default function FormStudent({
                 <input
                     id="birthday"
                     type="text"
+                    readOnly={true}
                     placeholder="Ingrese la fecha de nacimiento"
                     className={`${
                         errors.birthday && "invalid-control"

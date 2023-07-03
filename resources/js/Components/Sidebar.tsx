@@ -178,6 +178,17 @@ const Sidebar = () => {
               </ListItemButton>
             </ListItem>
         </List>
+
+        <List>
+            <ListItem  disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                    
+                </ListItemIcon>
+                <Link href="/teachers" as="button" type="button">Profesores</Link>
+              </ListItemButton>
+            </ListItem>
+        </List>
       </Drawer>
     )
 };

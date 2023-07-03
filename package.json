@@ -33,6 +33,7 @@
         "air-datepicker": "^3.3.5",
         "dayjs": "^1.11.7",
         "react-hook-form": "^7.43.9",
+        "react-hours": "^1.0.1",
         "react-icons": "^4.8.0",
         "react-select": "^5.7.3",
         "sweetalert2": "^11.7.3"

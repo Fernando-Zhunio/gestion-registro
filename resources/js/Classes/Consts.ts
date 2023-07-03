@@ -12,3 +12,11 @@ export function ConstDocTypes() {
         3: 'Cédula de extranjería',
     }
 }
+export function ValueDocTypes() {
+    return [
+        { value: 1, text: 'Cédula de ciudadanía' },
+        { value: 2, text: 'Pasaporte' },
+        { value: 3, text: 'Cédula de extranjería' },
+    ]
+        
+}

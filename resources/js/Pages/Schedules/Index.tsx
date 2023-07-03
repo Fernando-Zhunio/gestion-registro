@@ -13,6 +13,7 @@ import AsyncSelect from "react-select/async";
 import { IParallel } from "../Parallels/types/parallel.types";
 import { useFetch } from "@/Hooks/UseFetch";
 import { ISchedule } from "./types/schedules.type";
+import Hours from "react-hours";
 
 function generarColorAleatorio() {
     // Generar componentes de color RGB aleatorios entre 0 y 255
@@ -33,14 +34,15 @@ const SCHEDULE_DATE: ISchedule = {
     friday: [],
     saturday: [],
     sunday: [],
-
 };
 
 const getPrefixDayForIndex = (index: number) => {
     const days = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
     return days[index];
-}
-const IndexSchedule = ({data}: ResponsePaginator<{parallels:IParallel}>) => {
+};
+const IndexSchedule = ({
+    data,
+}: ResponsePaginator<{ parallels: IParallel }>) => {
     const tableRef = useRef<any>(null);
     const [partition, setPartition] = useState<any[]>([]);
     const [typePartition, setTypePartition] = useState<string>("minutes");
@@ -63,17 +65,21 @@ const IndexSchedule = ({data}: ResponsePaginator<{parallels:IParallel}>) => {
     let isMouseDown = false;
     let initialCell: { parentNode: { rowIndex: any }; cellIndex: any } | null =
         null;
-        let endCell: { parentNode: { rowIndex: any }; cellIndex: any } | null =
+    let endCell: { parentNode: { rowIndex: any }; cellIndex: any } | null =
         null;
     let overlayDiv!: HTMLDivElement;
     let overlayChild!: HTMLDivElement;
-    let isMovementStarted = false;
 
+    let isMovementStarted = false;
     const onMouseDown = (e: any) => {
+        isMovementStarted = false;
         console.log({ mouseDown: e });
+        if (e.target?.localName != "td") {
+            return;
+        }
         isMouseDown = true;
-        document.body.style.pointerEvents = "none";
         initialCell = e.target;
+        document.body.style.pointerEvents = "none";
         overlayDiv = document.createElement("div");
         overlayChild = document.createElement("div");
         overlayChild.classList.add("schedules-overlay-child");
@@ -84,8 +90,8 @@ const IndexSchedule = ({data}: ResponsePaginator<{parallels:IParallel}>) => {
         overlayDiv.addEventListener("mousedown", (e) => {
             e.stopPropagation();
         });
-        // overlayDiv.style.backgroundColor = '' //generarColorAleatorio();
         tableRef.current?.appendChild(overlayDiv);
+        // overlayDiv.style.backgroundColor = '' //generarColorAleatorio();
         const hour = partition[initialCell?.parentNode.rowIndex];
         // console.log({ cellIndex: initialCell?.cellIndex, hour });
     };
@@ -93,19 +99,22 @@ const IndexSchedule = ({data}: ResponsePaginator<{parallels:IParallel}>) => {
     const onMouseMove = (e: any) => {
         // console.log({ e });
         isMovementStarted = true;
-        if (isMouseDown && e.target?.localName == 'td') {
+        if (isMouseDown && e.target?.localName == "td") {
             updateOverlaySize(e);
         }
     };
 
     const onMouseUp = (e: any) => {
+        if (e.target?.localName != "td") {
+            return;
+        }
         endCell = e.target;
         isMouseDown = false;
         overlayDiv.style.pointerEvents = "all";
         document.body.style.pointerEvents = "all";
         addHtmlTimeForSelection();
         console.log({ mouseUp: overlayDiv });
-        // tableRef.current?.removeChild(overlayDiv);
+        !isMovementStarted && tableRef.current?.removeChild(overlayDiv);
         isMovementStarted = false;
         const hour = partition[endCell?.parentNode.rowIndex];
         console.log({ cellIndex: endCell?.cellIndex, hour });
@@ -177,38 +186,46 @@ const IndexSchedule = ({data}: ResponsePaginator<{parallels:IParallel}>) => {
     function addHtmlTimeForSelection() {
         const startDate = initialCell?.cellIndex;
         const endDate = endCell?.cellIndex;
-        const startHour = partition[initialCell?.parentNode.rowIndex -1];
-        const endHour = partition[endCell?.parentNode.rowIndex -1];
-        if(!startDate || !endDate || !startHour || !endHour) {
+        const startHour = partition[initialCell?.parentNode.rowIndex - 1];
+        const endHour = partition[endCell?.parentNode.rowIndex - 1];
+        if (!startDate || !endDate || !startHour || !endHour) {
             tableRef.current?.removeChild(overlayDiv);
-        };
+        }
 
-        let textHtml = `${startHour} - ${endHour}`
+        let textHtml = `${startHour} - ${endHour}`;
         if (startDate !== endDate) {
             const minDate = Math.min(startDate, endDate);
             const maxDate = Math.max(startDate, endDate);
-            textHtml += ` | ${getPrefixDayForIndex(minDate -1)} - ${getPrefixDayForIndex(maxDate -1)}`
+            textHtml += ` | ${getPrefixDayForIndex(
+                minDate - 1
+            )} - ${getPrefixDayForIndex(maxDate - 1)}`;
         }
         overlayChild.innerHTML = textHtml;
     }
-
-
 
     return (
         <div>
             <div>
                 <div>
-                    <div className="col-span-6 my-3">
-                    <AsyncSelect
-                        onChange={(e: any) => {
-                            console.log({ e });
-                            // setValue("course_id", e?.value);
-                        }}
-                        className="w-full"
-                        loadOptions={loadOptionsCourse}
-                    />
+                    <div className=" my-3">
+                        <label htmlFor="name">Paralelos:</label>
+                        <AsyncSelect
+                            onChange={(e: any) => {
+                                console.log({ e });
+                                // setValue("course_id", e?.value);
+                            }}
+                            className="w-full"
+                            loadOptions={loadOptionsCourse}
+                        />
                     </div>
                     <div className="rounded-xl border shadow-lg overflow-hidden bg-white mt-6">
+                        <Hours
+                        
+                            onChange={(osmString) => {
+                                console.log(osmString);
+                            }}
+                        />
+                        ,
                         <table
                             ref={tableRef}
                             className="table-auto table-schedule relative user-select-none"
@@ -228,11 +245,13 @@ const IndexSchedule = ({data}: ResponsePaginator<{parallels:IParallel}>) => {
                                     <th>Domingo</th>
                                 </tr>
                             </thead>
-                            <tbody draggable="false" className="schedules user-select-none">
+                            <tbody
+                                draggable="false"
+                                className="schedules user-select-none"
+                            >
                                 {partition.map((item, index) => {
                                     return (
                                         <tr
-                                        
                                             draggable="false"
                                             key={index}
                                             data-hour={item}
