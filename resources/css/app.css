@@ -234,3 +234,21 @@ input:focus, textarea:focus, select:focus {
     align-items: center;
     text-align: center;
 }
+
+.slots-table {
+    position: relative;
+    z-index: 1;
+}
+
+.columns-table{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.content-table {
+    position: relative;
+    z-index: 2;
+}

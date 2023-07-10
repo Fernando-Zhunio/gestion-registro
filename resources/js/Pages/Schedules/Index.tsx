@@ -14,6 +14,7 @@ import { IParallel } from "../Parallels/types/parallel.types";
 import { useFetch } from "@/Hooks/UseFetch";
 import { ISchedule } from "./types/schedules.type";
 import Hours from "react-hours";
+import { ManagerSchedule } from "./tools/schedules.tools";
 
 function generarColorAleatorio() {
     // Generar componentes de color RGB aleatorios entre 0 y 255
@@ -36,132 +37,33 @@ const SCHEDULE_DATE: ISchedule = {
     sunday: [],
 };
 
-const getPrefixDayForIndex = (index: number) => {
-    const days = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
-    return days[index];
-};
 const IndexSchedule = ({
     data,
 }: ResponsePaginator<{ parallels: IParallel }>) => {
-    const tableRef = useRef<any>(null);
-    const [partition, setPartition] = useState<any[]>([]);
+    const [schedules, setSchedules] = useState<ISchedule>(SCHEDULE_DATE);
+    const tableRef = useRef<HTMLTableElement>(null);
+    const [schedulesHours, setSchedulesHours] = useState<any[]>([]);
     const [typePartition, setTypePartition] = useState<string>("minutes");
     useEffect(() => {
-        for (let index = 6; index < 24; index++) {
-            if (typePartition == "minutes") {
-                for (let index2 = 0; index2 < 60; index2 = index2 + 15) {
-                    const time = `${String(index).padStart(2, "0")}:${String(
-                        index2
-                    ).padStart(2, "0")}`;
-                    // console.log({ time });
-                    setPartition((state) => [...state, time]);
-                }
-            }
-        }
+        const managerSchedule = new ManagerSchedule("table-schedule");
+        const _scheduleHours = managerSchedule.generateHours();
+        setSchedulesHours(_scheduleHours);
+        // const _onMouseUp = (e: any) => {
+        //     onMouseUp(e);
+        // };
+        // let isMouseDown = false;
+        // let initialCell: {
+        //     parentNode: { rowIndex: any };
+        //     cellIndex: any;
+        // } | null = null;
+        // let endCellCurrent: any | null = null;
+        // var overlayDiv!: HTMLDivElement;
+        // let overlayChild!: HTMLDivElement;
+        // var isMovementStarted = false;
+        // document.body.addEventListener("mouseup", _onMouseUp);
+        // tableRef?.current?.addEventListener("mousemove", onMouseMove);
+        // tableRef?.current?.addEventListener("mousedown", onMouseDown);
     }, []);
-
-    const [schedules, setSchedules] = useState<ISchedule>(SCHEDULE_DATE);
-
-    let isMouseDown = false;
-    let initialCell: { parentNode: { rowIndex: any }; cellIndex: any } | null =
-        null;
-    let endCell: { parentNode: { rowIndex: any }; cellIndex: any } | null =
-        null;
-    let overlayDiv!: HTMLDivElement;
-    let overlayChild!: HTMLDivElement;
-
-    let isMovementStarted = false;
-    const onMouseDown = (e: any) => {
-        isMovementStarted = false;
-        console.log({ mouseDown: e });
-        if (e.target?.localName != "td") {
-            return;
-        }
-        isMouseDown = true;
-        initialCell = e.target;
-        document.body.style.pointerEvents = "none";
-        overlayDiv = document.createElement("div");
-        overlayChild = document.createElement("div");
-        overlayChild.classList.add("schedules-overlay-child");
-        overlayDiv.appendChild(overlayChild);
-        overlayDiv.classList.add("schedules-overlay");
-        overlayDiv.setAttribute("draggable", "false");
-
-        overlayDiv.addEventListener("mousedown", (e) => {
-            e.stopPropagation();
-        });
-        tableRef.current?.appendChild(overlayDiv);
-        // overlayDiv.style.backgroundColor = '' //generarColorAleatorio();
-        const hour = partition[initialCell?.parentNode.rowIndex];
-        // console.log({ cellIndex: initialCell?.cellIndex, hour });
-    };
-
-    const onMouseMove = (e: any) => {
-        // console.log({ e });
-        isMovementStarted = true;
-        if (isMouseDown && e.target?.localName == "td") {
-            updateOverlaySize(e);
-        }
-    };
-
-    const onMouseUp = (e: any) => {
-        if (e.target?.localName != "td") {
-            return;
-        }
-        endCell = e.target;
-        isMouseDown = false;
-        overlayDiv.style.pointerEvents = "all";
-        document.body.style.pointerEvents = "all";
-        addHtmlTimeForSelection();
-        console.log({ mouseUp: overlayDiv });
-        !isMovementStarted && tableRef.current?.removeChild(overlayDiv);
-        isMovementStarted = false;
-        const hour = partition[endCell?.parentNode.rowIndex];
-        console.log({ cellIndex: endCell?.cellIndex, hour });
-        initialCell = null;
-    };
-
-    const updateOverlaySize = (event: { target: any }) => {
-        let currentCell = event.target;
-        var currentRowIndex = currentCell.parentNode.rowIndex;
-        let initialRowIndex = initialCell?.parentNode.rowIndex;
-        var initialCellIndex = initialCell?.cellIndex;
-        var currentCellIndex = currentCell.cellIndex;
-
-        var startRow = Math.min(initialRowIndex, currentRowIndex);
-        var endRow = Math.max(initialRowIndex, currentRowIndex);
-        var startCell = Math.min(initialCellIndex, currentCellIndex);
-        var endCell = Math.max(initialCellIndex, currentCellIndex);
-        if (!tableRef.current) return;
-
-        var startCellElement =
-            tableRef!.current!.rows[startRow].cells[startCell];
-        var endCellElement = tableRef!.current!.rows[endRow].cells[endCell];
-
-        var startCellRect = startCellElement.getBoundingClientRect();
-        var endCellRect = endCellElement.getBoundingClientRect();
-
-        var overlayTop =
-            startCellRect.top - tableRef.current.getBoundingClientRect().top;
-        var overlayLeft =
-            startCellRect.left - tableRef.current.getBoundingClientRect().left;
-        var overlayHeight = endCellRect.bottom - startCellRect.top;
-        var overlayWidth = endCellRect.right - startCellRect.left;
-
-        overlayDiv.style.top = overlayTop + "px";
-        overlayDiv.style.left = overlayLeft + "px";
-        overlayDiv.style.height = overlayHeight + "px";
-        overlayDiv.style.width = overlayWidth + "px";
-
-        // var celdasNoSeleccionadas = Array.from(
-        //     tableRef.current.querySelectorAll(
-        //         "tbody td:not(:nth-child(" + ((selectedColumnIndex || 0) + 1) + "))"
-        //     )
-        // );
-        // celdasNoSeleccionadas.forEach(function (celda: any) {
-        //     celda.style.pointerEvents = "none";
-        // });
-    };
 
     const { fetchUrl } = useFetch("/schedules/parallels/search");
     const loadOptionsCourse = async (inputValue: string) => {
@@ -183,26 +85,6 @@ const IndexSchedule = ({
         return data2;
     };
 
-    function addHtmlTimeForSelection() {
-        const startDate = initialCell?.cellIndex;
-        const endDate = endCell?.cellIndex;
-        const startHour = partition[initialCell?.parentNode.rowIndex - 1];
-        const endHour = partition[endCell?.parentNode.rowIndex - 1];
-        if (!startDate || !endDate || !startHour || !endHour) {
-            tableRef.current?.removeChild(overlayDiv);
-        }
-
-        let textHtml = `${startHour} - ${endHour}`;
-        if (startDate !== endDate) {
-            const minDate = Math.min(startDate, endDate);
-            const maxDate = Math.max(startDate, endDate);
-            textHtml += ` | ${getPrefixDayForIndex(
-                minDate - 1
-            )} - ${getPrefixDayForIndex(maxDate - 1)}`;
-        }
-        overlayChild.innerHTML = textHtml;
-    }
-
     return (
         <div>
             <div>
@@ -220,56 +102,121 @@ const IndexSchedule = ({
                     </div>
                     <div className="rounded-xl border shadow-lg overflow-hidden bg-white mt-6">
                         <Hours
-                        
                             onChange={(osmString) => {
                                 console.log(osmString);
                             }}
                         />
-                        ,
+
                         <table
                             ref={tableRef}
+                            id="table-schedule"
                             className="table-auto table-schedule relative user-select-none"
-                            onMouseMove={onMouseMove}
-                            onMouseDown={onMouseDown}
-                            onMouseUp={onMouseUp}
                         >
                             <thead className="pointer-events-none">
                                 <tr>
-                                    <th>Horas</th>
-                                    <th>Lunes</th>
-                                    <th>Martes</th>
-                                    <th>Miércoles</th>
-                                    <th>Jueves</th>
-                                    <th>Viernes</th>
-                                    <th>Sábado</th>
-                                    <th>Domingo</th>
+                                    <td>
+                                        <div>
+                                            <div>
+                                                <table>
+                                                    <colgroup>
+                                                        <col
+                                                            style={{
+                                                                width: "57px",
+                                                            }}
+                                                        />
+                                                    </colgroup>
+                                                    <tbody>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Lunes</th>
+                                                            <th>Martes</th>
+                                                            <th>Miércoles</th>
+                                                            <th>Jueves</th>
+                                                            <th>Viernes</th>
+                                                            <th>Sábado</th>
+                                                            <th>Domingo</th>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </thead>
                             <tbody
                                 draggable="false"
                                 className="schedules user-select-none"
                             >
-                                {partition.map((item, index) => {
-                                    return (
-                                        <tr
-                                            draggable="false"
-                                            key={index}
-                                            data-hour={item}
-                                            className="user-select-none text-center text-sm text-slate-800"
-                                        >
-                                            <td className="pointer-events-none user-select-none">
-                                                {item}
-                                            </td>
-                                            <td draggable="false"></td>
-                                            <td draggable="false"></td>
-                                            <td draggable="false"></td>
-                                            <td draggable="false"></td>
-                                            <td draggable="false"></td>
-                                            <td draggable="false"></td>
-                                            <td draggable="false"></td>
-                                        </tr>
-                                    );
-                                })}
+                                <td>
+                                    <div className="content-table">
+                                        <div className="slots-table">
+                                            <table className="w-full">
+                                                <colgroup>
+                                                    <col
+                                                        style={{ width: "57px" }}
+                                                    />
+                                                </colgroup>
+                                                <tbody>
+                                                    {schedulesHours.map(
+                                                        (item, index) => {
+                                                            return (
+                                                                <tr
+                                                                    draggable="false"
+                                                                    key={index}
+                                                                    data-hour={item}
+                                                                    className="user-select-none text-center text-sm text-slate-800"
+                                                                >
+                                                                    <td className="pointer-events-none user-select-none">
+                                                                        {item}
+                                                                    </td>
+                                                                    <td draggable="false"></td>
+                                                                    {/* <td draggable="false"></td>
+                                                                    <td draggable="false"></td>
+                                                                    <td draggable="false"></td>
+                                                                    <td draggable="false"></td>
+                                                                    <td draggable="false"></td>
+                                                                    <td draggable="false"></td> */}
+                                                                </tr>
+                                                            );
+                                                        }
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="columns-table">
+                                            <table className="w-full">
+                                                <colgroup>
+                                                    <col
+                                                        style={{ width: "57px" }}
+                                                    />
+                                                </colgroup>
+                                                <tbody>
+                                                    {
+                                                        <tr>
+                                                            {[
+                                                                1, 2, 3, 4, 5, 6, 7,
+                                                            ].map((item, index) => {
+                                                                return (
+                                                                   <td>
+                                                                     <div
+                                                                         key={item}
+                                                                         className="h-full"
+                                                                     >
+                                                                         <div className="fc-timegrid-col-bg"></div>
+                                                                         <div className="fc-timegrid-col-events"></div>
+                                                                         <div className="fc-timegrid-col-events"></div>
+                                                                         <div className="fc-timegrid-now-indicator-container"></div>
+                                                                     </div>
+                                                                   </td>
+                                                                );
+                                                            })}
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
                             </tbody>
                         </table>
                     </div>
