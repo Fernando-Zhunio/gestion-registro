@@ -347,10 +347,10 @@ export default function FormStudent({
                     } form-control w-full `}
                     {...register("parallel_id", { required: true })}
                 >
-                    {parallels?.map((item: any) => {
+                    {parallels?.map((item) => {
                         return (
                             <option key={item.id} value={item.id}>
-                                {item.name} - {item.nivel}
+                                {item.name} - {item.description}
                             </option>
                         );
                     })}

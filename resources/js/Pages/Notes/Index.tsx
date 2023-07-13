@@ -7,22 +7,20 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from "react";
-import { Course } from "./types/course.types";
-import {  ResponsePaginator } from "@/types/global";
+import { INote } from "./types/note.types";
+import { ResponsePaginator } from "@/types/global";
 import { CreateOrEditNote } from "./CreateOrEditNote";
 import { showAlert } from "@/Helpers/alerts";
-import { useForm } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 
-
-
-const CoursesIndex = ({data}: ResponsePaginator<Course>) => {
+const NotesIndex = ({ data }: ResponsePaginator<INote>) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [dataEdit, setDataEdit] = useState<Course | undefined>(undefined);
-    function openPeriod(row: Course | undefined): void {
+    const [dataEdit, setDataEdit] = useState<INote | undefined>(undefined);
+    function openPeriod(row: INote | undefined): void {
         setDataEdit(row);
         setIsOpen(true);
     }
-    const {  delete: _deleteCourse } = useForm()
+    const { delete: _deleteCourse } = useForm()
 
     function deleteCourse(id: number): void {
         showAlert({
@@ -34,11 +32,11 @@ const CoursesIndex = ({data}: ResponsePaginator<Course>) => {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                _deleteCourse(`/courses/${id}`, {
+                _deleteCourse(`/notes/${id}`, {
                     preserveScroll: true,
                     onSuccess: () => {
                         showAlert({
-                            title: 'Curso eliminado',
+                            title: 'Nota eliminado',
                             icon: 'success'
                         })
                     },
@@ -47,20 +45,20 @@ const CoursesIndex = ({data}: ResponsePaginator<Course>) => {
                     },
                     preserveState: true
                 })
-                
+
             }
         })
     }
 
     return (
-        <div className="container">
+        <div className="">
             <SearchBarComponent
                 path="/notes"
                 title="Notas"
                 withPaginator={true}
                 notLoadDataOnInit={true}
                 buttons={<>
-                    <button onClick={() => openPeriod(undefined)} className="btn-custom btn-create">Crear Nota</button>
+                    <Link href="/notes/create" className="btn-custom btn-create">Crear Nota</Link>
                 </>}
             >
                 <TableContainer component={Paper}>
@@ -72,10 +70,21 @@ const CoursesIndex = ({data}: ResponsePaginator<Course>) => {
                                     color: 'gray'
                                 }
                             }}>
-                                <TableCell>id</TableCell>
-                                <TableCell>Nombre</TableCell>
-                                <TableCell>Descripción</TableCell>
-                                <TableCell>nivel</TableCell>
+                                <TableCell>Id</TableCell>
+                                <TableCell>Estudiante</TableCell>
+                                <TableCell>Materia</TableCell>
+                                <TableCell>Profesor</TableCell>
+                                <TableCell>Periodo</TableCell>
+                                <TableCell>Aporte 1</TableCell>
+                                <TableCell>P. I. 1</TableCell>
+                                <TableCell>M. E. 1</TableCell>
+                                <TableCell>Aporte 2</TableCell>
+                                <TableCell>P. I. 2</TableCell>
+                                <TableCell>M. E. 2</TableCell>
+                                <TableCell>Aporte 3</TableCell>
+                                <TableCell>P. I. 3</TableCell>
+                                <TableCell>M. E. 3</TableCell>
+                                <TableCell>Proyecto Final</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -87,21 +96,43 @@ const CoursesIndex = ({data}: ResponsePaginator<Course>) => {
                                         {row.id}
                                     </TableCell>
                                     <TableCell>
-                                        {row.name}
+                                        {row.student?.first_name} {row.student?.last_name}
                                     </TableCell>
-                                    <TableCell>{row.description}</TableCell>
-                                    <TableCell>{row.nivel}</TableCell>
+                                    <TableCell>{row.subject?.name} - {row.subject?.course?.name}</TableCell>
+                                    <TableCell>{row.teacher?.first_name} - {row.teacher?.last_name}</TableCell>
                                     <TableCell>
-                                       <div className="flex gap-1">
-                                         <button onClick={() => openPeriod(row)} className="btn-icon btn-c-edit">
-                                             <i className="fas fa-edit"></i>
-                                         </button>
-                                         <button onClick={() => deleteCourse(row.id)} className="btn-icon btn-c-edit">
-                                         <i className="fa-solid fa-trash text-red-600"></i>
-                                         </button>
-                                       </div>
+                                        {row.period?.promotion}
                                     </TableCell>
-                                    
+                                    <TableCell>
+                                        {row.partial_trimester_1}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.integrating_project_1}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.evaluation_mechanism_1}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.partial_trimester_2}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.integrating_project_2}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.evaluation_mechanism_2}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.partial_trimester_3}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.integrating_project_3}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.evaluation_mechanism_3}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.project_final}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -109,9 +140,9 @@ const CoursesIndex = ({data}: ResponsePaginator<Course>) => {
                 </TableContainer>
             </SearchBarComponent>
 
-            <CreateOrEditNote setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/>
+            {/* <CreateOrEditNote setIsOpen={setIsOpen} isOpen={isOpen} data={dataEdit || undefined} state="create" /> */}
         </div>
     );
 };
 
-export default CoursesIndex;
+export default NotesIndex;

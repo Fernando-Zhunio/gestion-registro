@@ -13,14 +13,25 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
-            $table->float('partial');
-            $table->float('quimester');
-            $table->float('lesson');
-            $table->float('task');
-            $table->float('evaluation');
-            $table->float('exam');
-            $table->char('status');
-            $table->string('observation');
+            // $table->float('partial');
+            // $table->float('quimester');
+            // $table->float('lesson');
+            // $table->float('task');
+            // $table->float('evaluation');
+            // $table->float('exam');
+            // $table->char('status');
+            // $table->integer('trimester')->default(1)->min(1)->max(3);
+            $table->float('partial_trimester_1')->default(0)->min(0)->max(9);
+            $table->float('partial_trimester_2')->default(0)->min(0)->max(9);
+            $table->float('partial_trimester_3')->default(0)->min(0)->max(9);
+            $table->float('integrating_project_1')->default(0)->min(0)->max(0.5);
+            $table->float('integrating_project_2')->default(0)->min(0)->max(0.5);
+            $table->float('integrating_project_3')->default(0)->min(0)->max(0.5);
+            $table->float('evaluation_mechanism_1')->default(0)->min(0)->max(0.5);
+            $table->float('evaluation_mechanism_2')->default(0)->min(0)->max(0.5);
+            $table->float('evaluation_mechanism_3')->default(0)->min(0)->max(0.5);
+            $table->float('project_final')->default(0)->min(0)->max(1);
+            $table->string('observation')->nullable();
             $table->foreignId('subject_id')->constrained('subjects');
             $table->foreignId('teacher_id')->constrained('teachers');
             $table->foreignId('student_id')->constrained('students');

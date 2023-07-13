@@ -252,3 +252,10 @@ input:focus, textarea:focus, select:focus {
     position: relative;
     z-index: 2;
 }
+
+.table-schedule, .table-schedule table {
+    table-layout: fixed;
+}
+.slots-table tr:hover {
+ background-color: #075eff1e;
+}

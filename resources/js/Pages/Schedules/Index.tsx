@@ -101,23 +101,23 @@ const IndexSchedule = ({
                         />
                     </div>
                     <div className="rounded-xl border shadow-lg overflow-hidden bg-white mt-6">
-                        <Hours
+                        {/* <Hours
                             onChange={(osmString) => {
                                 console.log(osmString);
                             }}
-                        />
+                        /> */}
 
                         <table
                             ref={tableRef}
                             id="table-schedule"
-                            className="table-auto table-schedule relative user-select-none"
+                            className="table-auto table-schedule relative user-select-none w-full"
                         >
                             <thead className="pointer-events-none">
                                 <tr>
                                     <td>
                                         <div>
                                             <div>
-                                                <table>
+                                                <table className="w-full">
                                                     <colgroup>
                                                         <col
                                                             style={{
@@ -184,7 +184,7 @@ const IndexSchedule = ({
                                             </table>
                                         </div>
                                         <div className="columns-table">
-                                            <table className="w-full">
+                                            <table className="w-full h-full">
                                                 <colgroup>
                                                     <col
                                                         style={{ width: "57px" }}
@@ -194,10 +194,10 @@ const IndexSchedule = ({
                                                     {
                                                         <tr>
                                                             {[
-                                                                1, 2, 3, 4, 5, 6, 7,
+                                                                1, 2, 3, 4, 5, 6, 7,8
                                                             ].map((item, index) => {
                                                                 return (
-                                                                   <td>
+                                                                   <td className="">
                                                                      <div
                                                                          key={item}
                                                                          className="h-full"

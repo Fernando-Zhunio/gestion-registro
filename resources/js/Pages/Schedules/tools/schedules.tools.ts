@@ -13,9 +13,22 @@ export class ManagerSchedule {
         this.tableElement = document.getElementById(
             idTable
         ) as HTMLTableElement;
-        document.body.addEventListener("mouseup", this.onMouseUp.bind(this));
-        this.tableElement.addEventListener("mousemove", this.onMouseMove.bind(this));
-        this.tableElement?.addEventListener("mousedown", this.onMouseDown.bind(this));
+        // document.body.addEventListener("mouseup", this.onMouseUp.bind(this));
+        // this.tableElement.addEventListener("mousemove", this.onMouseMove.bind(this));
+        // this.tableElement?.addEventListener("mousedown", this.onMouseDown.bind(this));
+        this.listenerTdColumns();
+    }
+
+    listenerTdColumns() {
+        const tds = document.querySelectorAll(".columns-table td");
+        // console.log({ tds })
+        tds.forEach((td) => {
+            console.log({ td })
+            td.addEventListener("mousedown", (e) => {
+                e.stopPropagation();
+                console.log("mousedown", this.getCurrentRow(e));
+            });
+        });
     }
 
     setIntervalMinutes(interval: number) {
@@ -26,6 +39,7 @@ export class ManagerSchedule {
         if (!this.tableElement || !this.overlayElement) return;
         let currentCell = event.target;
         const initialCellIndex = this.initialCell?.cellIndex;
+        console.log({ initialCellIndex })
         const currentRowIndex = currentCell.parentNode.rowIndex;
         let initialRowIndex = this.initialCell?.parentNode.rowIndex;
         const currentCellIndex = currentCell.cellIndex;
@@ -111,6 +125,10 @@ export class ManagerSchedule {
 
     isCell(e: any) {
         return e.target?.localName == "td";
+    }
+
+    getCurrentRow(e: any) {
+        return e.target?.parentNode.rowIndex;
     }
 
     generateHours(interval: number| null = null) {
