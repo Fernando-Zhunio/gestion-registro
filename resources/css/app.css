@@ -209,7 +209,8 @@ input:focus, textarea:focus, select:focus {
     position: absolute; /* Establece una posición absoluta para superponer el div encima de la tabla */
     top: 0;
     left: 0;
-    pointer-events: none; /* Evita que el div capture los eventos del mouse y permita interactuar con la tabla */
+    /* pointer-events: none; */
+     /* Evita que el div capture los eventos del mouse y permita interactuar con la tabla */
      /* Cambia el color de fondo para resaltar la selección */
     /* opacity: .5; */
     z-index: 1; /* Asegura que el div se muestre por encima de la tabla */
@@ -259,3 +260,17 @@ input:focus, textarea:focus, select:focus {
 .slots-table tr:hover {
  background-color: #075eff1e;
 }
+
+.columns-up .columns-table  {
+    z-index: 10;
+}
+
+
+
+.columns-table td:hover {
+    background-color: #075eff1e;
+}
+
+/* .columns-table {
+    z-index: 10;
+} */

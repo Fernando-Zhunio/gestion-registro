@@ -101,11 +101,11 @@ const IndexSchedule = ({
                         />
                     </div>
                     <div className="rounded-xl border shadow-lg overflow-hidden bg-white mt-6">
-                        {/* <Hours
+                        <Hours
                             onChange={(osmString) => {
                                 console.log(osmString);
                             }}
-                        /> */}
+                        />
 
                         <table
                             ref={tableRef}
@@ -114,7 +114,7 @@ const IndexSchedule = ({
                         >
                             <thead className="pointer-events-none">
                                 <tr>
-                                    <td>
+                                    <th>
                                         <div>
                                             <div>
                                                 <table className="w-full">
@@ -140,83 +140,79 @@ const IndexSchedule = ({
                                                 </table>
                                             </div>
                                         </div>
-                                    </td>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody
                                 draggable="false"
-                                className="schedules user-select-none"
+                                className="schedules"
                             >
-                                <td>
-                                    <div className="content-table">
-                                        <div className="slots-table">
-                                            <table className="w-full">
-                                                <colgroup>
-                                                    <col
-                                                        style={{ width: "57px" }}
-                                                    />
-                                                </colgroup>
-                                                <tbody>
-                                                    {schedulesHours.map(
-                                                        (item, index) => {
-                                                            return (
-                                                                <tr
-                                                                    draggable="false"
-                                                                    key={index}
-                                                                    data-hour={item}
-                                                                    className="user-select-none text-center text-sm text-slate-800"
-                                                                >
-                                                                    <td className="pointer-events-none user-select-none">
-                                                                        {item}
-                                                                    </td>
-                                                                    <td draggable="false"></td>
-                                                                    {/* <td draggable="false"></td>
-                                                                    <td draggable="false"></td>
-                                                                    <td draggable="false"></td>
-                                                                    <td draggable="false"></td>
-                                                                    <td draggable="false"></td>
-                                                                    <td draggable="false"></td> */}
-                                                                </tr>
-                                                            );
-                                                        }
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div className="columns-table">
-                                            <table className="w-full h-full">
-                                                <colgroup>
-                                                    <col
-                                                        style={{ width: "57px" }}
-                                                    />
-                                                </colgroup>
-                                                <tbody>
-                                                    {
-                                                        <tr>
-                                                            {[
-                                                                1, 2, 3, 4, 5, 6, 7,8
-                                                            ].map((item, index) => {
+                                <tr>
+                                    <td>
+                                        <div className="content-table">
+                                            <div className="slots-table">
+                                                <table id="slots-table" className="w-full">
+                                                    <colgroup>
+                                                        <col
+                                                            style={{ width: "57px" }}
+                                                        />
+                                                    </colgroup>
+                                                    <tbody>
+                                                        {schedulesHours.map(
+                                                            (item, index) => {
                                                                 return (
-                                                                   <td className="">
-                                                                     <div
-                                                                         key={item}
-                                                                         className="h-full"
-                                                                     >
-                                                                         <div className="fc-timegrid-col-bg"></div>
-                                                                         <div className="fc-timegrid-col-events"></div>
-                                                                         <div className="fc-timegrid-col-events"></div>
-                                                                         <div className="fc-timegrid-now-indicator-container"></div>
-                                                                     </div>
-                                                                   </td>
+                                                                    <tr
+                                                                        draggable="false"
+                                                                        key={index}
+                                                                        data-hour={item}
+                                                                        className="user-select-none text-center text-sm text-slate-800"
+                                                                    >
+                                                                        <td className="pointer-events-none user-select-none">
+                                                                            {item}
+                                                                        </td>
+                                                                        <td draggable="false"></td>
+                                                                    </tr>
                                                                 );
-                                                            })}
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
+                                                            }
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div className="columns-table">
+                                                <table id="columns-table" className="w-full h-full">
+                                                    <colgroup>
+                                                        <col
+                                                            style={{ width: "57px" }}
+                                                        />
+                                                    </colgroup>
+                                                    <tbody>
+                                                        {
+                                                            <tr>
+                                                                {[
+                                                                    1, 2, 3, 4, 5, 6, 7, 8
+                                                                ].map((item, index) => {
+                                                                    return (
+                                                                        <td key={index} className="h-full">
+                                                                            {/* <div
+                                                                                key={item}
+                                                                                className="h-full"
+                                                                            >
+                                                                                <div className="fc-timegrid-col-bg"></div>
+                                                                                <div className="fc-timegrid-col-events"></div>
+                                                                                <div className="fc-timegrid-col-events"></div>
+                                                                                <div className="fc-timegrid-now-indicator-container"></div>
+                                                                            </div> */}
+                                                                        </td>
+                                                                    );
+                                                                })}
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
