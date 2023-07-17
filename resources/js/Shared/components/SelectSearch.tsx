@@ -15,6 +15,7 @@ type SelectSearchProps = InputHTMLAttributes<HTMLInputElement> & {
     cacheOptions?: boolean;
     label?: string;
     rules?: { [key: string]: any };
+    className?: string;
 };
 const SelectSearch = ({
     path,
@@ -26,6 +27,8 @@ const SelectSearch = ({
     cacheOptions,
     label,
     rules,
+    className,
+
     ...props
 }: SelectSearchProps) => {
     const { fetchUrl } = useFetch(path);
@@ -68,7 +71,7 @@ const SelectSearch = ({
                         <AsyncSelect
                             cacheOptions={cacheOptions}
                             {...field}
-                            className="w-full z-10"
+                            className={"w-full " + (className || '')}
                             defaultValue={defaultValue || null}
                             loadOptions={loadOptions}
                             {...props}

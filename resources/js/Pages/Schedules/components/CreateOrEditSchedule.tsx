@@ -12,28 +12,32 @@ import { router } from "@inertiajs/react";
 import { showToast } from "@/Helpers/alerts";
 import Select from "@/Components/Select";
 import Textarea from "@/Components/Textarea";
+import { IParallel } from "@/Pages/Parallels/types/parallel.types";
+import axios from "axios";
 
 interface ICreateOrEditScheduleProps {
     isOpen: boolean;
     isEdit: boolean;
     course_id: number;
-    setIsOpen: (isOpen: boolean) => void;
+    close: (data?: ISchedule) => any;
     schedule: ISchedule;
+    parallel: IParallel;
 }
 const CreateOrEditSchedule = ({
     isOpen,
     isEdit,
-    course_id,
-    setIsOpen,
+    // course_id,
+    close,
     schedule,
+    parallel,
 }: ICreateOrEditScheduleProps) => {
-    const { control, setValue, register, handleSubmit } = useForm({
+    const { control, setValue, register, handleSubmit,watch } = useForm({
         defaultValues: {
             start_time: schedule.start_time,
             end_time: schedule.end_time,
             day: schedule.day,
             description: schedule.description,
-            parallel_id: schedule.parallel_id,
+            parallel_id: parallel?.id,
         }
     });
     const [hoursStart, setHoursStart] = useState<string[]>([]);
@@ -44,15 +48,13 @@ const CreateOrEditSchedule = ({
         console.log({ schedule });
         setHoursStart(() => [...ManagerSchedule.getHours()]);
         setDays(() => [...ManagerSchedule.getDays()]);
-
         handlerOnChangeHourStart({ target: { value: schedule.start_time } });
-        // setValue("start_time", schedule.start_time);
-        // setValue("test", schedule.start_time);
     }, [schedule]);
 
     const handlerOnChangeHourStart = (e: any) => {
         console.log(e.target.value);
         const value = e.target.value;
+        setValue("start_time", value);
         const hoursStart = ManagerSchedule.getHours();
         const index = hoursStart.findIndex((hour: any) => hour === value);
         if (hoursStart[index + 1]) {
@@ -66,31 +68,54 @@ const CreateOrEditSchedule = ({
 
     function onSubmit(data: any) {
         console.log({ data });
-        const options = {
-            onSuccess: () => {
-                setIsLoading(false);
-            },
-            onError: (error: any) => {
-                console.log({ error });
-                setIsLoading(false);
-                showToast({
-                    icon: "error",
-                    text: Object.values(error).join("\n"),
-                    title: "Error al crear el estudiante",
-                });
-            },
-        };
         data.subject_id = data.subject_id.value;
         data.teacher_id = data.teacher_id.value;
         data.day = data.day.value || data.day;
+
+        setIsLoading(true);
         if (isEdit) {
-            console.log("editando");
-            router.put(`schedules/${schedule.id}`, data, options);
+            axios.put(`schedules/${schedule.id}`, data)
+            .then((response) => {
+                // setIsOpen(false);
+                close(response.data);
+                showToast({
+                    icon: "success",
+                    text: "Horario actualizado correctamente",
+                    title: "Horario creado",
+                });
+            }) 
+            .catch((error) => {
+                setIsLoading(false);
+                console.log({ error })
+                showToast({
+                    icon: "error",
+                    text: Object.values(error).join("\n"),
+                    title: "Error al actualizar el horario",
+                });
+            });
         } else {
-            console.log("creando");
-            router.post(`schedules`, data, options);
+            axios.post(`schedules`, data)
+            .then((response) => {
+                console.log({ response });
+                close(response.data.data);
+                // setIsOpen(false);
+                showToast({
+                    icon: "success",
+                    text: "Horario creado correctamente",
+                    title: "Horario creado",
+                });
+            })
+            .catch((error) => {
+                setIsLoading(false);
+                console.log({ error })
+
+                showToast({
+                    icon: "error",
+                    text: error.response.data.message,
+                    title: "Error al crear el horario",
+                });
+            });
         }
-        console.log(data);
     }
 
     return (
@@ -103,32 +128,15 @@ const CreateOrEditSchedule = ({
                     onSubmit={handleSubmit(onSubmit)}
                     className="grid grid-cols-12 gap-3"
                 >
+                    {parallel ? <div className="col-span-12">Paralelo: {parallel.name}</div> : <div className="text-red-600 col-span-12">No se a seleccionado un paralelo</div>}
                     <div className="col-span-4">
-                        {/* <label htmlFor="start_time">Hora de inicio</label>
-                        <select
-                            id="start_time"
-                            {...register("start_time", { required: true })}
-                            className="w-full block border-gray-300  focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                            onChange={handlerOnChangeHourStart}
-                        >
-                            {hoursStart.map((hour) => {
-                                return (
-                                    <option
-                                        selected={hour == schedule.start_time}
-                                        key={hour}
-                                        value={hour}
-                                    >
-                                        {hour}
-                                    </option>
-                                );
-                            })}
-                        </select> */}
                         <Select
                             label="Hora de inicio"
                             id="start_time"
                             control={control}
                             name="start_time"
                             rules={{ required: true }}
+                            onChange={handlerOnChangeHourStart}
                         >
                             {hoursStart.map((hour) => {
                                 return (
@@ -147,7 +155,7 @@ const CreateOrEditSchedule = ({
                         <input  type="text" {...register('test')} />
                     </div> */}
                     <div className="col-span-4">
-                        <label htmlFor="end_time">Hora fin</label>
+                        {/* <label htmlFor="end_time">Hora fin</label>
                         <select
                             defaultValue={schedule?.end_time}
                             id="end_time"
@@ -165,7 +173,27 @@ const CreateOrEditSchedule = ({
                                     </option>
                                 );
                             })}
-                        </select>
+                        </select> */}
+                        <Select
+                            label="Hora fin"
+                            id="end_time"
+                            control={control}
+                            name="end_time"
+                            rules={{ required: true }}
+                        >
+                            {hoursEnd.map((hour) => {
+                                return (
+                                    <option
+                                        selected={hour == schedule.end_time}
+                                        key={hour}
+                                        value={hour}
+                                    >
+                                        {hour}
+                                    </option>
+                                );
+                            }
+                            )}
+                        </Select>
                     </div>
                     <div className="col-span-4">
                         {/* <label htmlFor="day">Dia</label>
@@ -214,7 +242,7 @@ const CreateOrEditSchedule = ({
                             control={control}
                             name="subject_id"
                             rules={{ required: true }}
-                            moreParams={{ course_id }}
+                            moreParams={{ course_id: parallel?.course_id }}
                         />
                     </div>
                     <div className="col-span-12">
@@ -244,7 +272,7 @@ const CreateOrEditSchedule = ({
                     <hr className="my-3 col-span-12" />
                     <div className="col-span-12 flex gap-4">
                         <button
-                            disabled={isLoading}
+                            disabled={isLoading || !parallel}
                             className="btn bg-create"
                             type="submit"
                         >
@@ -258,7 +286,7 @@ const CreateOrEditSchedule = ({
                             disabled={isLoading}
                             className="btn bg-delete"
                             type="button"
-                            onClick={() => setIsOpen(false)}
+                            onClick={() => close()}
                         >
                             Cerrar <i className="fa-solid fa-xmark ml-2"></i>
                         </button>

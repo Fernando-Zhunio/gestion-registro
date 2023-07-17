@@ -149,6 +149,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/parallels/search', [ScheduleController::class, 'parallelSearch'])->name('parallelSearch');
         Route::get('/teachers/search', [ScheduleController::class, 'teacherSearch'])->name('teacherSearch');
         Route::get('/subjects/search', [ScheduleController::class, 'subjectSearch'])->name('subjectSearch');
+        Route::get('/parallels/{parallel}', [ScheduleController::class, 'schedulesByParallel'])->name('schedules.parallel');
         Route::post('/', [ScheduleController::class, 'store'])->name('schedules.store');
         Route::put('/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
         Route::delete('/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');

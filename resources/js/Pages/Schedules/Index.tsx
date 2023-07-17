@@ -1,14 +1,14 @@
 import { ResponsePaginator } from "@/types/global";
-import {
-    ScheduleComponent,
-    Day,
-    Week,
-    WorkWeek,
-    Month,
-    Agenda,
-    Inject,
-} from "@syncfusion/ej2-react-schedule";
-import { useCallback, useEffect, useRef, useState } from "react";
+// import {
+//     ScheduleComponent,
+//     Day,
+//     Week,
+//     WorkWeek,
+//     Month,
+//     Agenda,
+//     Inject,
+// } from "@syncfusion/ej2-react-schedule";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AsyncSelect from "react-select/async";
 import { IParallel } from "../Parallels/types/parallel.types";
 import { useFetch } from "@/Hooks/UseFetch";
@@ -19,6 +19,8 @@ import CreateOrEditSchedule from "./components/CreateOrEditSchedule";
 import { ManagerSchedule } from "./tools/manager-schedule";
 import SelectSearch from "@/Shared/components/SelectSearch";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import { showQuestion } from "@/Helpers/alerts";
 
 function generarColorAleatorio() {
     // Generar componentes de color RGB aleatorios entre 0 y 255
@@ -45,46 +47,64 @@ const IndexSchedule = ({
     data,
 }: ResponsePaginator<{ parallels: IParallel }>) => {
     const [schedule, setSchedule] = useState<ISchedule>();
-    const tableRef = useRef<HTMLTableElement>(null);
+    // const tableRef = useRef<HTMLTableElement>(null);
     const [schedulesHours, setSchedulesHours] = useState<any[]>(ManagerSchedule.getHours());
-    const [schedulesDays, setSchedulesDays] = useState<{value: any, label: string}[]>(ManagerSchedule.getDays());
+    const [schedulesDays, setSchedulesDays] = useState<{ value: any, label: string }[]>(ManagerSchedule.getDays());
     const [isOpen, setIsOpen] = useState(false);
+    const [blockedHours, setBlockedHours] = useState<boolean>(true);
     const [parallel, setParallel] = useState<IParallel | null>(null);
-    useEffect(() => {
-        // const hour = [...ManagerSchedule.getHours()]
-        // console.log({hour})
-        // setSchedulesHours(() => hour);
-        // setSchedulesDays([...ManagerSchedule.getDays()]);
-        tableRef?.current?.addEventListener("click", (e) => {onClickCell(e);});
-    }, []);
+    const [isEdit, setIsEdit] = useState<boolean>(false);
+    let [managerSchedule, setManagerSchedule] = useState<ManagerSchedule>()
 
-    // const { fetchUrl } = useFetch("/schedules/parallels/search");
-    // const loadOptionsCourse = async (inputValue: string) => {
-    //     const response = await fetchUrl<ResponsePaginator<IParallel>>({
-    //         info: {
-    //             params: {
-    //                 search: inputValue,
-    //             },
-    //         },
-    //     });
-    //     const data = response.data.data;
-    //     console.log({ response, data });
-    //     const data2 = data.map((course: { id: any; name: any }) => {
-    //         return {
-    //             value: course.id,
-    //             label: course.name,
-    //         };
-    //     });
-    //     return data2;
-    // };
+    useEffect(() => {
+        managerSchedule! = new ManagerSchedule('table-schedule');
+        setManagerSchedule(managerSchedule);
+        console.log({ table: managerSchedule.getTable() });
+        managerSchedule.subscribeClickSchedule(async (schedule) => {
+            console.log('click schedule', schedule);
+            // alert('click schedule ' + schedule.schedule.id);
+            const response = await showQuestion({
+                title: '¿Que desea hace al horario?',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Eliminar',
+                text: '¿Seleccione una opción?',
+                showCancelButton: true,
+                showConfirmButton: true,
+                showDenyButton: true,
+                denyButtonText: 'Editar',
+                confirmButtonColor: '#dc3545',
+            });
+
+            if (response.isConfirmed) {
+                const responseDelete = await showQuestion({
+                    title: '¿Esta seguro de eliminar el horario?',
+                    cancelButtonText: 'Cancelar',
+                    showCancelButton: true,
+                    confirmButtonText: 'Eliminar',
+                })
+                if (responseDelete.isConfirmed) {
+                    await axios.delete(`/schedules/${schedule.schedule.id}`);
+                    managerSchedule?.removeScheduleInView(schedule.schedule.id);
+                }
+            } else if (response.isDenied) {
+                setIsEdit(true);
+                setSchedule(schedule.schedule);
+                setIsOpen(true);
+            }
+        })
+        const listener = (e: any) => onClickCell(e);
+        managerSchedule.getTable().addEventListener("click", listener);
+        return () => {
+            managerSchedule?.getTable().removeEventListener('click', listener);
+        };
+    }, []);
 
     const onClickCell = (e: any) => {
         e.stopPropagation();
-        console.log({ e });
         if (!isCell(e)) return;
         const hourIndex = e.target.parentNode.rowIndex;
         const dayIndex = e.target.cellIndex;
-        
+
         const hour = schedulesHours[hourIndex - 1];
         const day = schedulesDays[dayIndex - 1];
         setSchedule({
@@ -93,15 +113,32 @@ const IndexSchedule = ({
             end_time: null,
             description: '',
             parallel_id: parallel?.id,
-
         } as any);
-        console.log({schedulesHours, schedulesDays });
         setIsOpen(true);
     };
 
     const isCell = (e: any) => {
         return e?.target?.localName == "td";
     };
+
+    const onClose = (schedule?: ISchedule) => {
+        setIsOpen(false);
+        if (schedule) {
+            if (isEdit) {
+
+            } else {
+                managerSchedule!?.addScheduleInView(schedule);
+            }
+        }
+    }
+
+    function getScheduleByParallel(parallelId: number) {
+        axios.get(`/schedules/parallels/${parallelId}`)
+            .then((response) => {
+                console.log(response.data);
+                managerSchedule?.refreshSchedules(response.data.data);
+            })
+    }
 
     const { control } = useForm();
 
@@ -110,43 +147,38 @@ const IndexSchedule = ({
             <div className=" my-3">
                 <label htmlFor="name">Paralelos:</label>
                 <SelectSearch
+                    className="z-10"
                     path="/schedules/parallels/search"
                     control={control}
                     name="paralelo_id"
                     disabled={true}
                     onChange={(e: any) => {
-                        console.log({ e });
                         setParallel(e.item);
+                        setBlockedHours(false);
+                        getScheduleByParallel(e.item.id);
                     }}
                 />
             </div>
-            <div className="mt-4 relative container-table p-3">
-                {!parallel && <div className="overlay-table"></div>}
+            <div className="mt-4 relative">
+                {blockedHours && <div className="overlay-table"></div>}
                 <table
-                    ref={tableRef}
+                    id="table-schedule"
                     className="table-auto table-schedule relative user-select-none w-full"
                 >
                     <thead>
                         <tr>
                             <th style={{ width: "63px" }}>Hora</th>
                             {schedulesDays.map((day) => {
-                                return <th key={day.value} className="text-center">{day.label}</th>;
+                                return <th key={day.value} className="text-center"><div className="day-label">{day.label}</div></th>;
                             })}
-                            {/* <th>Lunes</th>
-                            <th>Martes</th>
-                            <th>Miércoles</th>
-                            <th>Jueves</th>
-                            <th>Viernes</th>
-                            <th>Sábado</th>
-                            <th>Domingo</th> */}
                         </tr>
                     </thead>
                     <tbody>
-                        {schedulesHours.map((scheduleHour) => {
+                        {schedulesHours.map((scheduleHour, index) => {
                             return (
                                 <tr key={scheduleHour}>
-                                    <td className="pointer-events-none">
-                                        {scheduleHour}
+                                    <td className="td-hour">
+                                        <div className="hour-label">{index != 0 ? scheduleHour : ''}</div>
                                     </td>
                                     <td></td>
                                     <td></td>
@@ -161,11 +193,11 @@ const IndexSchedule = ({
                     </tbody>
                 </table>
             </div>
-            {parallel?.course_id && isOpen && (
+            {isOpen && (
                 <CreateOrEditSchedule
-                    course_id={parallel.course_id}
-                    isEdit={false}
-                    setIsOpen={setIsOpen}
+                    parallel={parallel!}
+                    isEdit={isEdit}
+                    close={onClose}
                     isOpen={isOpen}
                     schedule={schedule!}
                 />

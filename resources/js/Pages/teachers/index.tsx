@@ -10,7 +10,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import React from 'react'
 import { VscPersonAdd } from 'react-icons/vsc'
-const Index = ({data}: {data: {data:ITeacher[]}}) => {
+const IndexTeacher = ({data}: {data: {data:ITeacher[]}}) => {
     function Buttons() {
         return (
             <>
@@ -87,4 +87,4 @@ const Index = ({data}: {data: {data:ITeacher[]}}) => {
     )
 }
 
-export default Index
+export default IndexTeacher

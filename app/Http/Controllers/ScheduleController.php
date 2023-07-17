@@ -10,6 +10,7 @@ use App\Models\Parallel;
 use App\Models\Subject;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class ScheduleController extends Controller
@@ -26,6 +27,15 @@ class ScheduleController extends Controller
                 'schedules' => Schedule::all(),
             ],
         ]);
+    }
+
+    public function schedulesByParallel(Request $request, $parallel_id)
+    {
+        // $parallel_id = $request->get('parallel_id', null);
+        $period_id = currentState()->period_id;
+        $schedules = Schedule::with('teacher:id,first_name,last_name,doc_number', 'subject:id,name')
+        ->where('period_id', $period_id)->where('parallel_id', $parallel_id)->get();
+        return response()->json(['data' => $schedules]);
     }
 
     public function parallelSearch(Request $response)
@@ -74,13 +84,14 @@ class ScheduleController extends Controller
     public function store(StorescheduleRequest $request)
     {
         $data = $request->all();
+        $period_id = currentState()->period_id;
         $overlap = Schedule::where('day', $data['day'])
             ->where('parallel_id', $data['parallel_id'])
-            ->where('period_id', $data['period_id'])
-            ->where('start_time' , '<=', $data['end_time'])
-            ->where('end_time', '>=', $data['start_time']);
+            ->where('period_id', $period_id)
+            ->where('start_time' , '<', $data['end_time'])
+            ->where('end_time', '>', $data['start_time'])->get();
         if ($overlap->count() > 0) {
-            return redirect()->back()->with('error', 'El horario se superpone con otro');
+            validationException('start_time','Este horario se cruza con otro horario existente.');
         }
         $schedule = Schedule::create([
             'day' => $data['day'],
@@ -91,12 +102,12 @@ class ScheduleController extends Controller
             'parallel_id' => $data['parallel_id'],
             'subject_id' => $data['subject_id'],
             'teacher_id' => $data['teacher_id'],
-            'period_id' => currentState()->period_id,
+            'period_id' => $period_id,
         ]);
 
         return response()->json([
             'success' => true,
-            'data' => $schedule,
+            'data' => $schedule->load('teacher:id,first_name,last_name,doc_number', 'subject:id,name'),
         ]);
     }
 

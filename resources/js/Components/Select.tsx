@@ -30,8 +30,8 @@ export default function Select({
                 render={({ field, fieldState: { error } }) => (
                     <>
                         <select
-                            {...props}
                             {...field}
+                            {...props}
                             className={
                                 `${
                                     error && "invalid-control"

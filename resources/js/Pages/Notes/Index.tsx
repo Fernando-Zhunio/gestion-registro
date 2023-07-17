@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { useState } from "react";
 import { INote } from "./types/note.types";
 import { ResponsePaginator } from "@/types/global";
-import { CreateOrEditNote } from "./CreateOrEditNote";
+// import { CreateOrEditNote } from "./CreateOrEditNote";
 import { showAlert } from "@/Helpers/alerts";
 import { Link, useForm } from "@inertiajs/react";
 

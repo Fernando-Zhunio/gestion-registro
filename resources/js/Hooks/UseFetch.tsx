@@ -1,7 +1,7 @@
 import axios, { type AxiosRequestConfig } from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-enum Methods {
+export enum Methods {
     GET = 'GET',
     POST = 'POST',
     PUT = 'PUT',
