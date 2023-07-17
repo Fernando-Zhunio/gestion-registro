@@ -1,7 +1,7 @@
-import { InputHTMLAttributes } from "react";
+import { SelectHTMLAttributes } from "react";
 import { Controller } from "react-hook-form";
 
-export default function Input({
+export default function Select({
     label,
     rules,
     name,
@@ -9,7 +9,7 @@ export default function Input({
     className = "",
     children,
     ...props
-}: InputHTMLAttributes<HTMLInputElement> & {
+}: SelectHTMLAttributes<HTMLSelectElement> & {
     control: any;
     name: string;
     rules?: any;
@@ -29,7 +29,7 @@ export default function Input({
                 control={control}
                 render={({ field, fieldState: { error } }) => (
                     <>
-                        <input
+                        <select
                             {...props}
                             {...field}
                             className={
@@ -37,8 +37,9 @@ export default function Input({
                                     error && "invalid-control"
                                 } border py-2 px-3 w-full block border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm ${className}` 
                             }
-                        />
+                        >
                         {children}
+                        </select>
                         {(error as any)?.type === "required" && (
                             <small className="text-red-600">
                                 Este campo es requerido

@@ -77,6 +77,7 @@ const CreateOrEditTeacher = ({
 
     useEffect(() => {
         if (isEdit) {
+            
         }
     }, []);
 
@@ -104,48 +105,49 @@ const CreateOrEditTeacher = ({
         reset,
         control,
     } = useForm({
-        // defaultValues: {
-        //     ...patchValues({first_name: "",
-        //     last_name: "",
-        //     email: "",
-        //     phone: "",
-        //     address: "",
-        //     doc_type: "",
-        //     doc_number: "",
-        //     birthday: "",
-        //     academic_title: "",
-        //     working_day: "",
-        //     observation: "",
-        //     start_date: "",
-        //     end_date: "",
-        //     contract_file: "",
-        //     contract_state: "",
-        //     contract_type: "",
-        //     salary: "",}, teacher)
-        // },
+        defaultValues: {
+            ...patchValues({first_name: "",
+            last_name: "",
+            email: "",
+            phone: "",
+            address: "",
+            doc_type: "",
+            doc_number: "",
+            birthday: "",
+            academic_title: "",
+            working_day: "",
+            observation: "",
+            start_date: "",
+            end_date: "",
+            contract_file: "",
+            contract_state: "",
+            contract_type: "",
+            salary: "",}, teacher)
+        },
+        // defaultValues: teacher,
     });
     const [isContractDefined, setIsContractDefined] = useState(false);
 
-    useEffect(() => {
-        new AirDatepicker("#start_date", {
-            locale: localeEs,
-            dateFormat: "yyyy-MM-dd",
-            onChangeView: function (view: any) {
-                console.log({ view });
-            },
-            onSelect: function ({ date, formattedDate, datepicker }) {
-                console.log({ date, formattedDate, datepicker });
-                setValue("start_date", formattedDate);
-            },
-        });
-        new AirDatepicker("#end_date", {
-            locale: localeEs,
-            dateFormat: "yyyy-MM-dd",
-            onSelect: function ({ date, formattedDate, datepicker }) {
-                console.log({ date, formattedDate, datepicker });
-                setValue("end_date", formattedDate);
-            },
-        });
+    // useEffect(() => {
+        // new AirDatepicker("#start_date", {
+        //     locale: localeEs,
+        //     dateFormat: "yyyy-MM-dd",
+        //     onChangeView: function (view: any) {
+        //         console.log({ view });
+        //     },
+        //     onSelect: function ({ date, formattedDate, datepicker }) {
+        //         console.log({ date, formattedDate, datepicker });
+        //         setValue("start_date", formattedDate);
+        //     },
+        // });
+        // new AirDatepicker("#end_date", {
+        //     locale: localeEs,
+        //     dateFormat: "yyyy-MM-dd",
+        //     onSelect: function ({ date, formattedDate, datepicker }) {
+        //         console.log({ date, formattedDate, datepicker });
+        //         setValue("end_date", formattedDate);
+        //     },
+        // });
 
         // if (validators) {
         //     setValidator((prevState: any) => {
@@ -155,7 +157,7 @@ const CreateOrEditTeacher = ({
         //         };
         //     });
         // }
-    }, []);
+    // }, []);
 
     const onSubmit = (_data: any) => {
         console.log({ _data });
@@ -174,6 +176,7 @@ const CreateOrEditTeacher = ({
                         text: Object.values(e).join("\n"),
                         title: "Error al crear el estudiante",
                     });
+                    
                     setIsLoading(false);
                 },
             });
@@ -213,16 +216,16 @@ const CreateOrEditTeacher = ({
                             Datos del Maestro(a)
                         </h3>
                         <div className="grid md:grid-cols-12 gap-5">
-                            {/* <FormTeacher
+                            <FormTeacher
                                 data={null}
                                 isEdit={isEdit}
                                 setValue={setValue}
                                 register={register}
                                 control={control}
                                 errors={errors}
-                            /> */}
+                            />
                         </div>
-                        <Divider className="py-3" />
+                        {/* <Divider className="py-3" />
                         <h3 className="text-2xl text-gray-500 mt-4 mb-2">
                             Datos del contrato
                         </h3>
@@ -260,9 +263,7 @@ const CreateOrEditTeacher = ({
                             </div>
 
                             <div
-                                className={`md:col-span-6 ${
-                                    isContractDefined ? "block" : "hidden"
-                                }`}
+                                className={`md:col-span-6 `}
                             >
                                 <label htmlFor="start_date">
                                     *Inicio de contrato:
@@ -311,14 +312,14 @@ const CreateOrEditTeacher = ({
                                     <small className="text-red-600">
                                         El fin de contrato es requerido
                                     </small>
-                                )} */}
+                                )} 
                                 <div className="md:col-span-6">
                                     <Input
                                         readOnly={true}
                                         type="text"
                                         id="end_date"
                                         label="Fin de contrato"
-                                        rules={{ required: true }}
+                                        rules={{ required: isContractDefined }}
                                         control={control}
                                         name="end_date"
                                         placeholder="Ingrese del fin de contrato"
@@ -346,7 +347,7 @@ const CreateOrEditTeacher = ({
                                     <small className="text-red-600">
                                         El salario es requerido
                                     </small>
-                                )} */}
+                                )} 
                                 <div className="md:col-span-6">
                                     <Input
                                         type="number"
@@ -377,18 +378,18 @@ const CreateOrEditTeacher = ({
                                     }
                                 ></textarea>
                                 
-                            </div> */}
+                            </div> 
 
                             <div className="md:col-span-6">
                                 <Textarea
                                     label="Observación"
-                                    rules={{ required: true }}
+                                    
                                     control={control}
                                     name="observation"
                                     placeholder="Ingrese la observación"
                                 />
                             </div>
-                        </div>
+                        </div> */}
                         <div className="mt-5">
                             <button
                                 disabled={isLoading}

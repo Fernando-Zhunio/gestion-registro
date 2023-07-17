@@ -6,9 +6,13 @@ use App\Models\teacher;
 use App\Http\Requests\StoreteacherRequest;
 use App\Http\Requests\UpdateteacherRequest;
 use App\Models\ContractTeacher;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+
+use function PHPUnit\Framework\isEmpty;
 
 class TeacherController extends Controller
 {
@@ -40,7 +44,7 @@ class TeacherController extends Controller
         return Inertia::render('Teachers/CreateOrEditTeacher', [
             'isEdit' => false,
             'periods' => $periods,
-        ]); 
+        ]);
     }
 
     /**
@@ -48,41 +52,62 @@ class TeacherController extends Controller
      */
     public function store(StoreteacherRequest $request)
     {
-        $request->validated();
-        DB::beginTransaction();
+        // $request->validated();
+        // DB::beginTransaction();
 
-        try {
-            $data = $request->all();
-            $teacher = Teacher::create([
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'],
-                'address' => $data['address'],
-                'doc_type' => Teacher::$DOC_TYPES[$data['doc_type']],
-                'doc_number' => $data['doc_number'],
-                'birthday' => date('Y-m-d', strtotime($data['birthday'])),
-                'academic_title' => $data['academic_title'],
-                'working_day' => $data['working_day'],
-                'period_id' => $data['period_id'],
-            ]);
+        // try {
+        $data = $request->all();
+        $teacher = Teacher::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'address' => $data['address'],
+            'doc_type' => $data['doc_type'],
+            'doc_number' => $data['doc_number'],
+            'birthday' => date('Y-m-d', strtotime($data['birthday'])),
+            'academic_title' => $data['academic_title'],
+            'working_day' => $data['working_day'],
+            'observation' => $data['observation'] ?? null,
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'contract_file' => null,
+            'contract_state' => 1,
+            'salary' => $data['salary'],
+            'period_id' => currentState()->period_id,
+        ]);
+        $this->generateUserTeacher($data['first_name'] . ' ' . $data['last_name'], $data['email']);
 
-            $teacher->contractsTeacher()->create([
-                'observation' => $data['observation'],
-                'start_date' => date('Y-m-d', strtotime($data['start_date'])),
-                'end_date' => date('Y-m-d', strtotime($data['end_date'])),
-                'contract_file' => $data['contract_file'],
-                'contract_state' => $data['contract_state'],
-                'contract_type' => $data['contract_type'],
-                'salary' => $data['salary'],
-                'period_id' => $data['period_id'],
-            ]);
-            DB::commit();
+        return redirect()->route('teachers.index');
 
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw new \Exception($th->getMessage());
-        }
+
+        // $teacher->contractsTeacher()->create([
+        //     'observation' => $data['observation'] ?? null,
+        //     'start_date' => isset($data['start_date']) && isEmpty(!$data['start_date']) ? date('Y-m-d', strtotime($data['start_date'])) : null,
+        //     'end_date' =>  isset($data['end_date']) && isEmpty(!$data['end_date']) ? date('Y-m-d', strtotime($data['end_date'])) : null,
+        //     'contract_file' => $data['contract_file'] ?? null,
+        //     'contract_state' => $data['contract_state'] ?? 1,
+        //     'contract_type' => $data['contract_type'],
+        //     'salary' => $data['salary'],
+        //     'period_id' => currentState()->period_id,
+        // ]);
+        //     DB::commit();
+        // } catch (\Throwable $th) {
+        //     DB::rollBack();
+        //     throw new \Exception($th->getMessage());
+        // }
+
+    }
+
+    private function generateUserTeacher($name, $email)
+    {
+        $user = User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make(time()),
+        ]);
+        $user->assignRole('teacher');
+        return $user;
     }
 
     /**
@@ -100,7 +125,7 @@ class TeacherController extends Controller
     {
         return Inertia::render('Teachers/CreateOrEditTeacher', [
             'isEdit' => true,
-            'teacher' => $teacher->load('contractsTeacher'),
+            'teacher' => $teacher,
         ]);
     }
 
@@ -109,7 +134,28 @@ class TeacherController extends Controller
      */
     public function update(UpdateteacherRequest $request, teacher $teacher)
     {
-        //
+        $data = $request->all();
+        $teacher->update([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'address' => $data['address'],
+            'doc_type' => $data['doc_type'],
+            'doc_number' => $data['doc_number'],
+            'birthday' => $data['birthday'],
+            'academic_title' => $data['academic_title'],
+            'working_day' => $data['working_day'],
+            'observation' => $data['observation'] ?? null,
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'contract_file' => null,
+            'contract_state' => 1,
+            'salary' => $data['salary'],
+            'period_id' => currentState()->period_id,
+        ]);
+
+        return redirect()->route('teachers.index');
     }
 
     /**

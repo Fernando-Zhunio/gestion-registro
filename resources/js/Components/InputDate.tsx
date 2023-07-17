@@ -1,11 +1,15 @@
-import { InputHTMLAttributes } from "react";
-import { Controller } from "react-hook-form";
+import AirDatepicker from "air-datepicker";
+import { InputHTMLAttributes, useEffect } from "react";
+import { Controller, set } from "react-hook-form";
+import localeEs from "air-datepicker/locale/es";
 
-export default function Input({
+export default function InputDate({
     label,
     rules,
     name,
     control,
+    setValue,
+    defaultValue,
     className = "",
     children,
     ...props
@@ -13,8 +17,18 @@ export default function Input({
     control: any;
     name: string;
     rules?: any;
+    setValue: any;
     label?: string;
 }) {
+    useEffect(() => {
+        new AirDatepicker(`#${name}`, {
+            locale: localeEs,
+            dateFormat: "yyyy-MM-dd",
+            onSelect: function ({ date, formattedDate, datepicker }) {
+                setValue(name, formattedDate);
+            },
+        });
+    }, []);
     return (
         <div>
             {label && (
@@ -30,13 +44,12 @@ export default function Input({
                 render={({ field, fieldState: { error } }) => (
                     <>
                         <input
+                            id={name}
                             {...props}
                             {...field}
-                            className={
-                                `${
-                                    error && "invalid-control"
-                                } border py-2 px-3 w-full block border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm ${className}` 
-                            }
+                            className={`${
+                                error && "invalid-control"
+                            } border py-2 px-3 w-full block border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm ${className}`}
                         />
                         {children}
                         {(error as any)?.type === "required" && (

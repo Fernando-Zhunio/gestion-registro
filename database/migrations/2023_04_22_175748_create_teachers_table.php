@@ -23,6 +23,12 @@ return new class extends Migration
             $table->date('birthday');
             $table->string('academic_title');
             $table->string('working_day');
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->string('contract_file')->nullable();
+            $table->boolean('contract_state')->nullable();
+            $table->float('salary')->nullable();
+            $table->string('observation', 1000)->nullable();
             $table->foreignId('period_id')->constrained('periods');
             $table->timestamps();
         });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Const\ConstMiscellany;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreteacherRequest extends FormRequest
@@ -33,20 +34,16 @@ class StoreteacherRequest extends FormRequest
             ],
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
-            'doc_type' => 'required|string|in:CI,PASSPORT',
+            'doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
             'doc_number' => 'required|string|max:20',
             'birthday' => 'required|date',
             'academic_title' => 'required|string|max:50',
             'working_day' => 'required|date',
-            'period_id' => 'required|integer|exists:periods,id',
-
             'observation' => 'nullable|string|max:1000',
-            'start_date' => 'required_if:contract_type,defined',
-            'start_date' => 'nullable|before:end_date|date',
-            'end_date' => 'required_if:contract_type,defined',
+            'start_date' => 'required|date|date_format:Y-m-d',
+            'end_date' => 'nullable|date|date_format:Y-m-d|after:start_date',
             'contract_file' => 'nullable|string|max:255',
-            // 'contract_state' => 'required|string|in:ACTIVE,INACTIVE',
-            'contract_type' => 'required|string|in:defined,undefined',
+            // 'contract_state' => 'boolean',
             'salary' => 'required|numeric',
 
         ];

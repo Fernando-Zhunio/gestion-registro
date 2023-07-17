@@ -10,6 +10,12 @@ export interface ITeacher {
     birthday: string;
     academic_title: string;
     working_day: string;
+    observation: string;
+    start_date: string;
+    end_date: string;
+    contract_file: string;
+    contract_state: string;
+    salary: number;
     period_id: number;
     
 }

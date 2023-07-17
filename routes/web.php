@@ -65,10 +65,11 @@ Route::middleware('auth')->group(function () {
 
 
     Route::prefix('teachers')->group(function () {
-        Route::get('/', [TeacherController::class, 'index'])->name('teacher');
-        Route::get('/create', [TeacherController::class, 'create'])->name('teacher.create');
-        Route::get('/{teacher}', [TeacherController::class, 'edit'])->name('teacher.edit');
-        Route::post('/', [TeacherController::class, 'store'])->name('teacher.store');
+        Route::get('/', [TeacherController::class, 'index'])->name('teachers.index');
+        Route::get('/create', [TeacherController::class, 'create'])->name('teachers.create');
+        Route::get('/{teacher}', [TeacherController::class, 'edit'])->name('teachers.edit');
+        Route::post('/', [TeacherController::class, 'store'])->name('teachers.store');
+        Route::put('/{teacher}', [TeacherController::class, 'update'])->name('teachers.update');
     });
 
     Route::prefix('periods')->group(function () {
@@ -146,6 +147,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ScheduleController::class, 'index'])->name('schedules.index');
         Route::get('/create', [ScheduleController::class, 'create'])->name('schedules.create');
         Route::get('/parallels/search', [ScheduleController::class, 'parallelSearch'])->name('parallelSearch');
+        Route::get('/teachers/search', [ScheduleController::class, 'teacherSearch'])->name('teacherSearch');
+        Route::get('/subjects/search', [ScheduleController::class, 'subjectSearch'])->name('subjectSearch');
         Route::post('/', [ScheduleController::class, 'store'])->name('schedules.store');
         Route::put('/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
         Route::delete('/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');

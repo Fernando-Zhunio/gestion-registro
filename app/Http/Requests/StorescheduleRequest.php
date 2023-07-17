@@ -11,7 +11,7 @@ class StorescheduleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,15 @@ class StorescheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'description' => 'required|string|max:255',
+            'status' => 'boolean',
+            'day' => 'required|integer|between:1,7',
+            'start_time' => 'required|date|date_format:H:i',
+            'end_time' => 'nullable|date|date_format:H:i|after:start_date',
+            'subject_id' => 'required|integer|exists:subjects,id',
+            'parallel_id' => 'required|integer|exists:paralelos,id',
+            'period_id' => 'required|integer|exists:periods,id',
+            'teacher_id' => 'required|integer|exists:teachers,id',
         ];
     }
 }

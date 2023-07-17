@@ -17,15 +17,36 @@
     --btn-c-edit: #075eff;
 }
 
-.bg-create { background: #272d4d; color: white };
-.bg-danger { background:#b83564; color: white };
-.color3 { background: #ff6a5a; color: white };
-.color4 { background: #ffb350; color:black };
-.color5 { background: #83b8aa; color: black };
- 
+.bg-create {
+    background: #272d4d;
+    color: white;
+}
+
+.bg-danger {
+    background: #b83564 !important;
+    color: white;
+}
+
+
+.color3 {
+    background: #ff6a5a;
+    color: white;
+}
+
+
+.color4 {
+    background: #ffb350;
+    color: black;
+}
+
+.color5 {
+    background: #83b8aa;
+    color: black;
+}
+
 .MuiTableCell-head {
-   font-family: Figtree, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-} 
+    font-family: Figtree, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
 
 .sidebar {
     width: var(--sidebar-width);
@@ -43,6 +64,7 @@
     background: white;
     z-index: 100;
 }
+
 .app-main {
     margin-left: var(--sidebar-width);
     margin-top: var(--header-height);
@@ -61,8 +83,9 @@
     /* background: #18cfe7;
     color: white; */
     border-radius: 10px;
-    background: #83b8aa; color: rgb(41, 41, 41);
-    box-shadow: 1px 1px 10px  rgba(0, 0, 0, 0.2);
+    background: #83b8aa;
+    color: rgb(41, 41, 41);
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn-custom {
@@ -85,9 +108,17 @@
     padding: 8px 15px;
 }
 
+.bg-delete {
+    background: #b83564 !important;
+    color: white
+}
+
+;
+
 .btn-create:hover {
     background: #16bacf;
 }
+
 .btn-store {
     padding: .5rem 1rem;
     background: #0d6efd;
@@ -101,7 +132,7 @@
 
 .MuiCard-root {
     border-radius: 10px !important;
-    box-shadow: 1px 1px 10px  rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
 
@@ -138,6 +169,7 @@ input:focus, textarea:focus, select:focus {
     display: flex;
     border: 1px solid #d1d1d1;
 }
+
 .form-control:focus {
     border-color: #16bacf;
     outline: #16bacf !important;
@@ -164,13 +196,14 @@ input:focus, textarea:focus, select:focus {
     justify-content: center;
     align-items: center;
 }
+
 .dialog-custom-container {
     width: auto;
     min-width: 300px;
     background: white;
     padding: 1rem;
     border-radius: 10px;
-    box-shadow: 1px 1px 10px  rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
     height: calc(100vh - 2rem);
     overflow: auto;
 }
@@ -182,11 +215,11 @@ input:focus, textarea:focus, select:focus {
 
 .MuiTableCell-head {
     font-family: Figtree, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
- }
+}
 
 .MuiPaper-root {
     border-radius: 10px !important;
-    box-shadow: 1px 1px 10px  rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2) !important;
     overflow: hidden;
 }
 
@@ -201,27 +234,34 @@ input:focus, textarea:focus, select:focus {
 }
 
 .schedules {
-    position: relative; /* Establece una posición relativa para poder posicionar el div */
+    position: relative;
+    /* Establece una posición relativa para poder posicionar el div */
     pointer-events: all;
-  }
+}
 
-  .schedules-overlay {
-    position: absolute; /* Establece una posición absoluta para superponer el div encima de la tabla */
+.schedules-overlay {
+    position: absolute;
+    /* Establece una posición absoluta para superponer el div encima de la tabla */
     top: 0;
     left: 0;
     /* pointer-events: none; */
-     /* Evita que el div capture los eventos del mouse y permita interactuar con la tabla */
-     /* Cambia el color de fondo para resaltar la selección */
+    /* Evita que el div capture los eventos del mouse y permita interactuar con la tabla */
+    /* Cambia el color de fondo para resaltar la selección */
     /* opacity: .5; */
-    z-index: 1; /* Asegura que el div se muestre por encima de la tabla */
+    z-index: 1;
+    /* Asegura que el div se muestre por encima de la tabla */
     padding: 5px
-  }
+}
 
 .user-select-none {
-    -webkit-user-select: none; /* Safari */        
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE10+/Edge */
-    user-select: none; /* Standard */
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
 }
 
 .schedules-overlay-child {
@@ -241,7 +281,7 @@ input:focus, textarea:focus, select:focus {
     z-index: 1;
 }
 
-.columns-table{
+.columns-table {
     position: absolute;
     top: 0;
     left: 0;
@@ -257,11 +297,12 @@ input:focus, textarea:focus, select:focus {
 .table-schedule, .table-schedule table {
     table-layout: fixed;
 }
+
 .slots-table tr:hover {
- background-color: #075eff1e;
+    background-color: #075eff1e;
 }
 
-.columns-up .columns-table  {
+.columns-up .columns-table {
     z-index: 10;
 }
 
@@ -274,3 +315,31 @@ input:focus, textarea:focus, select:focus {
 /* .columns-table {
     z-index: 10;
 } */
+
+
+
+
+
+
+.table-schedule tr:hover {
+    background-color: #075eff1e;
+}
+
+.overlay-table {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #00000040;
+    z-index: 1;
+}
+
+.container-table {
+    border-radius: 20px;
+    overflow: auto;
+}
+
+.swal2-container {
+    z-index: 99999
+}

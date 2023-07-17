@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Search;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Teacher extends Model
 {
-    use HasFactory;
+    use HasFactory, Search;
 
     protected $fillable = [
         'first_name',
@@ -20,6 +21,12 @@ class Teacher extends Model
         'birthday',
         'academic_title',
         'working_day',
+        'observation',
+        'start_date',
+        'end_date',
+        'contract_file',
+        'contract_state',
+        'salary',
         'period_id',
     ];
 
@@ -43,14 +50,5 @@ class Teacher extends Model
         return $this->belongsTo('App\Models\Period');
     }
 
-    public function scopeSearch($query, $search) {
-        if(!empty($search)) {
-            $query->where([
-                ['first_name', 'like', '%'.$search.'%'],
-                ['last_last', 'like', '%'.$search.'%'],
-            ]);
-        }
-        return $query;
-    }
 }
 
