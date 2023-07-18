@@ -88,15 +88,15 @@ export class ManagerSchedule {
         this.schedulesMap.set(schedule.id, { element: elementDiv, schedule });
         const elementDivChild = document.createElement("div");
         elementDivChild.classList.add("schedules-overlay-content");
-        elementDivChild.innerHTML = `<span>
-            <strong>Profesor: </strong>${schedule.teacher.first_name} - ${schedule.teacher.last_name}
-        </span>
-        <span>
-            <strong>Material: </strong>${schedule.subject.name}
-        </span>
-        <span>
-            <strong>Hora: </strong>${schedule.start_time} A ${schedule.end_time}
-        </span>
+        elementDivChild.innerHTML = `<div class="event-pointer-none">
+            <strong class="event-pointer-none">Profesor: </strong>${schedule.teacher.first_name} - ${schedule.teacher.last_name}
+        </div>
+        <div class="event-pointer-none>
+            <strong class="event-pointer-none">Material: </strong>${schedule.subject.name}
+        </div>
+        <div class="event-pointer-none">
+            <strong class="event-pointer-none">Hora: </strong>${schedule.start_time} A ${schedule.end_time}
+        </div>
         `
         elementDiv.appendChild(elementDivChild);
 
@@ -130,49 +130,8 @@ export class ManagerSchedule {
     }
 
     editScheduleInView(id: number, schedule: ISchedule) {
-        const start_hour = schedule.start_time.substring(0, 5);
-        const end_hour = schedule.end_time.substring(0, 5);
-        const day = schedule.day;
-        const elementDiv = this.schedulesMap.get(id)?.element;
-        if (!elementDiv) return;
-        elementDiv.innerHTML = ''
-        // elementDiv.classList.add("schedules-overlay");
-        // elementDiv.setAttribute("data-schedule-id", schedule.id?.toString());
-        // this.schedulesMap.set(schedule.id, { element: elementDiv, schedule });
-        const elementDivChild = document.createElement("div");
-        elementDivChild.classList.add("schedules-overlay-content");
-        elementDivChild.innerHTML = `<div>
-            <strong>Profesor: </strong>${schedule.teacher.first_name} - ${schedule.teacher.last_name}
-        </div>
-        <div>
-            <strong>Material: </strong>${schedule.subject.name}
-        </div>
-        <div>
-            <strong>Hora: </strong>${schedule.start_time} A ${schedule.end_time}
-        </div>
-        `
-        // elementDiv.appendChild(elementDivChild);
-
-        const hours = ManagerSchedule.getHours();
-        const indexStart = hours.indexOf(start_hour);
-        const indexEnd = hours.indexOf(end_hour);
-        const startCell = this.table.rows[indexStart].cells[day];
-        const endCell = this.table.rows[indexEnd].cells[day];
-
-        const startDiffMinutes = this.getDiffMinutes(hours[0], start_hour);
-        const endDiffMinutes = this.getDiffMinutes(start_hour, end_hour);
-
-        const startDiffPixels = this.convertMinutesToPixels(startDiffMinutes) + 35;
-        const endDiffPixels = this.convertMinutesToPixels(endDiffMinutes);
-
-        const left = startCell.getBoundingClientRect().left - this.table.getBoundingClientRect().left;
-        const width = startCell.getBoundingClientRect().width;
-
-        elementDiv.style.top = `${startDiffPixels}px`;
-        elementDiv.style.left = `${left}px`;
-        elementDiv.style.width = `${width}px`;
-        elementDiv.style.height = `${endDiffPixels}px`;
-        this.table.appendChild(elementDiv);
+        this.removeScheduleInView(id);
+        this.addScheduleInView(schedule);
     }
 
     getDiffMinutes(start: string, end: string) {

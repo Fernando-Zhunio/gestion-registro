@@ -1,196 +1,36 @@
-import { WIDTH_SIDEBAR } from "@/Constants/constants";
-import { Link } from "@inertiajs/react";
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+// import { WIDTH_SIDEBAR } from "@/Constants/constants";
+import { IItemSidebar } from "@/Models/sidebar";
+import { getItemSidebar } from "@/services/sidebar";
+import { Link, usePage } from "@inertiajs/react";
+import { useEffect, useState } from "react";
+// import { Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
-const Sidebar = () => {
-    return (
-        // <div className="sidebar px-5 py-4 position-fixed left-0 bg-white dark:bg-gray-800">
-        //     <div>
-        //         <ul className="inline-block">
-        //             <li>
-        //                 <a href="#" className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200">
-        //                     <span className="text-gray-600 dark:text-gray-400">
-        //                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        //                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        //                         </svg>
-        //                     </span>
-        //                     <span className="text-gray-600 dark:text-gray-400">Home</span>
-        //                 </a>
-        //             </li>
+const Sidebar = ({items}: {items:IItemSidebar[]}) => {
+  const { url } = usePage()
 
-        //             <li>
-        //                 <a href="#" className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200">
-        //                     <span className="text-gray-600 dark:text-gray-400">
-        //                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        //                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        //                         </svg>
-        //                     </span>
-        //                     <span className="text-gray-600 dark:text-gray-400">fernefc dsd fsvdd sfsdfs vds vdf vds</span>
-        //                 </a>
-        //             </li>
-
-        //             <li>
-        //                 <a href="#" className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200">
-        //                     <span className="text-gray-600 dark:text-gray-400">
-        //                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        //                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        //                         </svg>
-        //                     </span>
-        //                     <span className="text-gray-600 dark:text-gray-400">Home</span>
-        //                 </a>
-        //             </li>
-                    
-        //             <li>
-        //                 <a href="#" className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200">
-        //                     <span className="text-gray-600 dark:text-gray-400">
-        //                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        //                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        //                         </svg>
-        //                     </span>
-        //                     <span className="text-gray-600 dark:text-gray-400">Home</span>
-        //                 </a>
-        //             </li>
-        //         </ul>
-        //     </div>
-        // </div>
-        <Drawer
-        className="bg-white dark:bg-gray-800"
-        sx={{
-          width: WIDTH_SIDEBAR,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: WIDTH_SIDEBAR,
-            boxSizing: 'border-box',
-            height: 'calc(100vh - var(--header-height))',
-            top: 'var(--header-height)'
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={true}
-      >
-        {/* <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader> */}
-        {/* <Divider /> */}
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    hjh
-                </ListItemIcon>
-                <Link href="/teachers" as="button" type="button">Profesores</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-        <Divider />
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    hjh
-                </ListItemIcon>
-                <Link href="/periods" as="button" type="button">Periodos</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/courses" as="button" type="button">Cursos</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/notes" as="button" type="button">Notas</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/students" as="button" type="button">Estudiantes</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/representatives" as="button" type="button">Representantes</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/tuitions" as="button" type="button">Matriculas</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/subjects" as="button" type="button">Materias</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/parallels" as="button" type="button">Paralelos</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/schedules" as="button" type="button">Horarios</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-
-        <List>
-            <ListItem  disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                    
-                </ListItemIcon>
-                <Link href="/teachers" as="button" type="button">Profesores</Link>
-              </ListItemButton>
-            </ListItem>
-        </List>
-      </Drawer>
-    )
+  return (
+    <div className="sidebar">
+      <ul>
+        {/* <li>
+          <Link href="/periods" as="button" type="button">Periodos</Link>
+        </li>
+        <li><Link href="/courses" as="button" type="button">Cursos</Link></li>
+        <li><Link href="/notes" as="button" type="button">Notas</Link></li>
+        <li><Link href="/students" as="button" type="button">Estudiantes</Link></li>
+        <li><Link href="/representatives" as="button" type="button">Representantes</Link></li>
+        <li><Link href="/tuitions" as="button" type="button">Matriculas</Link></li>
+        <li><Link href="/subjects" as="button" type="button">Materias</Link></li>
+        <li><Link href="/parallels" as="button" type="button">Paralelos</Link></li>
+        <li><Link href="/schedules" as="button" type="button">Horarios</Link></li>
+        <li><Link href="/teachers" as="button" type="button">Profesores</Link></li> */}
+        {items.map((item, index) => {
+          return (
+            <li className={url === item.path  ? 'active' : ''} key={item.path}><Link  href={item.path} as="button" type="button"><i className={item.icon}></i> {item.name}</Link></li>
+          )
+        })}
+      </ul>
+    </div>
+  )
 };
 
 export default Sidebar;

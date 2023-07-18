@@ -132,7 +132,33 @@ class ScheduleController extends Controller
      */
     public function update(UpdatescheduleRequest $request, schedule $schedule)
     {
-        //
+        $data = $request->all();
+        $period_id = currentState()->period_id;
+        $overlap = Schedule::where('day', $data['day'])
+            ->where('id', '!=', $schedule->id)
+            ->where('parallel_id', $data['parallel_id'])
+            ->where('period_id', $period_id)
+            ->where('start_time' , '<', $data['end_time'])
+            ->where('end_time', '>', $data['start_time'])->get();
+        if ($overlap->count() > 0) {
+            validationException('start_time','Este horario se cruza con otro horario existente.');
+        }
+        $schedule->update([
+            'day' => $data['day'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'status' => 1,
+            'description' => $data['description'],
+            'parallel_id' => $data['parallel_id'],
+            'subject_id' => $data['subject_id'],
+            'teacher_id' => $data['teacher_id'],
+            'period_id' => $period_id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $schedule->load('teacher:id,first_name,last_name,doc_number', 'subject:id,name'),
+        ]);
     }
 
     /**
@@ -140,6 +166,10 @@ class ScheduleController extends Controller
      */
     public function destroy(schedule $schedule)
     {
-        //
+        $schedule->delete();
+        return response()->json([
+            'success' => true,
+            'data' => $schedule,
+        ]);
     }
 }

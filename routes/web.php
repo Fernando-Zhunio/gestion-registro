@@ -1,5 +1,7 @@
 <?php
 
+use App\Const\SidebarItem;
+use App\Http\Controllers\AcademicController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PeriodController;
@@ -40,21 +42,24 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('auth-info', function () {
+        // /**
+        //  * @var \App\Models\User $user
+        //  */
+        // $user = auth()->user();
+        // $myRoles = $user->roles()->get();
+        // $sidebar = [];
+        // if($user->hasRole('super-admin')) {
+        //     $sidebar = SidebarItem::getAllItems();
+        // } else {
+        //     $sidebar = SidebarItem::getItemsByRole($myRoles);
+        // }
         return [
+            // 'isSuperAdmin' => $user->hasRole('super-admin'),
             'user' => auth()->user(),
+            'currentState' => currentState(),
+            // 'roles' => $myRoles->toArray(),
             'sidebar' => [
-                'links' => [
-                    [
-                        'name' => 'Dashboard',
-                        'route' => 'dashboard',
-                        'icon' => 'home',
-                    ],
-                    [
-                        'name' => 'Profile',
-                        'route' => 'profile.edit',
-                        'icon' => 'user',
-                    ],
-                ],
+                'links' => SidebarItem::getItemsByRole(),
             ],
         ];
     })->name('auth.info');
@@ -153,6 +158,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [ScheduleController::class, 'store'])->name('schedules.store');
         Route::put('/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
         Route::delete('/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+    });
+
+    Route::prefix('/academic')->group(function () {
+        Route::get('/', [AcademicController::class, 'index'])->name('academic.index');
+        Route::get('/periods', [AcademicController::class, 'getPeriods'])->name('academic.periods');
     });
 });
 

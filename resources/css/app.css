@@ -70,7 +70,6 @@
     margin-top: var(--header-height);
     padding: 1rem;
     min-height: calc(100vh - var(--header-height));
-    background: #f5f5f5;
 }
 
 .center {
@@ -382,6 +381,55 @@ button:disabled {
     min-height: 100%;
 }
 
+
 .schedules-overlay-content:hover {
     background-color: #8deeee80;
+    cursor: pointer;
+}
+
+.event-pointer-none {
+    pointer-events: none;
+}
+
+/* ///////////////////sidebar */
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: #f5f5f5;
+
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.sidebar ul li.active {
+    background: cornflowerblue;
+    color: white;
+}
+
+.sidebar ul li i{
+
+    border: 1px solid #dadada;
+    padding: 4px;
+    border-radius: 5px;
+    background: #a9a9a936;
+    margin-right: 5px;
+}
+
+.table-periods {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-periods td, .table-periods th {
+    border: 1px solid #ddd;
+    padding: 8px;
 }

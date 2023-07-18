@@ -72,7 +72,7 @@ const IndexSchedule = ({
                 showConfirmButton: true,
                 showDenyButton: true,
                 denyButtonText: 'Editar',
-                confirmButtonColor: '#dc3545',
+                // confirmButtonColor: '#dc3545',
             });
 
             if (response.isConfirmed) {
@@ -87,6 +87,7 @@ const IndexSchedule = ({
                     managerSchedule?.removeScheduleInView(schedule.schedule.id);
                 }
             } else if (response.isDenied) {
+                console.log('edit schedule', schedule.schedule)
                 setIsEdit(true);
                 setSchedule(schedule.schedule);
                 setIsOpen(true);
@@ -125,7 +126,7 @@ const IndexSchedule = ({
         setIsOpen(false);
         if (schedule) {
             if (isEdit) {
-
+                managerSchedule?.editScheduleInView(schedule.id, schedule);
             } else {
                 managerSchedule!?.addScheduleInView(schedule);
             }

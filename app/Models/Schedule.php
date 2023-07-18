@@ -21,6 +21,21 @@ class Schedule extends Model
         'teacher_id'
     ];
 
+    protected $cast = [
+        'start_time' => 'time:H:i',
+        'end_time' => 'time:H:i'
+    ];
+
+    public function getStartTimeAttribute($value)
+    {
+        return date('H:i', strtotime($value));
+    }
+
+    public function getEndTimeAttribute($value)
+    {
+        return date('H:i', strtotime($value));
+    }
+
     public function subject()
     {
         return $this->belongsTo('App\Models\subject');

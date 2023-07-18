@@ -18,7 +18,7 @@ import axios from "axios";
 interface ICreateOrEditScheduleProps {
     isOpen: boolean;
     isEdit: boolean;
-    course_id: number;
+    // course_id: number;
     close: (data?: ISchedule) => any;
     schedule: ISchedule;
     parallel: IParallel;
@@ -36,8 +36,10 @@ const CreateOrEditSchedule = ({
             start_time: schedule.start_time,
             end_time: schedule.end_time,
             day: schedule.day,
-            description: schedule.description,
+            description: schedule?.description,
             parallel_id: parallel?.id,
+            teacher_id: schedule?.teacher_id ? { value: schedule?.teacher_id, label: `${schedule?.teacher?.first_name} ${schedule?.teacher?.last_name}` } : null,
+            subject_id: schedule?.subject_id ? { value: schedule?.subject_id, label: schedule?.subject?.name } : null,
         }
     });
     const [hoursStart, setHoursStart] = useState<string[]>([]);
@@ -77,7 +79,7 @@ const CreateOrEditSchedule = ({
             axios.put(`schedules/${schedule.id}`, data)
             .then((response) => {
                 // setIsOpen(false);
-                close(response.data);
+                close(response.data.data);
                 showToast({
                     icon: "success",
                     text: "Horario actualizado correctamente",

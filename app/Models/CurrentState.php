@@ -18,4 +18,9 @@ class CurrentState extends Model
         'number_teachers',
         'period_id',
     ];
+
+    public function period()
+    {
+        return $this->belongsTo(Period::class);
+    }
 }

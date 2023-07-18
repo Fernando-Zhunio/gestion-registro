@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\FormatTime;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatescheduleRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdatescheduleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,19 @@ class UpdatescheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'description' => 'required|string|max:255',
+            'status' => 'boolean',
+            'day' => 'required|integer|between:1,7',
+            'start_time' => ['required', new FormatTime],
+            'end_time' => ['required', new FormatTime, function ($attribute, $value, $fail) {
+                if ($value <= $this->start_time) {
+                    $fail('La hora de finalización debe ser mayor a la hora de inicio.');
+                }
+            }],
+            'subject_id' => 'required|integer|exists:subjects,id',
+            'parallel_id' => 'required|integer|exists:parallels,id',
+            // 'period_id' => 'required|integer|exists:periods,id',
+            'teacher_id' => 'required|integer|exists:teachers,id',
         ];
     }
 }
