@@ -56,8 +56,6 @@ class SubjectController extends Controller
      */
     public function store(StoresubjectRequest $request)
     {
-        // dd($request->all());
-        // $request->validated();
         $dataCreate = $request->all();
         $dataCreate['status'] = '1';
         Subject::create($dataCreate);

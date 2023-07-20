@@ -9,6 +9,7 @@ use App\Http\Requests\StorestudentRequest;
 use App\Http\Requests\UpdatestudentRequest;
 use App\Models\Course;
 use App\Models\Period;
+use App\Models\Tuition;
 use App\Traits\GenerateFile;
 use Inertia\Inertia;
 
@@ -20,18 +21,20 @@ class StudentController extends Controller
     use GenerateFile;
     public function index()
     {
-        $genders = ConstMiscellany::getGendersSelect();
-        $docTypes = ConstMiscellany::getDocTypesSelect();
-        $courses = Course::all();
-        $builder = Student::query();
-        $builder->with('course');
-        $students = BuilderForRoles::PaginateSearch($builder, 'first_name', ['last_name', 'doc_number']);
+        // $genders = ConstMiscellany::getGendersSelect();
+        // $docTypes = ConstMiscellany::getDocTypesSelect();
+        // $courses = Course::all();
+        // $builder = Student::query();
+        // $builder->with('course');
+        // $students = BuilderForRoles::PaginateSearch($builder, 'first_name', ['last_name', 'doc_number']);
         // BuilderSearchClass(Student::class, 'first_name', ['last_name']);
+        // $students = Student::search(request()->get('search', ''))->paginate();
+        $period_id = request('period_id', null) ?? currentState()->period_id;
+        $students = Student::search(request()->get('search', ''))->whereHas('tuitions', function($query) use($period_id) {
+            return $query->where('period_id', $period_id);
+        })->paginate();
         return Inertia::render('Students/Index', [
             'success' => true,
-            'gender' => $genders,
-            'courses' => $courses,
-            'docTypes' => $docTypes,
             'data' => $students,
         ]);
     }

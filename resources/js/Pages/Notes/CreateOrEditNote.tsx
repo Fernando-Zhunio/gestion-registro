@@ -9,6 +9,8 @@ import { router } from "@inertiajs/react";
 import DialogActions from "@mui/material/DialogActions";
 import SelectSearch from "@/Shared/components/SelectSearch";
 import { useForm } from "react-hook-form";
+import Select from "@/Components/Select";
+import { IParallel } from "../Parallels/types/parallel.types";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
@@ -16,7 +18,7 @@ import { useForm } from "react-hook-form";
 
 interface CreateOrEditNoteProps {
     state: "create" | "edit";
-    data?: INote;
+    data?: IParallel[];
 }
 
 const CreateOrEditNote = ({
@@ -37,6 +39,8 @@ const CreateOrEditNote = ({
     // });
 
     const {control} =  useForm();
+
+    // const getNotes
 
     const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -103,31 +107,24 @@ const CreateOrEditNote = ({
                 <form>
                     <div className="grid grid-cols-1 gap-5">
                         
-                        <SelectSearch cbMap={(item) => { return {value: item.id, label: 'fernando'}}} control={control} path="/notes/parallels" />
+                        {/* <SelectSearch 
+                        name="parallel_id"
+                        cbMap={(item) => { return {value: item.id, label: 'fernando'}}} 
+                        control={control} path="/notes/parallels" /> */}
+                        <Select
+                            name="parallel_id"
+                            label="Paralelo"
+                            control={control}
+                        >
+                            {
+                                data?.map((item) => {
+                                    return (
+                                        <option key={item.id} value={item.id}>{item.name}</option>
+                                    )
+                                })
+                            }
+                        </Select>
 
-            
-                        {/* <TextField
-                            required
-                            fullWidth
-                            label="Descripción"
-                            variant="filled"
-                            value={form.description}
-                            onChange={handlerSetForm}
-                            id="description"
-                            error={Boolean(errors.description)}
-                            helperText={errors.description}
-                        ></TextField>
-                        <TextField
-                            fullWidth
-                            required
-                            label="Promoción"
-                            variant="filled"
-                            value={form.nivel}
-                            id="nivel"
-                            onChange={handlerSetForm}
-                            error={Boolean(errors.nivel)}
-                            helperText={errors.nivel}
-                        ></TextField> */}
 
                         <div></div>
                     </div>

@@ -28,9 +28,14 @@ class TuitionController extends Controller
      */
     public function index()
     {
-        $builder = Tuition::query();
-        $builder->with('student', 'period', 'course');
-        $tuitions = BuilderForRoles::PaginateSearch($builder, 'student.first_name');
+        // $builder = Tuition::query();
+        // $builder->with('student', 'period', 'course');
+        // $tuitions = BuilderForRoles::PaginateSearch($builder, 'student.first_name');
+        $search = request()->get('search', '');
+        $period_id = request('period_id', null) ?? currentState()->period_id;
+        $tuitions = Tuition::whereHas('student', function($query) use($search, $period_id) {
+            $query->search($search, 'first_name', ['last_name']);
+        })->with('student', 'course', 'period')->where('period_id', $period_id)->paginate();
         return Inertia::render('Tuitions/Index', [
             'success' => true,
             'data' => $tuitions,

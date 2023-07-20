@@ -14,12 +14,6 @@ import { showAlert } from "@/Helpers/alerts";
 import { Link, useForm } from "@inertiajs/react";
 
 const StudentsIndex = ({data}: ResponsePaginator<IStudent>) => {
-    // const [isOpen, setIsOpen] = useState<boolean>(false);
-    // const [dataEdit, setDataEdit] = useState<Student | undefined>(undefined);
-    // function openPeriod(row: Student | undefined): void {
-    //     setDataEdit(row);
-    //     setIsOpen(true);
-    // }
     const {  delete: _deleteCourse } = useForm()
 
     function deleteCourse(id: number): void {

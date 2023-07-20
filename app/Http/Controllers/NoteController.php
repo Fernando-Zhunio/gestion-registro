@@ -7,6 +7,8 @@ use App\Models\Note;
 use App\Http\Requests\StorenoteRequest;
 use App\Http\Requests\UpdatenoteRequest;
 use App\Models\Parallel;
+use App\Models\Schedule;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,31 +17,41 @@ class NoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function __construct() {
-        // $this->middleware(['role:teacher']);
+    public function __construct()
+    {
+        $this->middleware(['role:teacher|super-admin|admin']);
     }
     public function index()
     {
         $builder = Note::query();
         $search = request()->get('search', '');
-        if (!empty($search)){
+        $period = request()->get('period', null) ?? currentState()->period_id;
+        if (!empty($search)) {
             $builder->whereHas('student', function ($query) use ($search) {
                 $query->where('first_name', 'like', "%{$search}%");
                 $query->orWhere('last_name', 'like', "%{$search}%");
             });
         }
-        $notes = BuilderForRoles::PaginateSearch($builder);
-        // $
-        // $notes = $builder->with('teacher')->paginate(10);
+        $notes = $builder->where('period_id', $period)->with('teacher')->paginate(10);
         return Inertia::render('Notes/Index', [
             'success' => true,
             'data' => $notes,
         ]);
     }
 
-    public function getParallels(Request $request) {
+    public function getParallels(Request $request)
+    {
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = $request->user();
+        $teacher = $user->teacher;
+        $isTeacher = $user->hasRole('teacher');
         $search = $request->get('search', '');
-        $parallels = Parallel::search($search)->paginate();
+        $parallels = Parallel::search($search)->whereHas('schedules', function ($query) use ($teacher, $isTeacher) {
+            $isTeacher && $query->where('teacher_id', $teacher?->id);
+            $query->where('period_id', currentState()->period_id);
+        })->paginate();
         return response()->json([
             'success' => true,
             'data' => $parallels,
@@ -51,10 +63,43 @@ class NoteController extends Controller
      */
     public function create()
     {
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = request()->user();
+        $teacher = $user->teacher;
+        $isTeacher = $user->hasRole('teacher');
+        $parallels = Parallel::whereHas('schedules', function ($query) use ($teacher, $isTeacher) {
+            $isTeacher && $query->where('teacher_id', $teacher?->id);
+            $query->where('period_id', currentState()->period_id);
+        })->get();
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $parallels,
+        // ]);
         return Inertia::render('Notes/CreateOrEditNote', [
             'success' => true,
-            'data' => [],
+            'data' => $parallels,
         ]);
+    }
+
+    public function getNotesByTeacher() {
+        $pageSize = request()->get('pageSize', 10);
+        $search = request()->get('search', null);
+        $period_id = currentState()->period_id;
+        $parallel_id = request()->get('parallel_id', null);
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = auth()->user();
+
+        $notes = Student::search($search, 'first_name', ['last_name', 'doc_number'])
+            ->where('parallel_id', $parallel_id)
+            ->whereHas('tuitions', function ($query) use ($period_id) {
+                $query->where('period_id', $period_id);
+            })
+            ->with('notes')
+            ->paginate($pageSize);
     }
 
     /**

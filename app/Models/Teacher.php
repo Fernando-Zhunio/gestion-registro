@@ -28,6 +28,7 @@ class Teacher extends Model
         'contract_state',
         'salary',
         'period_id',
+        'user_id',
     ];
 
     public static $DOC_TYPES = [
@@ -48,6 +49,11 @@ class Teacher extends Model
     public function Period()
     {
         return $this->belongsTo('App\Models\Period');
+    }
+
+    public function User()
+    {
+        return $this->belongsTo('App\Models\User');
     }
 
 }

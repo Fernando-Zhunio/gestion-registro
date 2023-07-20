@@ -16,7 +16,10 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = BuilderForRoles::PaginateSearch(Course::query(), 'name');
+        // $courses = BuilderForRoles::PaginateSearch(Course::query(), 'name');
+        $search = request()->get('search', '');
+        $pageSize = request()->get('pageSize', 10);
+        $courses = Course::search($search)->paginate($pageSize);
         return Inertia::render('Courses/Index', [
             'success' => true,
             'data' => $courses,

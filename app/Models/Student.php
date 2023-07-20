@@ -13,7 +13,6 @@ class Student extends Model
     protected $fillable = [
         'first_name',
         'last_name',
-        // 'email',
         'phone',
         'address',
         'doc_type',
@@ -34,11 +33,6 @@ class Student extends Model
         return $this->belongsTo('App\Models\course');
     }
 
-    // public function nextCourse()
-    // {
-    //     return $this->hasManyThrough('App\Models\Course', 'App\Models\Course', 'id', 'next_course_id');
-    // }
-
     public function representative()
     {
         return $this->belongsTo('App\Models\representative');
@@ -52,5 +46,14 @@ class Student extends Model
     public function tuitions()
     {
         return $this->hasMany('App\Models\Tuition');
+    }
+
+    public function parallel()
+    {
+        return $this->belongsTo('App\Models\parallel');
+    }
+
+    public function notes() {
+        return $this->hasMany('App\Models\Note');
     }
 }

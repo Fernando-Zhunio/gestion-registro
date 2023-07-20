@@ -57,6 +57,7 @@ class TeacherController extends Controller
 
         // try {
         $data = $request->all();
+        $user = $this->generateUserTeacher($data['first_name'] . ' ' . $data['last_name'], $data['email']);
         $teacher = Teacher::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
@@ -75,8 +76,8 @@ class TeacherController extends Controller
             'contract_state' => 1,
             'salary' => $data['salary'],
             'period_id' => currentState()->period_id,
+            'user_id' => $user->id,
         ]);
-        $this->generateUserTeacher($data['first_name'] . ' ' . $data['last_name'], $data['email']);
 
         return redirect()->route('teachers.index');
 
@@ -104,7 +105,7 @@ class TeacherController extends Controller
         $user = User::create([
             'name' => $name,
             'email' => $email,
-            'password' => Hash::make(time()),
+            'password' => Hash::make('fernando1991') // Hash::make(time()),
         ]);
         $user->assignRole('teacher');
         return $user;

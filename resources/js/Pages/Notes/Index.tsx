@@ -58,7 +58,7 @@ const NotesIndex = ({ data }: ResponsePaginator<INote>) => {
                 withPaginator={true}
                 notLoadDataOnInit={true}
                 buttons={<>
-                    <Link href="/notes/create" className="btn-custom btn-create">Crear Nota</Link>
+                    <Link href="/notes/create" className="btn-custom btn-create">Gestor Nota</Link>
                 </>}
             >
                 <TableContainer component={Paper}>
@@ -88,7 +88,7 @@ const NotesIndex = ({ data }: ResponsePaginator<INote>) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data.data.map((row) => (
+                            {data?.data?.map((row) => (
                                 <TableRow
                                     key={row.id}
                                 >

@@ -29,6 +29,7 @@ return new class extends Migration
             $table->boolean('contract_state')->nullable();
             $table->float('salary')->nullable();
             $table->string('observation', 1000)->nullable();
+            $table->foreignId('user_id')->constrained('users');
             $table->foreignId('period_id')->constrained('periods');
             $table->timestamps();
         });

@@ -4,7 +4,7 @@ namespace App\Builders;
 
 use App\Const\ConstRoles;
 
-class BuilderForRoles
+class FilterByRoles // BuilderForRoles
 {
     public static function BuilderSearchClass($class, $column = null, $moreColumns = [])
     {
@@ -18,17 +18,21 @@ class BuilderForRoles
     }
 
     private static function constructionBuilder($builder, $column = null, $moreColumns = []) {
-        $search = request()->search ?? '';
-        $pageSize = request()->pageSize ?? 10;
-        $roles = auth()->user()->getRoleNames();
-        if ($roles->contains(function ($value) {
-            return $value == ConstRoles::STUDENT || $value == ConstRoles::TEACHER;
-        })) {
-            return $builder->where('period_id', currentState()->period_id);
-        }
-        if ($column) {
-             $builder->search($search, $column, $moreColumns);
-        }
-        return $builder->paginate($pageSize);
+        // $search = request()->search ?? '';
+        // $pageSize = request()->pageSize ?? 10;
+        // /**
+        //  * @var \App\Models\User $user
+        //  */
+        // $user = auth()->user();
+
+        // if ($roles->contains(function ($value) {
+        //     return $value == ConstRoles::STUDENT || $value == ConstRoles::TEACHER;
+        // })) {
+        //     return $builder->where('period_id', currentState()->period_id);
+        // }
+        // if ($column) {
+        //      $builder->search($search, $column, $moreColumns);
+        // }
+        // return $builder->paginate($pageSize);
     }
 }

@@ -21,4 +21,9 @@ class Period extends Model
     {
         return $this->hasMany('App\Models\schedule');
     }
+
+    public function tuitions()
+    {
+        return $this->hasMany('App\Models\tuition');
+    }
 }
