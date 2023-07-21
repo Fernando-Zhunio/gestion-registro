@@ -3,7 +3,7 @@ import { PaginatorEvent } from "@/types/global";
 import TablePagination from "@mui/material/TablePagination";
 import { useEffect, useState } from "react";
 
-export const Paginator = ({path, onData} : {path: string, onData: (data: any) => any}) => {
+export const Paginator = ({ path, onData, onError }: { path: string, onData: (data: any) => any, onError: (data: any) => any }) => {
     const [rowsPerPageOptions, setRowsPerPageOptions] = useState<number[]>([10, 25, 50]);
     const [paginator, setPaginator] = useState<PaginatorEvent>({
         page: 0,
@@ -12,28 +12,32 @@ export const Paginator = ({path, onData} : {path: string, onData: (data: any) =>
     });
     const [length, setLength] = useState<number>(0)
     useEffect(() => {
+        if (!path) return;
         getData()
-    }, [paginator])
+    }, [paginator, path])
     function onRowsPerPageChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setPaginator((prevState) => ({
             ...prevState,
             pageSize: parseInt(event.target.value, 10),
-            page: 0,
+            // page: 0,
         }));
     }
 
     function handleChangePage(event: unknown, newPage: number) {
         setPaginator((prevState) => ({
             ...prevState,
-            page: newPage+1,
+            page: newPage + 1,
         }));
     }
 
-    function getData() {
-        getDataPaginateService(path, paginator.page, paginator.pageSize)
+    function getData(_path: string | null = path) {
+        const __path = _path || path;
+        getDataPaginateService(__path, paginator.page, paginator.pageSize)
             .then((response) => {
                 onData(response.data.data);
                 setLength(response.data.total)
+            }).catch((error) => {
+                onError(error)
             })
     }
     return (

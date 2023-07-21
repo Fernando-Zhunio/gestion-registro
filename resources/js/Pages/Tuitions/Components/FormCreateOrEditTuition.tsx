@@ -76,7 +76,6 @@ const FormCreateOrEditTuition = ({
     useEffect(() => {
         if (props.data) {
             const { student } = (props as any).data;
-            console.log({ student });
             studentKeys.forEach((key) => {
                 if (student.hasOwnProperty(key)) {
                     setValue(key, student[key]);

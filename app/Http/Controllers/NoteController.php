@@ -58,6 +58,23 @@ class NoteController extends Controller
         ]);
     }
 
+    public function getSubjectByTeacher(Parallel $parallel) {
+
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = request()->user();
+        $pageSize = request()->get('pageSize', 10);
+        $teacher = $user->teacher;
+        $course = $parallel->course;
+        $schedule = Schedule::where('parallel_id', $parallel->id)
+            ->where('teacher_id', $teacher->id)
+            ->where('period_id', currentState()->period_id)
+            ->first();
+        
+        $subject = $schedule->subject;
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -83,23 +100,30 @@ class NoteController extends Controller
         ]);
     }
 
-    public function getNotesByTeacher() {
+    public function getNotesByTeacher(Parallel $parallel) {
         $pageSize = request()->get('pageSize', 10);
         $search = request()->get('search', null);
         $period_id = currentState()->period_id;
-        $parallel_id = request()->get('parallel_id', null);
+        $parallel_id = $parallel->id;
         /**
          * @var \App\Models\User $user
          */
         $user = auth()->user();
-
+        $isTeacher = $user->hasRole('teacher');
         $notes = Student::search($search, 'first_name', ['last_name', 'doc_number'])
             ->where('parallel_id', $parallel_id)
-            ->whereHas('tuitions', function ($query) use ($period_id) {
+            ->whereHas('tuitions', function ($query) use ($period_id, $isTeacher) {
                 $query->where('period_id', $period_id);
             })
-            ->with('notes')
+            ->with(['notes' => function ($query) use ($user, $isTeacher, $period_id) {
+                $query->orWhere('period_id', $period_id);
+            }])      
+            // ->with('notes')
             ->paginate($pageSize);
+        return response()->json([
+            'success' => true,
+            'data' => $notes,
+        ]);
     }
 
     /**
