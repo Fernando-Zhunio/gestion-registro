@@ -33,22 +33,25 @@ interface CreateOrEditNoteProps {
     data?: IParallel[];
 }
 
-const CreateOrEditNote = ({
-    data,
-}: CreateOrEditNoteProps) => {
-
-    const { control, setValue, getValues } = useForm();
+const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
+    const { control, setValue, getValues, watch } = useForm();
 
     const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    // const [parallelId, setParallelId] = useState<number | null>(null);
     const [students, setStudents] = useState<IStudent[]>([]);
-    const [pathStudents, setPathStudents] = useState<string>('');
+    const [pathStudents, setPathStudents] = useState<string>("");
+    const [selectStudent, setSelectStudent] = useState<IStudent | null>(null);
 
+    const watchParallel = watch("parallel_id");
+    console.log({ watchParallel });
     function onChangeParallel(e: any) {
         if (isLoading) return;
         console.log({ e });
         setValue("parallel_id", e.target.value);
+        // setParallelId(e.target.value);
         setStudents([]);
+        setValue("course_id", "");
         searchNotesStudent(e.target.value);
     }
 
@@ -59,7 +62,7 @@ const CreateOrEditNote = ({
                 icon: "error",
                 title: "Error",
                 text: "Debe seleccionar un paralelo",
-            })
+            });
             setIsLoading(false);
             return;
         }
@@ -90,17 +93,21 @@ const CreateOrEditNote = ({
             icon: "error",
             title: "Error",
             text: "No se pudo obtener los datos",
-        })
+        });
+    }
+
+    function selectedStudent(student: IStudent) {
+        setSelectStudent(student);
     }
 
     return (
         <div>
-            <form>
+            <div>
                 <div className="col-span-12 mb-6">
                     <h2 className="text-3xl">Notas</h2>
                 </div>
                 <div className="grid grid-cols-12 gap-4">
-                    <div className="col-span-4 grid gap-4 ">
+                    <div className="col-span-4 gap-4 ">
                         <Select
                             disabled={isLoading}
                             name="parallel_id"
@@ -109,16 +116,28 @@ const CreateOrEditNote = ({
                             control={control}
                             onChange={onChangeParallel}
                         >
-                            <option value="" className="text-gray-500">Seleccione una opción</option>
-                            {
-                                data?.map((item) => {
-                                    return (
-                                        <option key={item.id} value={item.id}>{item.name}</option>
-                                    )
-                                })
-                            }
+                            <option value="" className="text-gray-500">
+                                Seleccione una opción
+                            </option>
+                            {data?.map((item) => {
+                                return (
+                                    <option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </option>
+                                );
+                            })}
                         </Select>
-                        <div className="">
+                        <div className="mt-3">
+                            <SelectSearch
+                                readOnly={true}
+                                disabled={true}
+                                path={`/notes/parallels/${watchParallel}/subjects`}
+                                control={control}
+                                name="subject_id"
+                                label="Materia"
+                            />
+                        </div>
+                        <div className="mt-3">
                             <div>
                                 <label htmlFor="student_id">Estudiante</label>
                                 <div className="flex items-center gap-3">
@@ -131,7 +150,11 @@ const CreateOrEditNote = ({
                                             className="w-full"
                                         />
                                     </div>
-                                    <button onClick={handlerOnClickBtnSearchStudent} className="bg-slate-800 rounded-md text-white px-3 py-2" type="button">
+                                    <button
+                                        onClick={handlerOnClickBtnSearchStudent}
+                                        className="bg-slate-800 rounded-md text-white px-3 py-2"
+                                        type="button"
+                                    >
                                         Buscar
                                     </button>
                                 </div>
@@ -147,36 +170,58 @@ const CreateOrEditNote = ({
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {students.map((student) =>
-                                    <TableRow hover key={student.id}>
+                                {students.map((student) => (
+                                    <TableRow
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            selectedStudent(student);
+                                        }}
+                                        hover
+                                        key={student.id}
+                                    >
                                         <TableCell className="rounde">
                                             <div>
                                                 <img
                                                     src={student.photo}
                                                     className="h-10 w-10 object-cover rounded-full"
-                                                    alt="student" />
+                                                    alt="student"
+                                                />
                                             </div>
                                         </TableCell>
-                                        <TableCell>{student.first_name}</TableCell>
-                                        <TableCell>{student.last_name}</TableCell>
-                                        <TableCell>{student.doc_number}</TableCell>
+                                        <TableCell>
+                                            {student.first_name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {student.last_name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {student.doc_number}
+                                        </TableCell>
                                     </TableRow>
-                                )}
+                                ))}
                                 {students.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={4} className="text-center text-gray-500">No hay datos</TableCell>
+                                        <TableCell
+                                            colSpan={4}
+                                            className="text-center text-gray-500"
+                                        >
+                                            No hay datos
+                                        </TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
                         </Table>
-                        <Paginator onError={onError} onData={onData} path={pathStudents} />
+                        <Paginator
+                            onError={onError}
+                            onData={onData}
+                            path={pathStudents}
+                        />
                     </div>
                     <div className="col-span-8 gap-5">
-                            <FormCreateOrEditNote />
+                        <FormCreateOrEditNote />
                     </div>
                 </div>
-            </form>
-
+            </div>
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import { useFetch } from "@/Hooks/UseFetch";
 import { ICourse } from "@/Pages/Courses/types/course.types";
 import { ResponsePaginator } from "@/types/global";
+import axios from "axios";
 import { InputHTMLAttributes } from "react";
 import { Controller } from "react-hook-form";
 import AsyncSelect from "react-select/async";
@@ -31,17 +32,30 @@ const SelectSearch = ({
 
     ...props
 }: SelectSearchProps) => {
+    console.log({ path });
     const { fetchUrl } = useFetch(path);
     const loadOptions = async (inputValue: string) => {
-        const response = await fetchUrl<ResponsePaginator<ICourse>>({
-            info: {
+        // const response = await fetchUrl<ResponsePaginator<ICourse>>({
+        //     info: {
+        //         params: {
+        //             search: inputValue,
+        //             ...moreParams,
+        //         },
+        //     },
+        // });
+        // let _path = path;
+        // if (inputValue) {
+        //     _path += `?search=${inputValue}`;
+        // }
+        const response = await axios
+            .get(path, {
                 params: {
                     search: inputValue,
                     ...moreParams,
                 },
-            },
-        });
-        const data = response.data.data;
+            })
+        console.log(response);    
+        const data = response.data.data.data;
         const data2 = data.map(
             cbMap ||
                 ((item: { id: any; name: any }) => {
@@ -71,7 +85,7 @@ const SelectSearch = ({
                         <AsyncSelect
                             cacheOptions={cacheOptions}
                             {...field}
-                            className={"w-full " + (className || '')}
+                            className={"w-full " + (className || "")}
                             defaultValue={defaultValue || null}
                             loadOptions={loadOptions}
                             {...props}

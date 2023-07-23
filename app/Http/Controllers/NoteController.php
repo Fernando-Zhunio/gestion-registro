@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatenoteRequest;
 use App\Models\Parallel;
 use App\Models\Schedule;
 use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -65,14 +66,25 @@ class NoteController extends Controller
          */
         $user = request()->user();
         $pageSize = request()->get('pageSize', 10);
-        $teacher = $user->teacher;
-        $course = $parallel->course;
-        $schedule = Schedule::where('parallel_id', $parallel->id)
-            ->where('teacher_id', $teacher->id)
-            ->where('period_id', currentState()->period_id)
-            ->first();
-        
-        $subject = $schedule->subject;
+        $teacher = $user?->teacher;
+        $search = request()->get('search', '');
+        // $course = $parallel->course;
+        $period = currentState()->period_id;
+        $builder = Subject::search($search)->whereHas('schedules', function ($query) use ($teacher, $parallel, $period) {
+            $query->where('period_id', $period);
+            $query->where('parallel_id', $parallel->id);
+            $teacher && $query->where('teacher_id', $teacher->id);
+        });
+        // ->where('parallel_id', $parallel->id)
+        // ->where('period_id', currentState()->period_id);
+        if ($teacher) {
+            $builder->where('teacher_id', $teacher->id);
+        }
+        $schedules = $builder->paginate($pageSize);
+        return response()->json([
+            'success' => true,
+            'data' => $schedules,
+        ]);
     }
 
     /**
@@ -90,10 +102,7 @@ class NoteController extends Controller
             $isTeacher && $query->where('teacher_id', $teacher?->id);
             $query->where('period_id', currentState()->period_id);
         })->get();
-        // return response()->json([
-        //     'success' => true,
-        //     'data' => $parallels,
-        // ]);
+
         return Inertia::render('Notes/CreateOrEditNote', [
             'success' => true,
             'data' => $parallels,
@@ -114,11 +123,10 @@ class NoteController extends Controller
             ->where('parallel_id', $parallel_id)
             ->whereHas('tuitions', function ($query) use ($period_id, $isTeacher) {
                 $query->where('period_id', $period_id);
+            })     
+            ->with('notes', function ($query) use ($user, $isTeacher, $period_id) {
+                $query->orWhere('period_id', $period_id)->first();
             })
-            ->with(['notes' => function ($query) use ($user, $isTeacher, $period_id) {
-                $query->orWhere('period_id', $period_id);
-            }])      
-            // ->with('notes')
             ->paginate($pageSize);
         return response()->json([
             'success' => true,
