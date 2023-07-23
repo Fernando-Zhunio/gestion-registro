@@ -30,8 +30,8 @@ export default function Input({
                 render={({ field, fieldState: { error } }) => (
                     <>
                         <input
-                            {...props}
                             {...field}
+                            {...props}
                             className={
                                 `${
                                     error && "invalid-control"

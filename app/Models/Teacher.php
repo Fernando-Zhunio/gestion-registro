@@ -46,12 +46,12 @@ class Teacher extends Model
         return $this->hasMany('App\Models\ContractTeacher');
     }
 
-    public function Period()
+    public function period()
     {
         return $this->belongsTo('App\Models\Period');
     }
 
-    public function User()
+    public function user()
     {
         return $this->belongsTo('App\Models\User');
     }

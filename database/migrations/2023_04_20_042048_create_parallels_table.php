@@ -14,12 +14,10 @@ return new class extends Migration
         Schema::create('parallels', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('description');
+            $table->string('observation')->nullable();
             $table->integer('quota');
-            // $table->integer('registered')->default(0)->nullable();
             $table->timestamps();
             $table->foreignId('course_id')->constrained('courses');
-
         });
     }
 

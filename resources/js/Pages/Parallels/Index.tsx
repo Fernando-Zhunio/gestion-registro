@@ -90,7 +90,7 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                                     <TableCell>
                                         {row.name}
                                     </TableCell>
-                                    <TableCell>{row.description}</TableCell>
+                                    <TableCell>{row.observation}</TableCell>
                                     <TableCell>{row.registered}</TableCell>
                                     <TableCell>{row.quota}</TableCell>
                                     <TableCell>

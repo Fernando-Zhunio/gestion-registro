@@ -3,7 +3,7 @@ import { ICourse } from "@/Pages/Courses/types/course.types";
 export interface ISubject {
     id: number;
     name: string;
-    description: string;
+    observation: string;
     // nivel: string;
     // hours: number;
     status: string;

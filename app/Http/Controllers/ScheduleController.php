@@ -98,7 +98,7 @@ class ScheduleController extends Controller
             'start_time' => $data['start_time'],
             'end_time' => $data['end_time'],
             'status' => 1,
-            'description' => $data['description'],
+            'observation' => $data['description'],
             'parallel_id' => $data['parallel_id'],
             'subject_id' => $data['subject_id'],
             'teacher_id' => $data['teacher_id'],

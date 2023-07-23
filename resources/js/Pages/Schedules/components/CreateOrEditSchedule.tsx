@@ -36,7 +36,7 @@ const CreateOrEditSchedule = ({
             start_time: schedule.start_time,
             end_time: schedule.end_time,
             day: schedule.day,
-            description: schedule?.description,
+            description: schedule?.observation,
             parallel_id: parallel?.id,
             teacher_id: schedule?.teacher_id ? { value: schedule?.teacher_id, label: `${schedule?.teacher?.first_name} ${schedule?.teacher?.last_name}` } : null,
             subject_id: schedule?.subject_id ? { value: schedule?.subject_id, label: schedule?.subject?.name } : null,
@@ -268,7 +268,7 @@ const CreateOrEditSchedule = ({
                             label="Descripcion"
                             control={control}
                             name="description"
-                            rules={{ required: true }}
+                            
                         ></Textarea>
                     </div>
                     <hr className="my-3 col-span-12" />

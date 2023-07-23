@@ -350,7 +350,7 @@ export default function FormStudent({
                     {parallels?.map((item) => {
                         return (
                             <option key={item.id} value={item.id}>
-                                {item.name} - {item.description}
+                                {item.name} - {item.observation}
                             </option>
                         );
                     })}

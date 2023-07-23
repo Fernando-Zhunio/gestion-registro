@@ -12,9 +12,8 @@ class Parallel extends Model
 
     protected $fillable = [
         'name',
-        'description',
+        'observation',
         'quota',
-        // 'registered',
         'course_id',
     ];
 

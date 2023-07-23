@@ -54,7 +54,7 @@ const CreateOrEditSubject = ({
 
             setValue("course_id", data.course_id);
             setValue("name", data.name);
-            setValue("description", data.description);
+            setValue("description", data.observation);
             setValue("status", data.status == '1' ? true : false);
             console.log({ data });
             setState("edit");

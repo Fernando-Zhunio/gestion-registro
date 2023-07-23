@@ -45,7 +45,7 @@ class NoteController extends Controller
          * @var \App\Models\User $user
          */
         $user = $request->user();
-        $teacher = $user->teacher;
+        $teacher = $user?->teacher;
         $isTeacher = $user->hasRole('teacher');
         $search = $request->get('search', '');
         $parallels = Parallel::search($search)->whereHas('schedules', function ($query) use ($teacher, $isTeacher) {

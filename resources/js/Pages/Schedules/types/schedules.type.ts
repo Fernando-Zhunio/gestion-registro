@@ -5,7 +5,7 @@ import { ISubject } from "@/Pages/Subjects/types/subject.types";
 
 export interface ISchedule {
     id: number;
-    description?: string;
+    observation?: string;
     status: 0| 1;
     day: number;
     start_time: string;

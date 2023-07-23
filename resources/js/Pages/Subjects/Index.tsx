@@ -93,7 +93,7 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                                     <TableCell>
                                         {row.name}
                                     </TableCell>
-                                    <TableCell>{row.description}</TableCell>
+                                    <TableCell>{row.observation}</TableCell>
                                     {/* <TableCell>{row.nivel}</TableCell> */}
                                     <TableCell>{row.status == '1' ? 'Activo' : 'Inactivo'}</TableCell>
                                     {/* <TableCell>{row.doc_type}</TableCell> */}

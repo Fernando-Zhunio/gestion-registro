@@ -13,7 +13,7 @@ class Subject extends Model
 
     protected $fillable = [
         'name',
-        'description',
+        'observation',
         'nivel',
         'hours',
         'status',

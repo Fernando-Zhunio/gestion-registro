@@ -23,10 +23,7 @@ class StoresubjectRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
-            // 'nivel' => 'required|string|max:255',
-            // 'hours' => 'required|time|max:255',
-            // 'status' => 'required|string|max:1',
+            'observation' => 'string|max:255',
             'course_id' => 'required|integer',
         ];
     }

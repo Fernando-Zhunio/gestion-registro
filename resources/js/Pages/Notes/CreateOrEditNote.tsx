@@ -22,6 +22,7 @@ import TableCell from "@mui/material/TableCell";
 import Divider from "@mui/material/Divider";
 import Input from "@/Components/Input";
 import { Paginator } from "@/Components/Paginator";
+import FormCreateOrEditNote from "@/Shared/FormCreateOrEditNote";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
@@ -45,6 +46,7 @@ const CreateOrEditNote = ({
 
     function onChangeParallel(e: any) {
         if (isLoading) return;
+        console.log({ e });
         setValue("parallel_id", e.target.value);
         setStudents([]);
         searchNotesStudent(e.target.value);
@@ -68,27 +70,13 @@ const CreateOrEditNote = ({
     }
 
     function searchNotesStudent(parallels: string, student: string = "") {
-        setIsLoading(true);
         let path = `/notes/by-teacher/${parallels}`;
         if (student) {
             path += `?search=${student}`;
         }
+        if (path == pathStudents) return;
+        setIsLoading(true);
         setPathStudents(path);
-        // axios.get(path)
-        //     .then((response) => {
-        //         const data = response.data as ResponsePaginator<IStudent>;
-        //         setStudents(data.data.data);
-        //         console.log({ response });
-        //         setIsLoading(false);
-        //     }).catch((error) => {
-        //         console.log({ error });
-        //         showToast({
-        //             icon: "error",
-        //             title: "Error",
-        //             text: "No se pudo obtener los datos",
-        //         })
-        //         setIsLoading(false);
-        //     });
     }
 
     function onData(data: IStudent[]) {
@@ -111,15 +99,17 @@ const CreateOrEditNote = ({
                 <div className="col-span-12 mb-6">
                     <h2 className="text-3xl">Notas</h2>
                 </div>
-                <div className="grid grid-cols-12">
+                <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-4 grid gap-4 ">
                         <Select
                             disabled={isLoading}
                             name="parallel_id"
                             label="Paralelo"
+                            placeholder="Buscar paralelo"
                             control={control}
                             onChange={onChangeParallel}
                         >
+                            <option value="" className="text-gray-500">Seleccione una opción</option>
                             {
                                 data?.map((item) => {
                                     return (
@@ -163,7 +153,7 @@ const CreateOrEditNote = ({
                                             <div>
                                                 <img
                                                     src={student.photo}
-                                                    className="h-16 w-16 object-cover rounded-full"
+                                                    className="h-10 w-10 object-cover rounded-full"
                                                     alt="student" />
                                             </div>
                                         </TableCell>
@@ -180,6 +170,9 @@ const CreateOrEditNote = ({
                             </TableBody>
                         </Table>
                         <Paginator onError={onError} onData={onData} path={pathStudents} />
+                    </div>
+                    <div className="col-span-8 gap-5">
+                            <FormCreateOrEditNote />
                     </div>
                 </div>
             </form>
