@@ -33,15 +33,6 @@ function generarColorAleatorio() {
 
     return colorHex;
 }
-// const SCHEDULE_DATE: ISchedule = {
-//     monday: [],
-//     tuesday: [],
-//     wednesday: [],
-//     thursday: [],
-//     friday: [],
-//     saturday: [],
-//     sunday: [],
-// };
 
 const IndexSchedule = ({
     data,
@@ -101,8 +92,10 @@ const IndexSchedule = ({
     }, []);
 
     const onClickCell = (e: any) => {
+
         e.stopPropagation();
         if (!isCell(e)) return;
+        setIsEdit(false);
         const hourIndex = e.target.parentNode.rowIndex;
         const dayIndex = e.target.cellIndex;
 

@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
                 SpecialtySeeder::class,
                 CourseSeeder::class,
                 ParallelSeeder::class,
+                SubjectSeeder::class,
             ]
         );
     }

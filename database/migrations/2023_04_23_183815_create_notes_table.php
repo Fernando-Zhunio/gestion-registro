@@ -33,7 +33,7 @@ return new class extends Migration
             $table->float('project_final')->default(0)->min(0)->max(1);
             $table->string('observation')->nullable();
             $table->foreignId('subject_id')->constrained('subjects');
-            $table->foreignId('teacher_id')->constrained('teachers');
+            $table->foreignId('user_id')->constrained('users');
             $table->foreignId('student_id')->constrained('students');
             $table->foreignId('period_id')->constrained('periods');
             $table->timestamps();

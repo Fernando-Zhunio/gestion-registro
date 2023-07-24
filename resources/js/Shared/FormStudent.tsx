@@ -244,6 +244,7 @@ export default function FormStudent({
                         getParallelsByCourse($event.target.value)
                     }
                 >
+                    <option value="">Seleccione una opción</option>
                     {courses?.map((item: any) => {
                         return (
                             <option key={item.id} value={item.id}>

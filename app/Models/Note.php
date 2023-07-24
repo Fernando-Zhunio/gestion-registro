@@ -22,28 +22,28 @@ class Note extends Model
         'project_final',
         'observation',
         'subject_id',
-        'teacher_id',
+        'user_id',
         'student_id',
         'period_id'
     ];
 
     public function subject()
     {
-        return $this->belongsTo('App\Models\subject');
+        return $this->belongsTo('App\Models\Subject');
     }
 
-    public function teacher()
+    public function user()
     {
-        return $this->belongsTo('App\Models\teacher');
+        return $this->belongsTo('App\Models\User');
     }
 
     public function student()
     {
-        return $this->belongsTo('App\Models\student');
+        return $this->belongsTo('App\Models\Student');
     }
 
     public function period()
     {
-        return $this->belongsTo('App\Models\period');
+        return $this->belongsTo('App\Models\Period');
     }
 }

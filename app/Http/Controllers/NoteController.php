@@ -59,13 +59,14 @@ class NoteController extends Controller
         ]);
     }
 
-    public function getSubjectByTeacher(Parallel $parallel) {
+    public function getSubjectByParallel(Parallel $parallel)
+    {
 
         /**
          * @var \App\Models\User $user
          */
         $user = request()->user();
-        $pageSize = request()->get('pageSize', 10);
+        // $pageSize = request()->get('pageSize', 10);
         $teacher = $user?->teacher;
         $search = request()->get('search', '');
         // $course = $parallel->course;
@@ -74,13 +75,12 @@ class NoteController extends Controller
             $query->where('period_id', $period);
             $query->where('parallel_id', $parallel->id);
             $teacher && $query->where('teacher_id', $teacher->id);
+            return $query;
         });
-        // ->where('parallel_id', $parallel->id)
-        // ->where('period_id', currentState()->period_id);
-        if ($teacher) {
-            $builder->where('teacher_id', $teacher->id);
-        }
-        $schedules = $builder->paginate($pageSize);
+        // if ($teacher) {
+        //     $builder->where('teacher_id', $teacher->id);
+        // }
+        $schedules = $builder->get();
         return response()->json([
             'success' => true,
             'data' => $schedules,
@@ -109,7 +109,8 @@ class NoteController extends Controller
         ]);
     }
 
-    public function getNotesByTeacher(Parallel $parallel) {
+    public function getNotesByTeacher(Parallel $parallel)
+    {
         $pageSize = request()->get('pageSize', 10);
         $search = request()->get('search', null);
         $period_id = currentState()->period_id;
@@ -123,7 +124,7 @@ class NoteController extends Controller
             ->where('parallel_id', $parallel_id)
             ->whereHas('tuitions', function ($query) use ($period_id, $isTeacher) {
                 $query->where('period_id', $period_id);
-            })     
+            })
             ->with('notes', function ($query) use ($user, $isTeacher, $period_id) {
                 $query->orWhere('period_id', $period_id)->first();
             })
@@ -134,12 +135,61 @@ class NoteController extends Controller
         ]);
     }
 
+    public function getNoteByStudent(Request $request, Student $student)
+    {
+        $subject_id = $request->get('subject_id');
+
+        $note = Note::where('student_id', $student->id)
+            ->where('period_id', currentState()->period_id)
+            ->where('subject_id', $subject_id)
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => ['note' => $note],
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StorenoteRequest $request)
     {
-        //
+        $teacher = $request->user()->teacher;
+        $data = $request->all();
+        if ($teacher) {
+            $permissionTeacher = Schedule::where('teacher_id', $teacher->id)
+                ->where('period_id', currentState()->period_id)
+                ->where('parallel_id', $request->parallel_id)
+                ->where('subject_id', $request->subject_id)
+                ->exists();
+            if (!$permissionTeacher) {
+                validationException('teacher_id', 'El docente no tiene permisos para crear notas.');
+            }
+            $data['teacher_id'] = $teacher->id;
+        }
+
+        $note = Note::where('student_id', $request->student_id)
+            ->where('period_id', currentState()->period_id)
+            ->where('subject_id', $request->subject_id)
+            ->first();
+        if ($note) {
+            validationException('note_id', 'La nota ya existe.');
+        }
+        $mergeData = array_merge($data, [
+            'user_id' => auth()->id(),
+            'period_id' => currentState()->period_id,
+        ]);
+
+        $note = Note::create($mergeData);
+
+        // szkmcdkw
+        // Note::updateOrCreate($mergeData);
+
+        return response()->json([
+            'success' => true,
+            'data' => $request->all(),
+        ]);
     }
 
     /**
@@ -163,7 +213,32 @@ class NoteController extends Controller
      */
     public function update(UpdatenoteRequest $request, note $note)
     {
-        //
+        $teacher = $request->user()->teacher;
+        $data = $request->all();
+        if ($teacher) {
+            $permissionTeacher = Schedule::where('teacher_id', $teacher->id)
+                ->where('period_id', currentState()->period_id)
+                ->where('parallel_id', $request->parallel_id)
+                ->where('subject_id', $request->subject_id)
+                ->exists();
+            if (!$permissionTeacher) {
+                validationException('teacher_id', 'El docente no tiene permisos para crear notas.');
+            }
+            $data['teacher_id'] = $teacher->id;
+        }
+
+        $mergeData = array_merge($data, [
+            'user_id' => auth()->id(),
+            'period_id' => currentState()->period_id,
+        ]);
+        $note->update($mergeData);
+        // szkmcdkw
+        // Note::updateOrCreate($mergeData);
+
+        return response()->json([
+            'success' => true,
+            'data' => $request->all(),
+        ]);
     }
 
     /**

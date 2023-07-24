@@ -341,6 +341,21 @@ button:disabled {
     opacity: 0.6;
 }
 
+button:disabled.is-loading::after {
+    content: "";
+    width: 18px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    display: inline-block;
+    animation: isLoading 1.3s 0.3s linear infinite;
+    margin-inline: 5px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
+    border-right: white 2px solid;
+    border-top: white 2px solid;
+  }
+
 .table-schedule td, th {
     height: 35px !important;
 }

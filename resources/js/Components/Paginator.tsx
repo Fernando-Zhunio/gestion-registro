@@ -34,6 +34,7 @@ export const Paginator = ({ path, onData, onError }: { path: string, onData: (da
         const __path = _path || path;
         getDataPaginateService(__path, paginator.page, paginator.pageSize)
             .then((response) => {
+                console.log('response',response.data);
                 onData(response.data.data);
                 setLength(response.data.total)
             }).catch((error) => {

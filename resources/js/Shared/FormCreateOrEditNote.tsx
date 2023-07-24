@@ -1,20 +1,34 @@
 import Input from "@/Components/Input";
 import Textarea from "@/Components/Textarea";
+import { showToast } from "@/Helpers/alerts";
+import { patchValues } from "@/Helpers/patchValues";
 import { INote } from "@/Pages/Notes/types/note.types";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const FormCreateOrEditNote = ({ note = {}, student_id, subject_id  }: { note?: INote | {}, student_id?: number, subject_id?: number }) => {
+const FormCreateOrEditNote = ({ note = null, student_id, subject_id  }: { note?: INote | null, student_id?: number, subject_id?: number }) => {
     useEffect(() => {
-        console.log(note);
+        reset(patchValues({
+            partial_trimester_1: 0,
+            partial_trimester_2: 0,
+            partial_trimester_3: 0,
+            integrating_project_1: 0,
+            integrating_project_2: 0,
+            integrating_project_3: 0,
+            evaluation_mechanism_1: 0,
+            evaluation_mechanism_2: 0,
+            evaluation_mechanism_3: 0,
+            project_final: 0,
+            observation: "",
+        }, note));
     }, [note]);
     const {
-        register,
         handleSubmit,
         getValues,
         setValue,
         watch,
+        reset,
         formState: { errors },
         control,
     } = useForm<INote>({
@@ -64,8 +78,68 @@ const FormCreateOrEditNote = ({ note = {}, student_id, subject_id  }: { note?: I
     }
 
     const onSubmit = (data: INote) => {
+        // if (!parallel_id) {
+        //     showToast({
+        //         icon: "error",
+        //         title: "Error",
+        //         text: "Debe seleccionar un paralelo",
+        //     });
+        //     return;
+        // }
+        if (!subject_id) {
+            showToast({
+                icon: "error",
+                title: "Error",
+                text: "Debe seleccionar un materia",
+            });
+            return;
+        }
+        if (!student_id) {
+            showToast({
+                icon: "error",
+                title: "Error",
+                text: "Debe seleccionar un estudiante",
+            });
+            return;
+        }
+
         console.log(data);
-        // axios.post("/api/notes", data);
+        setIsLoading(true);
+
+        const params = {
+            ...data,
+            student_id,
+            subject_id,
+            // parallel_id,
+        }
+        if (note) {
+            axios.put(`/notes/${note?.id}`, params).then((res) => {
+                showToast({
+                    icon: "success",
+                    title: "Éxito",
+                    text: "Nota actualizada",
+                })
+                setIsLoading(false);
+            })
+            return;
+        }
+
+        axios.post("/notes", params).then((res) => {
+            showToast({
+                icon: "success",
+                title: "Éxito",
+                text: "Nota creada",
+            })
+            setIsLoading(false);
+        }).catch((err: AxiosError) => {
+            console.log(err);
+            showToast({
+                icon: "error",
+                title: "Error",
+                text: (err?.response?.data as any)?.message || "No se pudo crear la nota, vuelva a intentarlo",
+            })
+            setIsLoading(false);
+        });
     }
 
     return (
@@ -214,7 +288,7 @@ const FormCreateOrEditNote = ({ note = {}, student_id, subject_id  }: { note?: I
                         </div>
                     </div>
                 </div>
-                <button type="submit" disabled={isLoading} className="btn-custom btn-store">Guardar</button>
+                <button type="submit" disabled={isLoading} className={`btn-custom btn-store ${isLoading ? "is-loading" : ""}`}>Guardar</button>
             </form>
         </div>
     );

@@ -23,7 +23,7 @@ class UpdatescheduleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'description' => 'required|string|max:255',
+            'observation' => 'nullable|string|max:255',
             'status' => 'boolean',
             'day' => 'required|integer|between:1,7',
             'start_time' => ['required', new FormatTime],

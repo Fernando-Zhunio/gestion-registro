@@ -11,7 +11,7 @@ class UpdatenoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,21 @@ class UpdatenoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'partial_trimester_1' => 'numeric|max:90',
+            'partial_trimester_2' => 'numeric|max:90',
+            'partial_trimester_3' => 'numeric|max:90',
+            'integrating_project_1' => 'numeric|max:5',
+            'integrating_project_2' => 'numeric|max:5',
+            'integrating_project_3' => 'numeric|max:5',
+            'evaluation_mechanism_1' => 'numeric|max:5',
+            'evaluation_mechanism_2' => 'numeric|max:5',
+            'evaluation_mechanism_3' => 'numeric|max:5',
+            'project_final' => 'numeric|max:10',
+            'observation' => 'max:1000',
+            'subject_id' => 'exists:subjects,id',
+            'teacher_id' => 'exists:teachers,id',
+            'student_id' => 'exists:students,id',
+            'period_id' => 'exists:periods,id',
         ];
     }
 }

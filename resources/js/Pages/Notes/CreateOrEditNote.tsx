@@ -1,7 +1,7 @@
 import DialogCustom from "@/Components/DialogCustom";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { INote } from "./types/note.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
@@ -23,6 +23,13 @@ import Divider from "@mui/material/Divider";
 import Input from "@/Components/Input";
 import { Paginator } from "@/Components/Paginator";
 import FormCreateOrEditNote from "@/Shared/FormCreateOrEditNote";
+import { ISubject } from "../Subjects/types/subject.types";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
@@ -34,25 +41,30 @@ interface CreateOrEditNoteProps {
 }
 
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
-    const { control, setValue, getValues, watch } = useForm();
+    const { control, setValue, getValues, watch } = useForm({});
 
-    const [state, setState] = useState<"create" | "edit">("create");
+    // const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    // const [parallelId, setParallelId] = useState<number | null>(null);
+    const [note, setNote] = useState<INote>();
     const [students, setStudents] = useState<IStudent[]>([]);
+    const [subjects, setSubjects] = useState<ISubject[]>([]);
     const [pathStudents, setPathStudents] = useState<string>("");
     const [selectStudent, setSelectStudent] = useState<IStudent | null>(null);
 
     const watchParallel = watch("parallel_id");
+    const watchSubject = watch("subject_id");
     console.log({ watchParallel });
     function onChangeParallel(e: any) {
         if (isLoading) return;
         console.log({ e });
         setValue("parallel_id", e.target.value);
-        // setParallelId(e.target.value);
         setStudents([]);
-        setValue("course_id", "");
+        setSelectStudent(null);
+        setValue("subject_id", "");
+        if (!e.target.value) return;
         searchNotesStudent(e.target.value);
+        setSubjects([]);
+        getSubjects(e.target.value);
     }
 
     function handlerOnClickBtnSearchStudent() {
@@ -72,6 +84,18 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         searchNotesStudent(parallel, student);
     }
 
+    const getSubjects = useCallback(
+        (watchParallel: number) => {
+            axios
+                .get(`/notes/parallels/${watchParallel}/subjects`)
+                .then(({ data }) => {
+                    console.log({ data });
+                    setSubjects(data.data);
+                });
+        },
+        [watchParallel]
+    );
+
     function searchNotesStudent(parallels: string, student: string = "") {
         let path = `/notes/by-teacher/${parallels}`;
         if (student) {
@@ -83,6 +107,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     }
 
     function onData(data: IStudent[]) {
+        console.log({ data });
         setIsLoading(false);
         setStudents(data);
     }
@@ -97,7 +122,26 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     }
 
     function selectedStudent(student: IStudent) {
-        setSelectStudent(student);
+        if (selectStudent?.id === student.id) return;
+        if (!watchSubject) {
+            showToast({
+                icon: "error",
+                text: "Debe seleccionar un materia",
+            });
+            return;
+        }
+        setIsLoading(true);
+        setSelectStudent(null);
+        axios
+            .get(`/notes/student/${student.id}?subject_id=${watchSubject}`)
+            .then(({ data }) => {
+                setSelectStudent(student);
+                setNote(data.data?.note);
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                setIsLoading(false);
+            });
     }
 
     return (
@@ -128,15 +172,39 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                             })}
                         </Select>
                         <div className="mt-3">
-                            <SelectSearch
+                            {/* <SelectSearch
                                 readOnly={true}
                                 disabled={true}
                                 path={`/notes/parallels/${watchParallel}/subjects`}
                                 control={control}
                                 name="subject_id"
                                 label="Materia"
-                            />
+                            /> */}
+                            <Select
+                                disabled={isLoading}
+                                name="subject_id"
+                                label="Materia"
+                                control={control}
+                                onChange={(e) => {
+                                    setValue("subject_id", e.target.value);
+                                    setSelectStudent(null);
+                                }}
+                            >
+                                <option value="">
+                                    <span className="text-gray-500">
+                                        Seleccione una opción
+                                    </span>
+                                </option>
+                                {subjects?.map((item) => {
+                                    return (
+                                        <option key={item.id} value={item.id}>
+                                            {item.name}
+                                        </option>
+                                    );
+                                })}
+                            </Select>
                         </div>
+                        <div></div>
                         <div className="mt-3">
                             <div>
                                 <label htmlFor="student_id">Estudiante</label>
@@ -160,7 +228,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                 </div>
                             </div>
                         </div>
-                        <Table size="small" className="table-auto">
+                        {/* <Table size="small" className="table-auto">
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Foto</TableCell>
@@ -210,7 +278,63 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                     </TableRow>
                                 )}
                             </TableBody>
-                        </Table>
+                        </Table> */}
+                        <List>
+                            {students.map((student) => {
+                                return (
+                                    <ListItem
+                                        selected={selectStudent?.id === student.id}
+                                        onClick={(event) =>
+                                            selectedStudent(student)
+                                        }
+                                        key={student.id}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar
+                                                alt="Remy Sharp"
+                                                src={student.photo}
+                                            />
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={`${student.first_name} ${student.last_name}`}
+                                            secondary={
+                                                <>
+                                                    <Typography
+                                                        sx={{
+                                                            display: "inline",
+                                                        }}
+                                                        component="span"
+                                                        variant="body2"
+                                                        color="text.primary"
+                                                    >
+                                                        # {student.doc_number}
+                                                    </Typography>
+                                                    {/* {student.notes && (
+                                                        <>
+                                                            <br />
+                                                            {`
+                                                            a1: ${student.notes[0].partial_trimester_1} | 
+                                                            p1: ${student.notes[0].integrating_project_1} |
+                                                            e1: ${student.notes[0].evaluation_mechanism_1} `}
+                                                            <br />
+                                                            {`
+                                                            a2: ${student?.notes?.[0].partial_trimester_2} |
+                                                            p2: ${student?.notes?.[0].integrating_project_2} |
+                                                            e2: ${student?.notes?.[0].evaluation_mechanism_2} `}
+                                                            <br />
+                                                            {`a3: ${student.notes?.[0].partial_trimester_3} | 
+                                                            p3: ${student.notes?.[0].integrating_project_3} |
+                                                            e3: ${student.notes?.[0].evaluation_mechanism_3}
+                                                            `}
+                                                        </>
+                                                    )} */}
+                                                </>
+                                            }
+                                        />
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
                         <Paginator
                             onError={onError}
                             onData={onData}
@@ -218,7 +342,21 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                         />
                     </div>
                     <div className="col-span-8 gap-5">
-                        <FormCreateOrEditNote />
+                        <div className="px-4">
+                            <div className="text-gray-500">
+                                Estudiante seleccionado:
+                            </div>
+                            <h4 className="m-0">
+                                {selectStudent?.first_name}{" "}
+                                {selectStudent?.last_name}
+                            </h4>
+                            <small># ID: {selectStudent?.doc_number}</small>
+                        </div>
+                        <FormCreateOrEditNote
+                            student_id={selectStudent?.id}
+                            subject_id={watchSubject}
+                            note={note}
+                        />
                     </div>
                 </div>
             </div>
