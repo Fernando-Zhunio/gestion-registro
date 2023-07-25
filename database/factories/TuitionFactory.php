@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,12 @@ class TuitionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'status' => $this->faker->randomElement([1, 2, 3]),
+            'approved' => $this->faker->randomElement([1, 2]),
+            'student_id' => Student::factory()->create()->id,
+            'course_id' => $this->faker->randomFloat(0, 1, 10),
+            'period_id' => 1,
+            'parallel_id' => $this->faker->randomFloat(0, 1, 10),
         ];
     }
 }

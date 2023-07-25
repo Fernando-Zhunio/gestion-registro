@@ -10,6 +10,7 @@ use App\Models\Parallel;
 use App\Models\Schedule;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Models\Tuition;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -20,23 +21,31 @@ class NoteController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['role:teacher|super-admin|admin']);
+        $this->middleware(['role:teacher|super-admin|admin'])->except('index');
     }
     public function index()
     {
         $builder = Note::query();
         $search = request()->get('search', '');
-        $period = request()->get('period', null) ?? currentState()->period_id;
-        if (!empty($search)) {
-            $builder->whereHas('student', function ($query) use ($search) {
-                $query->where('first_name', 'like', "%{$search}%");
-                $query->orWhere('last_name', 'like', "%{$search}%");
-            });
-        }
-        $notes = $builder->where('period_id', $period)->with('teacher')->paginate(10);
+        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
+        $parallel_id = request()->get('parallel_id', 1) ?? null;
+
+        $students = Student::whereHas('tuitions', function ($query) use ($parallel_id, $period_id) {
+            $query->where('parallel_id', $parallel_id);
+            $query->where('period_id', $period_id);
+        })->with('currentNotes')->paginate(10);
+        $subjectsOfParallel = $this->_getSubjectByParallel($parallel_id, $period_id);
+        // $students->getCollection()->map(function ($student) use($subjectsOfParallel) {
+        //     $student->notesBySubject = $subjectsOfParallel->map(function ($subject) use($student) {
+        //         $subject->note = $student->currentNotes;
+        //         return $subject;
+        //     });
+        //     return $student;
+        // });
         return Inertia::render('Notes/Index', [
             'success' => true,
-            'data' => $notes,
+            'data' => $students,
+            'metadata' => ['subjects' => $subjectsOfParallel],
         ]);
     }
 
@@ -61,30 +70,26 @@ class NoteController extends Controller
 
     public function getSubjectByParallel(Parallel $parallel)
     {
-
-        /**
-         * @var \App\Models\User $user
-         */
-        $user = request()->user();
-        // $pageSize = request()->get('pageSize', 10);
-        $teacher = $user?->teacher;
-        $search = request()->get('search', '');
-        // $course = $parallel->course;
-        $period = currentState()->period_id;
-        $builder = Subject::search($search)->whereHas('schedules', function ($query) use ($teacher, $parallel, $period) {
-            $query->where('period_id', $period);
-            $query->where('parallel_id', $parallel->id);
-            $teacher && $query->where('teacher_id', $teacher->id);
-            return $query;
-        });
-        // if ($teacher) {
-        //     $builder->where('teacher_id', $teacher->id);
-        // }
-        $schedules = $builder->get();
+        $schedules = $this->_getSubjectByParallel($parallel->id, currentState()->period_id);
         return response()->json([
             'success' => true,
             'data' => $schedules,
         ]);
+    }
+
+    private function _getSubjectByParallel(int $parallel_id, int $period_id)
+    {
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = request()->user();
+        $teacher = $user?->teacher;
+        return Subject::whereHas('schedules', function ($query) use ($teacher, $parallel_id, $period_id) {
+            $query->where('period_id', $period_id);
+            $query->where('parallel_id', $parallel_id);
+            $teacher && $query->where('teacher_id', $teacher->id);
+            return $query;
+        })->get();
     }
 
     /**
@@ -105,7 +110,7 @@ class NoteController extends Controller
 
         return Inertia::render('Notes/CreateOrEditNote', [
             'success' => true,
-            'data' => $parallels,
+            'data' => ['parallels' => $parallels],
         ]);
     }
 
@@ -121,8 +126,8 @@ class NoteController extends Controller
         $user = auth()->user();
         $isTeacher = $user->hasRole('teacher');
         $notes = Student::search($search, 'first_name', ['last_name', 'doc_number'])
-            ->where('parallel_id', $parallel_id)
-            ->whereHas('tuitions', function ($query) use ($period_id, $isTeacher) {
+            ->whereHas('tuitions', function ($query) use ($period_id, $parallel_id) {
+                $query->where('parallel_id', $parallel_id);
                 $query->where('period_id', $period_id);
             })
             ->with('notes', function ($query) use ($user, $isTeacher, $period_id) {
@@ -183,6 +188,8 @@ class NoteController extends Controller
 
         $note = Note::create($mergeData);
 
+        $this->verifiedApprovedCourse($request->parallel_id, $request->student_id);
+
         // szkmcdkw
         // Note::updateOrCreate($mergeData);
 
@@ -190,6 +197,35 @@ class NoteController extends Controller
             'success' => true,
             'data' => $request->all(),
         ]);
+    }
+
+    private function verifiedApprovedCourse($parallel_id, $student_id)
+    {
+        $period_id = currentState()->period_id;
+        $notes = Note::where('student_id', $student_id)->where('period_id', $period_id)->get();
+        $subjects = $this->_getSubjectByParallel($parallel_id, $period_id);
+        $tuition = Tuition::where('student_id', $student_id)->where('parallel_id', $parallel_id)->where('period_id', $period_id)->first();
+
+        foreach ($subjects as $subject) {
+            if(!$notes->contains('subject_id', $subject->id)) {
+                $tuition->approved = 0;
+                $tuition->save();
+                return;
+            }
+            $note = $notes->where('subject_id', $subject->id)->first();
+            $firstTrimesterNote = ((+$note?->partial_trimester_1 ?? 0) + (+$note?->integrating_project_1 ?? 0) + (+$note?->evaluation_mechanism_1 ?? 0)) / 10;
+            $secondTrimesterNote = ((+$note?->partial_trimester_2 ?? 0) + (+$note?->integrating_project_2 ?? 0) + (+$note?->evaluation_mechanism_2 ?? 0)) / 10;
+            $thirdTrimesterNote = ((+$note?->partial_trimester_3 ?? 0) + (+$note?->integrating_project_3 ?? 0) + (+$note?->evaluation_mechanism_3 ?? 0)) / 10;
+            $finalNote = ((($firstTrimesterNote + $secondTrimesterNote + $thirdTrimesterNote) / 3.33333333333333)+ ((+$note?->project_final/10) ?? 0));
+            if($finalNote < 7) {
+                $tuition->approved = 0;
+                $tuition->save();
+                return;
+            }
+        }
+
+        $tuition->approved = 1;
+        $tuition->save();
     }
 
     /**
@@ -234,6 +270,7 @@ class NoteController extends Controller
         $note->update($mergeData);
         // szkmcdkw
         // Note::updateOrCreate($mergeData);
+        $this->verifiedApprovedCourse($request->parallel_id, $request->student_id);
 
         return response()->json([
             'success' => true,

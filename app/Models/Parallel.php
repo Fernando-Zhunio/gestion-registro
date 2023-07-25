@@ -22,9 +22,9 @@ class Parallel extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function students()
+    public function tuitions()
     {
-        return $this->hasMany(Student::class);
+        return $this->hasMany(Tuition::class);
     }
 
     public function schedules()

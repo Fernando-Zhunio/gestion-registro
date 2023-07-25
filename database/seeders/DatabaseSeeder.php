@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
                 CourseSeeder::class,
                 ParallelSeeder::class,
                 SubjectSeeder::class,
+                TeacherSeeder::class,
+                TuitionSeeder::class,
             ]
         );
     }

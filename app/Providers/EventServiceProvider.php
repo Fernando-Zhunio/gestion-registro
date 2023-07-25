@@ -30,7 +30,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Parallel::observe(ParallelObserver::class);
-        Student::observe(StudentObserver::class);
+        // Student::observe(StudentObserver::class);
     }
 
     /**

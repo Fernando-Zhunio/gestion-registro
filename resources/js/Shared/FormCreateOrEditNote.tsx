@@ -320,7 +320,7 @@ export function InputsTrimester({
         [0, 0, 0]
     );
     useEffect(() => {
-        console.log(watchPartialFirst);
+        // console.log(watchPartialFirst);
         const partial = (
             (watchPartialFirst.reduce((a: number, b: number) => (+a || 0) + (+b || 0), 0) ||
                 0) / 10

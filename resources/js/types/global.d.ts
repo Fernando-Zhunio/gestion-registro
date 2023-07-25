@@ -36,9 +36,10 @@ export interface ResponseDataPaginator<T = any> {
     total: number;
 }
 
-export interface ResponsePaginator<T = any> {
+export interface ResponsePaginator<T = any, T2 = any> {
     success: boolean;
     data: ResponseDataPaginator<T>;
+    metadata?: T2;
 }
 
 export interface PaginatorEvent {

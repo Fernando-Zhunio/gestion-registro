@@ -7,6 +7,7 @@ use App\Http\Requests\StoreparallelRequest;
 use App\Http\Requests\UpdateparallelRequest;
 use App\Models\Course;
 use App\Models\Student;
+use App\Models\Tuition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -24,9 +25,9 @@ class ParallelController extends Controller
         $parallels = Parallel::search($search)
         ->paginate($pageSize);
         $parallels->getCollection()->map(function ($parallel) use($currentState) {
-            $countStudents = Student::where('parallel_id', $parallel->id)->whereHas('tuitions', function ($query) use( $currentState) {
-                $query->where('period_id', $currentState->period_id);
-            })->count();
+            $countStudents = Tuition::where('parallel_id', $parallel->id)
+            ->where('period_id', $currentState->period_id)
+            ->count();
             $parallel->registered = $countStudents;
             return $parallel;
         });

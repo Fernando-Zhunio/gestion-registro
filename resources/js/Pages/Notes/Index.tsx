@@ -12,8 +12,11 @@ import { ResponsePaginator } from "@/types/global";
 // import { CreateOrEditNote } from "./CreateOrEditNote";
 import { showAlert } from "@/Helpers/alerts";
 import { Link, useForm } from "@inertiajs/react";
+import { IStudent } from "../Students/types/student.types";
+import { ISubject } from "../Subjects/types/subject.types";
+import Avatar from "@mui/material/Avatar";
 
-const NotesIndex = ({ data }: ResponsePaginator<INote>) => {
+const NotesIndex = ({ data, metadata: {subjects}  }: ResponsePaginator<IStudent, {subjects: ISubject}>) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dataEdit, setDataEdit] = useState<INote | undefined>(undefined);
     function openPeriod(row: INote | undefined): void {
@@ -50,6 +53,49 @@ const NotesIndex = ({ data }: ResponsePaginator<INote>) => {
         })
     }
 
+    const templateNotes = function(subjectId: number, notes: INote[]) {
+        const note = notes.find((note) => note.subject_id === subjectId);
+        if (note) {
+            const firstTrimesterNote = ((+note?.partial_trimester_1 || 0) + (+note?.integrating_project_1 || 0) + (+note?.evaluation_mechanism_1 || 0)) / 10;
+            const secondTrimesterNote = ((+note?.partial_trimester_2 || 0) + (+note?.integrating_project_2 || 0) + (+note?.evaluation_mechanism_2 || 0)) / 10;
+            const thirdTrimesterNote = ((+note?.partial_trimester_3 || 0) + (+note?.integrating_project_3 || 0) + (+note?.evaluation_mechanism_3 || 0)) / 10;
+
+            const finalNote = (((firstTrimesterNote + secondTrimesterNote + thirdTrimesterNote) / 3.33333333333333)+ ((+note?.project_final/10) || 0));
+
+            return <div className="text-gray-500 text-sm flex gap-2 content-note-index" key={note.id}>
+            <p className={`text-white ${finalNote >= 7 ? 'bg-green-700' : 'bg-red-700'}`}>Esta materia fue <strong>{finalNote >= 7 ? 'APROBADA' : 'REPROBADA'} con promedio final de {finalNote.toFixed(2)}</strong></p>
+            <div>Primer semestre:</div>
+            <div className="mb-2 shadow p-2">
+                <p className="border-r-2">Parcial 1: <span className="text-blue-950">{note?.partial_trimester_1}</span></p>
+                <p className="border-r-2">P. integrador 1: <span className="text-blue-950">{note?.integrating_project_1}</span></p>
+                <p className="border-r-2">E. evaluador 1: <span className="text-blue-950">{note?.evaluation_mechanism_1}</span></p>
+                <p>Promedio: <span>{firstTrimesterNote}</span></p>
+            </div>
+            <div>Segundo semestre:</div>
+            <div className="mb-2 shadow p-2">
+                <p className="border-r-2">Parcial 2: <span className="text-blue-950">{note?.partial_trimester_2}</span></p>
+                <p className="border-r-2">P. integrador 2: <span className="text-blue-950">{note?.integrating_project_2}</span></p>
+                <p className="border-r-2">E. evaluador 2: <span className="text-blue-950">{note?.evaluation_mechanism_2}</span></p>
+                <p >Promedio: <span>{secondTrimesterNote}</span></p>
+
+            </div>
+            <div>Tercer semestre:</div>
+            <div className="mb-2 shadow p-2">
+                <p className="border-r-2">Parcial 3: <span className="text-blue-950">{note?.partial_trimester_3}</span></p>
+                <p className="border-r-2">P. integrador 3: <span className="text-blue-950">{note?.integrating_project_3}</span></p>
+                <p className="border-r-2">E. evaluador 3: <span className="text-blue-950">{note?.evaluation_mechanism_3}</span></p> 
+                <p>Promedio: <span>{thirdTrimesterNote}</span></p>
+
+            </div>
+            <p>Proyecto Final: <span className="text-blue-950">{note?.project_final}</span></p>
+        </div>;
+        } else {
+            return <div>
+                No hay notas
+            </div>
+        }
+    }
+
     return (
         <div className="">
             <SearchBarComponent
@@ -61,83 +107,35 @@ const NotesIndex = ({ data }: ResponsePaginator<INote>) => {
                     <Link href="/notes/create" className="btn-custom btn-create">Gestor Nota</Link>
                 </>}
             >
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow sx={{
-                                "&:last-child td, &:last-child th": {
-                                    fontWeight: "bold",
-                                    color: 'gray'
-                                }
-                            }}>
-                                <TableCell>Id</TableCell>
-                                <TableCell>Estudiante</TableCell>
-                                <TableCell>Materia</TableCell>
-                                <TableCell>Profesor</TableCell>
-                                <TableCell>Periodo</TableCell>
-                                <TableCell>Aporte 1</TableCell>
-                                <TableCell>P. I. 1</TableCell>
-                                <TableCell>M. E. 1</TableCell>
-                                <TableCell>Aporte 2</TableCell>
-                                <TableCell>P. I. 2</TableCell>
-                                <TableCell>M. E. 2</TableCell>
-                                <TableCell>Aporte 3</TableCell>
-                                <TableCell>P. I. 3</TableCell>
-                                <TableCell>M. E. 3</TableCell>
-                                <TableCell>Proyecto Final</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {data?.data?.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                >
-                                    <TableCell>
-                                        {row.id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.student?.first_name} {row.student?.last_name}
-                                    </TableCell>
-                                    <TableCell>{row.subject?.name} - {row.subject?.course?.name}</TableCell>
-                                    <TableCell>{row.teacher?.first_name} - {row.teacher?.last_name}</TableCell>
-                                    <TableCell>
-                                        {row.period?.promotion}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.partial_trimester_1}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.integrating_project_1}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.evaluation_mechanism_1}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.partial_trimester_2}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.integrating_project_2}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.evaluation_mechanism_2}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.partial_trimester_3}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.integrating_project_3}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.evaluation_mechanism_3}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.project_final}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <div>
+                    <div className="grid grid-cols-1 gap-3 ">
+                        {
+                            data?.data?.map((student) => (
+                                <div className="shadow p-4 rounded-lg">
+                                    <div className="flex gap-2 items-center"> 
+                                        <Avatar src={student?.photo} />
+                                        <div className="line-highlight">
+                                            <p className="m-0">{student?.first_name} {student?.last_name}</p>
+                                            <small className="text-gray-500">{student?.doc_number}</small>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div className="grid grid-cols-3">
+                                        {
+                                            subjects.map((subject:ISubject) => (
+                                                <div className="p-4 shadow m-2">
+                                                    <p>{subject.name}</p>
+                                                    {templateNotes(subject.id, (student as any)?.['current_notes'])}
+                                                </div>
+                                            ))
+                                        }
+                                        
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
             </SearchBarComponent>
 
             {/* <CreateOrEditNote setIsOpen={setIsOpen} isOpen={isOpen} data={dataEdit || undefined} state="create" /> */}

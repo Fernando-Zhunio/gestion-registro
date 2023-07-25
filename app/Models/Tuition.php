@@ -11,13 +11,12 @@ class Tuition extends Model
     use Search, HasFactory;
 
     protected $fillable = [
-        // 'doc_type',
-        // 'doc_number',
         'status',
         'approved',
         'student_id',
         'course_id',
         'period_id',
+        'parallel_id',
     ];
 
     public function student()
@@ -33,6 +32,11 @@ class Tuition extends Model
     public function period()
     {
         return $this->belongsTo('App\Models\Period');
+    }
+
+    public function parallel()
+    {
+        return $this->belongsTo('App\Models\parallel');
     }
 
 }

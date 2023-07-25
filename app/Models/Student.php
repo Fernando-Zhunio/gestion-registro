@@ -25,7 +25,7 @@ class Student extends Model
         'course_id',
         'representative_id',
         'user_id',
-        'parallel_id',
+        // 'parallel_id',
     ];
 
     public function course()
@@ -48,12 +48,16 @@ class Student extends Model
         return $this->hasMany('App\Models\Tuition');
     }
 
-    public function parallel()
-    {
-        return $this->belongsTo('App\Models\parallel');
-    }
+    // public function parallel()
+    // {
+    //     return $this->belongsTo('App\Models\parallel');
+    // }
 
     public function notes() {
         return $this->hasMany('App\Models\Note');
     }
+
+    public function currentNotes() {
+        return $this->notes()->where('period_id', currentState()->period_id);
+    } 
 }

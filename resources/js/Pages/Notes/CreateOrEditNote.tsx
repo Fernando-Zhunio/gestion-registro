@@ -37,7 +37,7 @@ import Typography from "@mui/material/Typography";
 
 interface CreateOrEditNoteProps {
     state: "create" | "edit";
-    data?: IParallel[];
+    data?: {parallels: IParallel[]};
 }
 
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
@@ -163,7 +163,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                             <option value="" className="text-gray-500">
                                 Seleccione una opción
                             </option>
-                            {data?.map((item) => {
+                            {data?.parallels?.map((item) => {
                                 return (
                                     <option key={item.id} value={item.id}>
                                         {item.name}
@@ -191,9 +191,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                 }}
                             >
                                 <option value="">
-                                    <span className="text-gray-500">
                                         Seleccione una opción
-                                    </span>
                                 </option>
                                 {subjects?.map((item) => {
                                     return (
