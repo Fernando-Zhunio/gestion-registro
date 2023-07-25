@@ -54,7 +54,7 @@ const SelectSearch = ({
                     ...moreParams,
                 },
             })
-        console.log(response);    
+        console.log(response.data.data);    
         const data = response.data.data.data;
         const data2 = data.map(
             cbMap ||

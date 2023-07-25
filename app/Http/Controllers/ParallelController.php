@@ -49,6 +49,15 @@ class ParallelController extends Controller
         ]);
     }
 
+    public function getParallelsByRoleAndPeriod(Request $request) {
+        $period_id = $request->get('period_id', null) ?? currentState()->period_id;
+        $parallels = getParallelsByRoleAndPeriod($period_id);
+        return response()->json([
+            'success' => true,
+            'data' => $parallels
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

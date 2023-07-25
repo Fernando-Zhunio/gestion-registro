@@ -17,6 +17,8 @@ use App\Http\Controllers\TuitionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Controllers\PrinterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,22 +46,11 @@ Route::get('/', //function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('auth-info', function () {
-        // /**
-        //  * @var \App\Models\User $user
-        //  */
-        // $user = auth()->user();
-        // $myRoles = $user->roles()->get();
-        // $sidebar = [];
-        // if($user->hasRole('super-admin')) {
-        //     $sidebar = SidebarItem::getAllItems();
-        // } else {
-        //     $sidebar = SidebarItem::getItemsByRole($myRoles);
-        // }
         return [
             // 'isSuperAdmin' => $user->hasRole('super-admin'),
             'user' => auth()->user(),
-            'currentState' => currentState(),
-            // 'roles' => $myRoles->toArray(),
+            'currentState' => currentState()->load('period'),
+            'periods' => getPeriodByRole(),
             'sidebar' => [
                 'links' => SidebarItem::getItemsByRole(),
             ],
@@ -105,6 +96,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
     });
 
+    Route::prefix('printers')->group(function() {
+        Route::get('/students/{student}/promotion_certificate', [PrinterController::class, 'promotionCertificate'])->name('notes.index');
+
+    });
+
     Route::prefix('students')->group(function () {
         Route::get('/', [StudentController::class, 'index'])->name('students.index');
         Route::get('/create', [StudentController::class, 'create'])->name('students.create');
@@ -120,6 +116,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/parallels', [TuitionController::class, 'parallelsIndex'])->name('tuitions.parallels');
         // Route::get('{tuition}/edit', [TuitionController::class, 'edit'])->name('tuitions.edit');
         Route::post('/', [TuitionController::class, 'store'])->name('tuitions.store');
+        Route::post('/students/{student}', [TuitionController::class, 'renew'])->name('tuitions.renew');
         // Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
         Route::delete('/{tuition}', [TuitionController::class, 'destroy'])->name('tuitions.destroy');
         Route::get('/students', [TuitionController::class, 'students'])->name('tuitions.student');
@@ -148,6 +145,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ParallelController::class, 'index'])->name('parallels.index');
         Route::get('/create', [ParallelController::class, 'create'])->name('parallels.create');
         Route::get('/courses', [ParallelController::class, 'courses'])->name('parallels.courses');
+        Route::get('/by-role', [ParallelController::class, 'getParallelsByRoleAndPeriod'])->name('parallels.getParallelsByRoleAndPeriod');
         Route::post('/', [ParallelController::class, 'store'])->name('parallels.store');
         Route::put('/{parallel}', [ParallelController::class, 'update'])->name('parallels.update');
         Route::delete('/{parallel}', [ParallelController::class, 'destroy'])->name('parallels.destroy');
@@ -168,6 +166,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/academic')->group(function () {
         Route::get('/', [AcademicController::class, 'index'])->name('academic.index');
         Route::get('/periods', [AcademicController::class, 'getPeriods'])->name('academic.periods');
+        Route::get('/periods-next', [AcademicController::class, 'getPeriodsNext'])->name('academic.getPeriodsNext');
+        Route::post('periods/{period}/period-next', [AcademicController::class, 'changePeriod'])->name('academic.changePeriod');
     });
 });
 

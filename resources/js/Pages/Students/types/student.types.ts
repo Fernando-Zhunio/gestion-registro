@@ -1,6 +1,7 @@
 import { IParallel } from "@/Pages/Parallels/types/parallel.types";
 import { ICourse } from "../../Courses/types/course.types";
 import { INote } from "@/Pages/Notes/types/note.types";
+import { ITuition } from "@/Pages/Tuitions/types/tuition";
 
 export interface IStudent {
     id: number;
@@ -22,4 +23,5 @@ export interface IStudent {
     parallel_id: number;
     parallel?: IParallel;
     notes?: INote[];
+    tuitions?: ITuition[];
 }

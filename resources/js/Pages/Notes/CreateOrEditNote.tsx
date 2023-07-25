@@ -172,14 +172,6 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                             })}
                         </Select>
                         <div className="mt-3">
-                            {/* <SelectSearch
-                                readOnly={true}
-                                disabled={true}
-                                path={`/notes/parallels/${watchParallel}/subjects`}
-                                control={control}
-                                name="subject_id"
-                                label="Materia"
-                            /> */}
                             <Select
                                 disabled={isLoading}
                                 name="subject_id"
@@ -226,57 +218,6 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                 </div>
                             </div>
                         </div>
-                        {/* <Table size="small" className="table-auto">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Foto</TableCell>
-                                    <TableCell>Nombre</TableCell>
-                                    <TableCell>Apellido</TableCell>
-                                    <TableCell>D.I</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {students.map((student) => (
-                                    <TableRow
-                                        className="cursor-pointer"
-                                        onClick={() => {
-                                            selectedStudent(student);
-                                        }}
-                                        hover
-                                        key={student.id}
-                                    >
-                                        <TableCell className="rounde">
-                                            <div>
-                                                <img
-                                                    src={student.photo}
-                                                    className="h-10 w-10 object-cover rounded-full"
-                                                    alt="student"
-                                                />
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            {student.first_name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {student.last_name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {student.doc_number}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                                {students.length === 0 && (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={4}
-                                            className="text-center text-gray-500"
-                                        >
-                                            No hay datos
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table> */}
                         <List>
                             {students.map((student) => {
                                 return (
@@ -307,25 +248,6 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                                     >
                                                         # {student.doc_number}
                                                     </Typography>
-                                                    {/* {student.notes && (
-                                                        <>
-                                                            <br />
-                                                            {`
-                                                            a1: ${student.notes[0].partial_trimester_1} | 
-                                                            p1: ${student.notes[0].integrating_project_1} |
-                                                            e1: ${student.notes[0].evaluation_mechanism_1} `}
-                                                            <br />
-                                                            {`
-                                                            a2: ${student?.notes?.[0].partial_trimester_2} |
-                                                            p2: ${student?.notes?.[0].integrating_project_2} |
-                                                            e2: ${student?.notes?.[0].evaluation_mechanism_2} `}
-                                                            <br />
-                                                            {`a3: ${student.notes?.[0].partial_trimester_3} | 
-                                                            p3: ${student.notes?.[0].integrating_project_3} |
-                                                            e3: ${student.notes?.[0].evaluation_mechanism_3}
-                                                            `}
-                                                        </>
-                                                    )} */}
                                                 </>
                                             }
                                         />
@@ -351,6 +273,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                             <small># ID: {selectStudent?.doc_number}</small>
                         </div>
                         <FormCreateOrEditNote
+                            parallel_id={watchParallel}
                             student_id={selectStudent?.id}
                             subject_id={watchSubject}
                             note={note}

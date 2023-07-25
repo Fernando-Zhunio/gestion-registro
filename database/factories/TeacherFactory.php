@@ -25,7 +25,7 @@ class TeacherFactory extends Factory
             'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->address(),
             'doc_type' => $this->faker->randomElement([1, 2,3]),
-            'doc_number' => $this->faker->randomNumber(),
+            'doc_number' => strval($this->faker->numberBetween(1000000000, 9999999999)),
             'birthday' => $this->faker->date(),
             'academic_title' => $this->faker->jobTitle(),
             'working_day' => $this->faker->date(),

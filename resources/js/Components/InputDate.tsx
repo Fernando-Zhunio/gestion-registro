@@ -24,6 +24,7 @@ export default function InputDate({
         new AirDatepicker(`#${name}`, {
             locale: localeEs,
             dateFormat: "yyyy-MM-dd",
+            classes:'z-2000',
             onSelect: function ({ date, formattedDate, datepicker }) {
                 setValue(name, formattedDate);
             },

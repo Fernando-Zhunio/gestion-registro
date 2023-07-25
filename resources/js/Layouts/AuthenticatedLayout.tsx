@@ -11,6 +11,7 @@ import { useFetch } from "@/Hooks/UseFetch";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { AppContext, AppContextProvider } from "@/Context/AppContext";
+import { IPeriod } from "@/Models/period";
 
 export default function Authenticated({
     header,
@@ -19,7 +20,8 @@ export default function Authenticated({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
     // const { data: auth } = useFetch("/auth-info");
-    const {setAppInfo} = useContext(AppContext)
+    const {setAppInfo} = useContext(AppContext);
+    const [period, setPeriod] = useState<IPeriod | null>(null);
     const [auth, setAuth] = useState<any | null>(null);
     useEffect(() => {
         axios
@@ -27,7 +29,9 @@ export default function Authenticated({
             .then((res) => {
                 console.log({res: res.data.user });
                 setAuth(res.data)
+
                 setAppInfo(res.data)
+                setPeriod(res.data.currentState.period)
             })
             .catch((err) => {
                 console.log({ err });
@@ -96,6 +100,9 @@ export default function Authenticated({
                                                 </Dropdown.Link>
                                             </Dropdown.Content>
                                         </Dropdown>
+                                    </div>
+                                    <div className="ml-3 relative">
+                                        {period?.promotion}
                                     </div>
                                 </div>
 

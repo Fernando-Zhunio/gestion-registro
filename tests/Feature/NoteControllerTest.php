@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\NoteController;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
@@ -23,20 +24,11 @@ class NoteControllerTest extends TestCase
         $period_id = currentState()->period_id;
         $parallel_id = 1;
 
-        $students = Student::whereHas('tuitions', function ($query) use ($parallel_id, $period_id) {
-            $query->where('parallel_id', $parallel_id);
-            $query->where('period_id', $period_id);
-        })->with('currentNotes')->paginate(10);
-        $subjectsOfParallel = $this->_getSubjectByParallel($parallel_id, $period_id);
-        $students->getCollection()->map(function ($student) use($subjectsOfParallel) {
-            $student->notesBySubject = $subjectsOfParallel->map(function ($subject) use($student) {
-                $subject->note = $student->currentNotes->get($subject->id);
-                return $subject;
-            });
-            return $student;
-        });
-        dd($students, $subjectsOfParallel);
-
+        $noteController = new NoteController();
+        $result = $noteController->verifiedApprovedCourse(1,13);
+        dd($result);
+        // dd($students, $subjectsOfParallel);
+        $this->assertEquals(1, 0);
         // $response->assertStatus(200);
     }
 

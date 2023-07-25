@@ -146,7 +146,7 @@ const SearchBarComponent = ({
 
             <div className="mt-5">
                 {children}
-
+                
                 {withPaginator && (
                     <TablePagination
                         rowsPerPageOptions={rowsPerPageOptions || [10, 25, 50]}

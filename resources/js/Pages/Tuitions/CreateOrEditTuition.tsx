@@ -13,6 +13,8 @@ import { IParallel } from "../Parallels/types/parallel.types";
 import { useFetch } from "@/Hooks/UseFetch";
 import { useForm } from "react-hook-form";
 import { usePage } from "@inertiajs/react";
+import { Avatar } from "@mui/material";
+import axios from "axios";
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
@@ -23,6 +25,7 @@ interface CreateOrEditCourseProps {
 
 const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
     const [student, setStudent] = useState<IStudent | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [representative, setRepresentative] =
         useState<IRepresentative | null>(null);
     const [optionsSearch, setOptionsSearch] = useState({
@@ -130,6 +133,11 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
         setParallels(parallels.data);
     }
 
+    function saveInServer(data : any) {
+        console.log({data})
+        axios.post("/tuitions/students/"+student?.id, data);
+    }
+
 
     return (
         <div className="Container">
@@ -146,22 +154,25 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
             <Card>
                 <CardContent>
                     {student ? (
-                        <form className="col-span-12 border px-4 py-3 rounded-lg mt-5">
+                        <form onSubmit={handleSubmit(saveInServer)} className="col-span-12 border px-4 py-3 rounded-lg mt-5">
                             <div className="col-span-12 flex justify-between items-center">
-                                <h2 className="flex items-center text-slate-700 border-b-1 font-bold text-3xl">
-                                    <img
+                                <h2 className="flex items-center text-slate-700 border-b-1 font-bold text-2xl gap-2">
+                                    {/* <img
                                         className="h-16 w-16 object-cover rounded-full"
                                         src={student.photo || "/img/avatar.png"}
                                         alt="Current profile photo"
-                                    />{" "}
+                                    />{" "} */}
+                                    <Avatar
+                                        src={student.photo || "/img/avatar.png"}
+                                    />
                                     Estudiante
                                 </h2>
                                 <button
                                     onClick={(e) => setStudent(null)}
                                     type="button"
-                                    className="px-3 py-1 bg-slate-600 text-white rounded-sm my-2 shadow-sm"
+                                    className="btn-custom bg-red-700 text-white rounded-sm my-2 shadow-sm"
                                 >
-                                    El estudiante no existe
+                                    Quitar estudiante
                                 </button>
                             </div>
                             <hr />
@@ -297,7 +308,7 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                 </div>
                                 <div className="col-span-12 my-3">
                                     <button
-                                        // disabled={isLoading}
+                                        disabled={isLoading}
                                         className="rounded-md bg-slate-800 text-white px-3 py-2"
                                         type="submit"
                                     >

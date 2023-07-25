@@ -2,7 +2,6 @@ import { IPeriod } from "@/Models/period";
 import { ITeacher } from "@/Models/teacher";
 import { IStudent } from "@/Pages/Students/types/student.types";
 import { ISubject } from "@/Pages/Subjects/types/subject.types";
-import { ITuition } from "@/Pages/Tuitions/types/tuition";
 
 export interface INote {
     id: number;

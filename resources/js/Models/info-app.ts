@@ -3,7 +3,8 @@ import { IPeriod } from "@/Pages/Periods/types/period.types"
 export interface IAppInfo {
     user: User
     currentState: CurrentState
-    sidebar: Sidebar
+    sidebar: Sidebar;
+    periods: IPeriod[]
   }
   
   export interface User {

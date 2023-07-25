@@ -18,7 +18,7 @@
         @inertiaHead
     </head>
     <script>
-       const isAuthenticated = @json(Auth::check())
+    //    const isAuthenticated = @json(Auth::check())
     </script>
     <body class="font-sans antialiased">
         @inertia

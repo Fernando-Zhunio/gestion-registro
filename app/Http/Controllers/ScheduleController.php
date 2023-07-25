@@ -19,8 +19,7 @@ class ScheduleController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        
+    { 
         return Inertia::render('Schedules/Index', [
             'success' => true,
             'data' => [
@@ -31,11 +30,10 @@ class ScheduleController extends Controller
 
     public function schedulesByParallel(Request $request, $parallel_id)
     {
-        // $parallel_id = $request->get('parallel_id', null);
         $period_id = currentState()->period_id;
         $schedules = Schedule::with('teacher:id,first_name,last_name,doc_number', 'subject:id,name')
         ->where('period_id', $period_id)->where('parallel_id', $parallel_id)->get();
-        return response()->json(['data' => $schedules]);
+        return response()->json(['data' => $schedules, 'success' => true]);
     }
 
     public function parallelSearch(Request $response)
@@ -43,7 +41,7 @@ class ScheduleController extends Controller
         $search = $response->get('search', null);
         $pageSize = $response->get('pageSize', null);
         $parallels = Parallel::search($search)->paginate($pageSize);
-        return response()->json(['data' => $parallels]);
+        return response()->json(['data' => $parallels, 'success' => true]);
     }
 
     public function teacherSearch(Request $response)
@@ -51,7 +49,7 @@ class ScheduleController extends Controller
         $search = $response->get('search', null);
         $pageSize = $response->get('pageSize', null);
         $teachers = Teacher::search($search, 'first_name', ['last_name', 'doc_number'])->paginate($pageSize);
-        return response()->json(['data' => $teachers]);
+        return response()->json(['data' => $teachers, 'success' => true]);
     }
 
     public function subjectSearch(Request $response)
@@ -60,10 +58,8 @@ class ScheduleController extends Controller
         $pageSize = $response->get('pageSize', null);
         $course_id = $response->get('course_id', null);
         $courses = Subject::where('course_id', $course_id)->search($search)->paginate($pageSize);
-        return response()->json(['data' => $courses]);
+        return response()->json(['data' => $courses, 'success' => true]);
     }
-
-
 
     /**
      * Show the form for creating a new resource.

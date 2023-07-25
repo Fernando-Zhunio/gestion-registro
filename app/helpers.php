@@ -2,6 +2,7 @@
 
 use App\Models\CurrentState;
 use App\Models\Parallel;
+use App\Models\Period;
 use App\Models\Student;
 use Illuminate\Support\Facades\Cache;
 
@@ -76,5 +77,71 @@ if (!function_exists('validateParallel')) {
                 'No se puede asignar el cupo de este paralelo, ya que la cantidad de estudiantes registrados alcanzó el cupo máximo.'
             );
         }
+    }
+}
+
+if (!function_exists('getParallelsByRoleAndPeriod')) {
+    /**
+     * Retorna el listado de paralelos por rol y periodo
+     *
+     * @param Parallel $parallel
+     * @param int $period_id
+     */
+    function getParallelsByRoleAndPeriod(int $period_id)
+    {
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = auth()->user();
+        if ($user->hasRole('student')) {
+            $student_id = $user->student->id;
+            $parallel = Parallel::whereHas('tuitions', function ($query) use ($period_id, $student_id) {
+                $query->where('period_id', $period_id);
+                $query->where('student_id', $student_id);
+            })->get();
+            return $parallel;
+        } else  if ($user->hasRole('teacher')) {
+            $teacher_id = $user->teacher->id;
+            $parallel = Parallel::whereHas('schedules', function ($query) use ($period_id, $teacher_id) {
+                $query->where('period_id', $period_id);
+                $query->where('teacher_id', $teacher_id);
+            })->get();
+            return $parallel;
+        }
+
+        return Parallel::whereHas('tuitions', function ($query) use ($period_id) {
+            $query->where('period_id', $period_id);
+        })->get();
+    }
+}
+
+if (!function_exists('getPeriodByRole')) {
+    /**
+     * Retorna el listado de paralelos por rol y periodo
+     *
+     * @param Parallel $parallel
+     * @param int $period_id
+     */
+    function getPeriodByRole()
+    {
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = auth()->user();
+        if ($user->hasRole('student')) {
+            $student_id = $user->student->id;
+            $parallel = Period::whereHas('tuitions', function ($query) use ($student_id) {
+                $query->where('student_id', $student_id);
+            })->get();
+            return $parallel;
+        } else  if ($user->hasRole('teacher')) {
+            $teacher_id = $user->teacher->id;
+            $parallel = Period::whereHas('schedules', function ($query) use ($teacher_id) {
+                $query->where('teacher_id', $teacher_id);
+            })->get();
+            return $parallel;
+        }
+
+        return Period::get();
     }
 }

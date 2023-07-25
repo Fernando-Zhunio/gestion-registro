@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const FormCreateOrEditNote = ({ note = null, student_id, subject_id  }: { note?: INote | null, student_id?: number, subject_id?: number }) => {
+const FormCreateOrEditNote = ({ note = null, student_id, subject_id, parallel_id  }: { note?: INote | null, student_id?: number, subject_id?: number, parallel_id: number }) => {
     useEffect(() => {
         reset(patchValues({
             partial_trimester_1: 0,
@@ -56,7 +56,6 @@ const FormCreateOrEditNote = ({ note = null, student_id, subject_id  }: { note?:
 
     const watchProjectFinal = watch("project_final");
     useEffect(() => {
-        // const project_final = +getValues("project_final");
         const note =
             (ponderateFirst || 0) +
             (ponderateSecond || 0) +
@@ -78,14 +77,14 @@ const FormCreateOrEditNote = ({ note = null, student_id, subject_id  }: { note?:
     }
 
     const onSubmit = (data: INote) => {
-        // if (!parallel_id) {
-        //     showToast({
-        //         icon: "error",
-        //         title: "Error",
-        //         text: "Debe seleccionar un paralelo",
-        //     });
-        //     return;
-        // }
+        if (!parallel_id) {
+            showToast({
+                icon: "error",
+                title: "Error",
+                text: "Debe seleccionar un paralelo",
+            });
+            return;
+        }
         if (!subject_id) {
             showToast({
                 icon: "error",
@@ -110,7 +109,7 @@ const FormCreateOrEditNote = ({ note = null, student_id, subject_id  }: { note?:
             ...data,
             student_id,
             subject_id,
-            // parallel_id,
+            parallel_id,
         }
         if (note) {
             axios.put(`/notes/${note?.id}`, params).then((res) => {

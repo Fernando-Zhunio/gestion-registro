@@ -1,6 +1,6 @@
 export interface IPeriod {
     id: number;
-    description: string;
+    observation: string;
     start_date: string;
     end_date: string;
     promotion: string;

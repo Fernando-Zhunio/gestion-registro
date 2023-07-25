@@ -11,7 +11,7 @@ class Period extends Model
     use HasFactory, Search;
 
     protected $fillable = [
-        'description',
+        'observation',
         'start_date',
         'end_date',
         'promotion',

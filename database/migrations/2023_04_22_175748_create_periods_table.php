@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('periods', function (Blueprint $table) {
             $table->id();
-            $table->string('description');
+            $table->string('observation')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->string('promotion');

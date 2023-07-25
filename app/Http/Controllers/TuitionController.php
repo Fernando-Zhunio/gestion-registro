@@ -55,11 +55,12 @@ class TuitionController extends Controller
     {
         $search = $request->get('search', null);
         $pageSize = $request->get('pageSize', 10);
-        $currentPeriod = currentState()->period_id;
+        // $currentPeriod = currentState()->period_id;
         // return $currentPeriod;
-        $students = Student::search($search, 'first_name', ['last_name'])->whereHas('tuitions', function ($query) use ($currentPeriod) {
+        $students = Student::search($search, 'first_name', ['last_name'])
+        /* ->whereHas('tuitions', function ($query) use ($currentPeriod) {
             $query->where('period_id', $currentPeriod);
-        })->with('course')->paginate($pageSize);
+        }) */->with('course')->paginate($pageSize);
 
         return response()->json([
             'success' => true,
@@ -147,8 +148,9 @@ class TuitionController extends Controller
                 'student_id' => $student->id,
                 'period_id' => $currentPeriod,
                 'course_id' => $student->course_id,
+                'parallel_id' => $requestStudent['parallel_id'],
                 'status' => '1',
-                'approved' => '1'
+                'approved' => '0'
             ]);
             DB::commit();
             return to_route('tuitions.index');
@@ -159,6 +161,24 @@ class TuitionController extends Controller
                 'No se pudo crear la matricula intentelo nuevamente',
             );
         }
+    }
+
+    public function renew(Request $request, Student $student) {
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'parallel_id' => 'required|exists:parallels,id',
+        ], $request->all());
+        validateParallel($request->parallel_id, $request->course_id);
+        
+        Tuition::create([
+            'student_id' => $student->id,
+            'period_id' => currentState()->period_id,
+            'course_id' => $request->course_id,
+            'parallel_id' => $request->parallel_id,
+            'status' => '1',
+            'approved' => '0'
+        ]);
+
     }
 
     public function rulesStudent(): array

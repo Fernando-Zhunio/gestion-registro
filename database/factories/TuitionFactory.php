@@ -19,7 +19,7 @@ class TuitionFactory extends Factory
     {
         return [
             'status' => $this->faker->randomElement([1, 2, 3]),
-            'approved' => $this->faker->randomElement([1, 2]),
+            'approved' => strval($this->faker->randomElement([0, 1])),
             'student_id' => Student::factory()->create()->id,
             'course_id' => $this->faker->randomFloat(0, 1, 10),
             'period_id' => 1,

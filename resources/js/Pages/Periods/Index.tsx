@@ -58,7 +58,7 @@ const PeriodsIndex = ({data}: ResponsePaginator<IPeriod>) => {
                                     // }}
                                 >
                                     <TableCell>
-                                        {row.description}
+                                        {row.observation}
                                     </TableCell>
                                     <TableCell>
                                         {row.start_date}
@@ -78,7 +78,7 @@ const PeriodsIndex = ({data}: ResponsePaginator<IPeriod>) => {
                 </TableContainer>
             </SearchBarComponent>
 
-            <CreateOrEditPeriod setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/>
+            {isOpen && <CreateOrEditPeriod setIsOpen={setIsOpen}  isOpen={isOpen} period={dataEdit || undefined} isEdit/>}
         </div>
     );
 };
