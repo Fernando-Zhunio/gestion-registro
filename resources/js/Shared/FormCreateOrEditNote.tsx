@@ -102,7 +102,6 @@ const FormCreateOrEditNote = ({ note = null, student_id, subject_id, parallel_id
             return;
         }
 
-        console.log(data);
         setIsLoading(true);
 
         const params = {
@@ -130,6 +129,8 @@ const FormCreateOrEditNote = ({ note = null, student_id, subject_id, parallel_id
                 text: "Nota creada",
             })
             setIsLoading(false);
+            console.log(res.data.data)
+            note = res.data.data;
         }).catch((err: AxiosError) => {
             console.log(err);
             showToast({
@@ -146,73 +147,7 @@ const FormCreateOrEditNote = ({ note = null, student_id, subject_id, parallel_id
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="border border-gray-200 p-4 rounded-md mb-3">
                     <h3 className="text-2xl mb-2">Primer Trimestre</h3>
-                    {/* <div className="grid grid-cols-12 gap-4">
-                        <div className="col-span-3">
-                            <Input
-                                control={control}
-                                name="partial_trimester_1"
-                                label="Aporte 90%"
-                                type="number"
-                                onChange={(e: any) => {
-                                    if (
-                                        !isNaN(e.target.value) &&
-                                        e.target.value <= 90
-                                    ) {
-                                        setValue(
-                                            "partial_trimester_1",
-                                            e.target.value
-                                        );
-                                    }
-                                }}
-                            />
-                        </div>
-                        <div className="col-span-3">
-                            <Input
-                                control={control}
-                                name="integrating_project_1"
-                                label="Proyecto 5%"
-                                type="number"
-                                onChange={(e: any) => {
-                                    if (
-                                        !isNaN(e.target.value) &&
-                                        e.target.value <= 5
-                                    ) {
-                                        setValue(
-                                            "integrating_project_1",
-                                            e.target.value
-                                        );
-                                    }
-                                }}
-                            />
-                        </div>
-                        <div className="col-span-3">
-                            <Input
-                                control={control}
-                                name="evaluation_mechanism_1"
-                                label="Evaluación 5%"
-                                max={5}
-                                type="number"
-                                onChange={(e: any) => {
-                                    if (e.target.value <= 5) {
-                                        setValue(
-                                            "evaluation_mechanism_1",
-                                            e.target.value
-                                        );
-                                    }
-                                }}
-                            />
-                        </div>
-                        <div className="col-span-3 flex gap-2">
-                            <div className="border-r p-2">
-                                <div>Puntos</div>
-                                {partialFirst}
-                            </div>
-                            <div className="p-2">
-                                <div>Puntaje</div>
-                                {ponderateFirst}
-                            </div>
-                        </div>
-                    </div> */}
+                    
                     <InputsTrimester
                         control={control}
                         setValue={setValue}

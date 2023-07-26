@@ -1,5 +1,5 @@
 import DialogCustom from "@/Components/DialogCustom"
-import { Paginator } from "@/Components/Paginator"
+import { SearchPaginator } from "@/Components/Paginator"
 import { IPeriod } from "@/Models/period"
 import { useEffect, useState } from "react"
 
@@ -40,7 +40,7 @@ const IndexPeriods = () => {
                     }
                 </tbody>
             </table>
-            <Paginator path='/academic/periods' onData={getPeriods} />
+            <SearchPaginator path='/academic/periods' onData={getPeriods} />
             <DialogCustom
                 title="Crear Periodo"
                 open={isOpen}

@@ -1,44 +1,21 @@
 import { ResponsePaginator } from "@/types/global";
-// import {
-//     ScheduleComponent,
-//     Day,
-//     Week,
-//     WorkWeek,
-//     Month,
-//     Agenda,
-//     Inject,
-// } from "@syncfusion/ej2-react-schedule";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import AsyncSelect from "react-select/async";
+import { useCallback, useEffect, useMemo, useRef, useState, useContext } from "react";
 import { IParallel } from "../Parallels/types/parallel.types";
-import { useFetch } from "@/Hooks/UseFetch";
 import { ISchedule } from "./types/schedules.type";
-import Hours from "react-hours";
-// import { ManagerSchedule } from "./tools/schedules.tools";
 import CreateOrEditSchedule from "./components/CreateOrEditSchedule";
 import { ManagerSchedule } from "./tools/manager-schedule";
 import SelectSearch from "@/Shared/components/SelectSearch";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { showQuestion } from "@/Helpers/alerts";
+import { AppContext } from "@/Context/AppContext";
 
-function generarColorAleatorio() {
-    // Generar componentes de color RGB aleatorios entre 0 y 255
-    var r = Math.floor(Math.random() * 256);
-    var g = Math.floor(Math.random() * 256);
-    var b = Math.floor(Math.random() * 256);
-
-    // Combinar los componentes de color en un formato hexadecimal
-    var colorHex = "#" + r.toString(16) + g.toString(16) + b.toString(16);
-
-    return colorHex;
-}
 
 const IndexSchedule = ({
     data,
 }: ResponsePaginator<{ parallels: IParallel }>) => {
     const [schedule, setSchedule] = useState<ISchedule>();
-    // const tableRef = useRef<HTMLTableElement>(null);
+    const { role } = useContext(AppContext)
     const [schedulesHours, setSchedulesHours] = useState<any[]>(ManagerSchedule.getHours());
     const [schedulesDays, setSchedulesDays] = useState<{ value: any, label: string }[]>(ManagerSchedule.getDays());
     const [isOpen, setIsOpen] = useState(false);
@@ -50,10 +27,8 @@ const IndexSchedule = ({
     useEffect(() => {
         managerSchedule! = new ManagerSchedule('table-schedule');
         setManagerSchedule(managerSchedule);
-        console.log({ table: managerSchedule.getTable() });
+        if (role == 'teacher' || role == 'student') return
         managerSchedule.subscribeClickSchedule(async (schedule) => {
-            console.log('click schedule', schedule);
-            // alert('click schedule ' + schedule.schedule.id);
             const response = await showQuestion({
                 title: '¿Que desea hace al horario?',
                 cancelButtonText: 'Cancelar',
@@ -65,7 +40,6 @@ const IndexSchedule = ({
                 denyButtonText: 'Editar',
                 // confirmButtonColor: '#dc3545',
             });
-
             if (response.isConfirmed) {
                 const responseDelete = await showQuestion({
                     title: '¿Esta seguro de eliminar el horario?',
@@ -92,7 +66,7 @@ const IndexSchedule = ({
     }, []);
 
     const onClickCell = (e: any) => {
-
+        if (role == 'teacher' || role == 'student') return
         e.stopPropagation();
         if (!isCell(e)) return;
         setIsEdit(false);
@@ -129,7 +103,6 @@ const IndexSchedule = ({
     function getScheduleByParallel(parallelId: number) {
         axios.get(`/schedules/parallels/${parallelId}`)
             .then((response) => {
-                console.log(response.data);
                 managerSchedule?.refreshSchedules(response.data.data);
             })
     }
@@ -138,20 +111,25 @@ const IndexSchedule = ({
 
     return (
         <div>
-            <div className=" my-3">
-                <label htmlFor="name">Paralelos:</label>
-                <SelectSearch
-                    className="z-10"
-                    path="/schedules/parallels/search"
-                    control={control}
-                    name="paralelo_id"
-                    disabled={true}
-                    onChange={(e: any) => {
-                        setParallel(e.item);
-                        setBlockedHours(false);
-                        getScheduleByParallel(e.item.id);
-                    }}
-                />
+            <div>
+                <div className=" my-3">
+                    <label htmlFor="name">Paralelos:</label>
+                    <SelectSearch
+                        className="z-10"
+                        path="/schedules/parallels/search"
+                        control={control}
+                        name="paralelo_id"
+                        disabled={true}
+                        onChange={(e: any) => {
+                            setParallel(e.item);
+                            setBlockedHours(false);
+                            getScheduleByParallel(e.item.id);
+                        }}
+                    />
+                </div>
+                <div>
+                    
+                </div>
             </div>
             <div className="mt-4 relative">
                 {blockedHours && <div className="overlay-table"></div>}

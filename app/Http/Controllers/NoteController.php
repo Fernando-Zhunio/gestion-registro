@@ -7,6 +7,7 @@ use App\Models\Note;
 use App\Http\Requests\StorenoteRequest;
 use App\Http\Requests\UpdatenoteRequest;
 use App\Models\Parallel;
+use App\Models\Period;
 use App\Models\Schedule;
 use App\Models\Student;
 use App\Models\Subject;
@@ -43,19 +44,20 @@ class NoteController extends Controller
         ]);
     }
 
-    public function getParallels(Request $request)
+    public function getParallels(Request $request, Period $period)
     {
         /**
          * @var \App\Models\User $user
          */
-        $user = $request->user();
-        $teacher = $user?->teacher;
-        $isTeacher = $user->hasRole('teacher');
-        $search = $request->get('search', '');
-        $parallels = Parallel::search($search)->whereHas('schedules', function ($query) use ($teacher, $isTeacher) {
-            $isTeacher && $query->where('teacher_id', $teacher?->id);
-            $query->where('period_id', currentState()->period_id);
-        })->paginate();
+        // $user = $request->user();
+        // $teacher = $user?->teacher;
+        // $isTeacher = $user->hasRole('teacher');
+        // $search = $request->get('search', '');
+        // $parallels = Parallel::search($search)->whereHas('schedules', function ($query) use ($teacher, $isTeacher) {
+        //     $isTeacher && $query->where('teacher_id', $teacher?->id);
+        //     $query->where('period_id', currentState()->period_id);
+        // })->paginate();
+        $parallels = getParallelsByRoleAndPeriod($period->id);
         return response()->json([
             'success' => true,
             'data' => $parallels,
@@ -124,9 +126,9 @@ class NoteController extends Controller
                 $query->where('parallel_id', $parallel_id);
                 $query->where('period_id', $period_id);
             })
-            ->with('notes', function ($query) use ($user, $isTeacher, $period_id) {
-                $query->orWhere('period_id', $period_id)->first();
-            })
+            // ->with('notes', function ($query) use ($user, $isTeacher, $period_id) {
+            //     $query->orWhere('period_id', $period_id)->first();
+            // })
             ->paginate($pageSize);
         return response()->json([
             'success' => true,
@@ -154,9 +156,14 @@ class NoteController extends Controller
      */
     public function store(StorenoteRequest $request)
     {
-        $teacher = $request->user()->teacher;
+        // $teacher = $request->user()->teacher;
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = auth()->user();
         $data = $request->all();
-        if ($teacher) {
+        if ($user->hasRole('teacher')) {
+            $teacher = $user->teacher;
             $permissionTeacher = Schedule::where('teacher_id', $teacher->id)
                 ->where('period_id', currentState()->period_id)
                 ->where('parallel_id', $request->parallel_id)
@@ -165,7 +172,6 @@ class NoteController extends Controller
             if (!$permissionTeacher) {
                 validationException('teacher_id', 'El docente no tiene permisos para crear notas.');
             }
-            $data['teacher_id'] = $teacher->id;
         }
 
         $note = Note::where('student_id', $request->student_id)
@@ -183,13 +189,10 @@ class NoteController extends Controller
         $note = Note::create($mergeData);
 
         $this->verifiedApprovedCourse($request->parallel_id, $request->student_id);
-
         // szkmcdkw
-        // Note::updateOrCreate($mergeData);
-
         return response()->json([
             'success' => true,
-            'data' => $request->all(),
+            'data' => $note,
         ]);
     }
 

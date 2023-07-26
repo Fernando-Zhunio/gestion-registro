@@ -1,7 +1,7 @@
 import DialogCustom from "@/Components/DialogCustom";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { INote } from "./types/note.types";
 import Button from "@mui/material/Button";
 import axios from "axios";
@@ -21,7 +21,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Divider from "@mui/material/Divider";
 import Input from "@/Components/Input";
-import { Paginator } from "@/Components/Paginator";
+import { SearchPaginator } from "@/Components/Paginator";
 import FormCreateOrEditNote from "@/Shared/FormCreateOrEditNote";
 import { ISubject } from "../Subjects/types/subject.types";
 import List from "@mui/material/List";
@@ -37,33 +37,31 @@ import Typography from "@mui/material/Typography";
 
 interface CreateOrEditNoteProps {
     state: "create" | "edit";
-    data?: {parallels: IParallel[]};
+    data?: { parallels: IParallel[] };
 }
 
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     const { control, setValue, getValues, watch } = useForm({});
-
-    // const [state, setState] = useState<"create" | "edit">("create");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [note, setNote] = useState<INote>();
     const [students, setStudents] = useState<IStudent[]>([]);
     const [subjects, setSubjects] = useState<ISubject[]>([]);
     const [pathStudents, setPathStudents] = useState<string>("");
     const [selectStudent, setSelectStudent] = useState<IStudent | null>(null);
+    const searchPaginator = useRef(null);
 
     const watchParallel = watch("parallel_id");
     const watchSubject = watch("subject_id");
     console.log({ watchParallel });
     function onChangeParallel(e: any) {
         if (isLoading) return;
-        console.log({ e });
         setValue("parallel_id", e.target.value);
         setStudents([]);
         setSelectStudent(null);
         setValue("subject_id", "");
+        setSubjects([]);
         if (!e.target.value) return;
         searchNotesStudent(e.target.value);
-        setSubjects([]);
         getSubjects(e.target.value);
     }
 
@@ -98,12 +96,14 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
 
     function searchNotesStudent(parallels: string, student: string = "") {
         let path = `/notes/by-teacher/${parallels}`;
-        if (student) {
-            path += `?search=${student}`;
-        }
-        if (path == pathStudents) return;
+        // if (student) {
+        //     path += `?search=${student}`;
+        // }
+        // if (path == pathStudents) return;
         setIsLoading(true);
         setPathStudents(path);
+        console.log({ searchPaginator });
+        searchPaginator.current.getData(path);
     }
 
     function onData(data: IStudent[]) {
@@ -144,6 +144,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
             });
     }
 
+
     return (
         <div>
             <div>
@@ -151,41 +152,20 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                     <h2 className="text-3xl">Notas</h2>
                 </div>
                 <div className="grid grid-cols-12 gap-4">
-                    <div className="col-span-4 gap-4 ">
-                        <Select
-                            disabled={isLoading}
-                            name="parallel_id"
-                            label="Paralelo"
-                            placeholder="Buscar paralelo"
-                            control={control}
-                            onChange={onChangeParallel}
-                        >
-                            <option value="" className="text-gray-500">
-                                Seleccione una opción
-                            </option>
-                            {data?.parallels?.map((item) => {
-                                return (
-                                    <option key={item.id} value={item.id}>
-                                        {item.name}
-                                    </option>
-                                );
-                            })}
-                        </Select>
-                        <div className="mt-3">
+                    <div className="col-span-4 gap-4">
+                        <div className="shadow-md p-3 rounded-lg">
                             <Select
                                 disabled={isLoading}
-                                name="subject_id"
-                                label="Materia"
+                                name="parallel_id"
+                                label="Paralelo"
+                                placeholder="Buscar paralelo"
                                 control={control}
-                                onChange={(e) => {
-                                    setValue("subject_id", e.target.value);
-                                    setSelectStudent(null);
-                                }}
+                                onChange={onChangeParallel}
                             >
-                                <option value="">
-                                        Seleccione una opción
+                                <option value="" className="text-gray-500">
+                                    Seleccione una opción
                                 </option>
-                                {subjects?.map((item) => {
+                                {data?.parallels?.map((item) => {
                                     return (
                                         <option key={item.id} value={item.id}>
                                             {item.name}
@@ -193,84 +173,133 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                     );
                                 })}
                             </Select>
-                        </div>
-                        <div></div>
-                        <div className="mt-3">
-                            <div>
-                                <label htmlFor="student_id">Estudiante</label>
-                                <div className="flex items-center gap-3">
-                                    <div className="flex-grow">
-                                        <Input
-                                            disabled={isLoading}
-                                            name="student"
-                                            control={control}
-                                            placeholder="Buscar estudiante"
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    <button
-                                        onClick={handlerOnClickBtnSearchStudent}
-                                        className="bg-slate-800 rounded-md text-white px-3 py-2"
-                                        type="button"
-                                    >
-                                        Buscar
-                                    </button>
-                                </div>
+                            <div className="mt-3">
+                                <Select
+                                    disabled={isLoading}
+                                    name="subject_id"
+                                    label="Materia"
+                                    control={control}
+                                    onChange={(e) => {
+                                        setValue("subject_id", e.target.value);
+                                        setSelectStudent(null);
+                                    }}
+                                >
+                                    <option value="">
+                                        Seleccione una opción
+                                    </option>
+                                    {subjects?.map((item) => {
+                                        return (
+                                            <option
+                                                key={item.id}
+                                                value={item.id}
+                                            >
+                                                {item.name}
+                                            </option>
+                                        );
+                                    })}
+                                </Select>
                             </div>
-                        </div>
-                        <List>
-                            {students.map((student) => {
-                                return (
-                                    <ListItem
-                                        selected={selectStudent?.id === student.id}
-                                        onClick={(event) =>
-                                            selectedStudent(student)
-                                        }
-                                        key={student.id}
-                                    >
-                                        <ListItemAvatar>
-                                            <Avatar
-                                                alt="Remy Sharp"
-                                                src={student.photo}
-                                            />
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={`${student.first_name} ${student.last_name}`}
-                                            secondary={
-                                                <>
-                                                    <Typography
-                                                        sx={{
-                                                            display: "inline",
-                                                        }}
-                                                        component="span"
-                                                        variant="body2"
-                                                        color="text.primary"
+                            <hr />
+                            <div className="mt-3">
+                                <SearchPaginator
+                                    ref={searchPaginator}
+                                    onError={onError}
+                                    onData={onData}
+                                    path={pathStudents}
+                                    isDisabledBtn={!(!!watchParallel)}
+                                    placeholder="Buscar estudiante"
+                                >
+                                    <div>
+                                        <List>
+                                            {students.map((student) => {
+                                                return (
+                                                    <ListItem
+                                                        selected={
+                                                            selectStudent?.id ===
+                                                            student.id
+                                                        }
+                                                        onClick={(event) =>
+                                                            selectedStudent(
+                                                                student
+                                                            )
+                                                        }
+                                                        key={student.id}
                                                     >
-                                                        # {student.doc_number}
-                                                    </Typography>
-                                                </>
-                                            }
-                                        />
-                                    </ListItem>
-                                );
-                            })}
-                        </List>
-                        <Paginator
-                            onError={onError}
-                            onData={onData}
-                            path={pathStudents}
-                        />
+                                                        <ListItemAvatar>
+                                                            <Avatar
+                                                                alt="Remy Sharp"
+                                                                src={
+                                                                    student.photo
+                                                                }
+                                                            />
+                                                        </ListItemAvatar>
+                                                        <ListItemText
+                                                            primary={`${student.first_name} ${student.last_name}`}
+                                                            secondary={
+                                                                <>
+                                                                    <Typography
+                                                                        sx={{
+                                                                            display:
+                                                                                "inline",
+                                                                        }}
+                                                                        component="span"
+                                                                        variant="body2"
+                                                                        color="text.primary"
+                                                                    >
+                                                                        #{" "}
+                                                                        {
+                                                                            student.doc_number
+                                                                        }
+                                                                    </Typography>
+                                                                    <button className="hover:bg-blue-500 mx-2 bg-blue-600 px-2 py-1 text-white rounded-md">
+                                                                        Seleccionar
+                                                                    </button>
+                                                                </>
+                                                            }
+                                                        />
+                                                    </ListItem>
+                                                );
+                                            })}
+                                        </List>
+                                    </div>
+                                </SearchPaginator>
+                            </div>
+                            {/* <div className="mt-3">
+                                <div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex-grow">
+                                            <Input
+                                                disabled={isLoading}
+                                                name="student"
+                                                control={control}
+                                                placeholder="Buscar estudiante"
+                                                className="w-full"
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={onSearch}
+                                            className="bg-slate-800 rounded-md text-white px-3 py-2"
+                                            type="button"
+                                        >
+                                            Buscar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div> */}
+                        </div>
                     </div>
                     <div className="col-span-8 gap-5">
                         <div className="px-4">
-                            <div className="text-gray-500">
-                                Estudiante seleccionado:
+                            <div className="bg-blue-900 p-3 text-white my-2 rounded-lg">
+                                <div className="text-gray-400">
+                                    Estudiante seleccionado:
+                                </div>
+                                <h4 className="m-0">
+                                    {selectStudent?.first_name}{" "}
+                                    {selectStudent?.last_name}
+                                </h4>
+                                <small># ID: {selectStudent?.doc_number}</small>
                             </div>
-                            <h4 className="m-0">
-                                {selectStudent?.first_name}{" "}
-                                {selectStudent?.last_name}
-                            </h4>
-                            <small># ID: {selectStudent?.doc_number}</small>
                         </div>
                         <FormCreateOrEditNote
                             parallel_id={watchParallel}

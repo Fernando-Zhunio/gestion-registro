@@ -64,12 +64,7 @@ export default function IndexTuitions({data}: ResponsePaginator<ITuition>) {
                                     <TableCell>{row.period.promotion}</TableCell>
                                     <TableCell>
                                        <div className="flex gap-1">
-                                         {/* <Link href={"/tuitions/"+ row.id+ '/edit'}  className="btn-icon btn-c-edit">
-                                             <i className="fas fa-edit"></i>
-                                         </Link> */}
-                                         {/* <button onClick={() => deleteCourse(row.id)} className="btn-icon btn-c-edit">
-                                         <i className="fa-solid fa-trash text-red-600"></i>
-                                         </button> */}
+                                         <a href={`/printers/students/${row.student.id}/promotion_certificate`} target="_blank" className="bg-blue-400 px-2 rounded-md text-white shadow text-center">Certificado Promoción</a>
                                        </div>
                                     </TableCell>
                                     

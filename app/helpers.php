@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\CurrentState;
+use App\Models\Note;
 use App\Models\Parallel;
 use App\Models\Period;
 use App\Models\Student;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 
@@ -144,4 +146,24 @@ if (!function_exists('getPeriodByRole')) {
 
         return Period::get();
     }
+}
+
+
+if (!function_exists('addAverageInNotes')) {
+    function addAverageInNotes(Collection $notes): Collection
+    {
+        /**
+         * @var \App\Models\User $user
+         */
+        foreach ($notes as $key => $note) {
+            $note['averageFirstTrimester'] =( ($note?->partial_trimester_1 ?? 0) + ($note?->integrating_project_1 ?? 0) + ($note?->evaluation_mechanism_1 ?? 0)) / 10;
+            $note['averageSecondTrimester'] =( ($note?->partial_trimester_2 ?? 0) + ($note?->integrating_project_2 ?? 0) + ($note?->evaluation_mechanism_2 ?? 0)) / 10;
+            $note['averageThirdTrimester'] =( ($note?->partial_trimester_3 ?? 0) + ($note?->integrating_project_3 ?? 0) + ($note?->evaluation_mechanism_3 ?? 0)) / 10;
+            $note['noteFinal'] = round((($note['averageFirstTrimester']  + $note['averageSecondTrimester'] + $note['averageThirdTrimester']) / 3.3333333333) + (($note->project_final ?? 0) / 10), 2);
+            // dd($note, $note['noteFinal']);
+        }
+
+        return $notes;
+    }
+
 }

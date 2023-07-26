@@ -44,7 +44,7 @@
 
 <body>
     <div class="container px-4">
-        <header>
+        {{-- <header>
             <div class="text-center">
                 <img src="{{ asset('img/logo_ecuador.png') }}" alt="">
             </div>
@@ -58,45 +58,70 @@
 
             </div>
             <h2 class="text-center">CERTIFICADO DE PROMOCION</h2>
-        </header>
+        </header> --}}
         <div class="text-center">
             <h4>
-                <strong>{{ env('NAME_COLLEGE') }}</strong>
+                <strong>{{ env('NAME_COLLEGE') }}</strong> <br>
+                <strong>“MARIANO VALLA SAGÑAY”</strong>
             </h4>
+            <h5>COLTA – ECUADOR</h5>
+            <h5>Informe de calificaciones de 1er trimestre</h5>
         </div>
         <div>
-            <p>
-                De conformidad con lo prescrito en el Art. 197 del Reglamento General a la Ley Orgánica de Educación
-                Intercultural y demás
-                normativas vigentes, certifica que el/la estudiante
-            </p>
+           
             <h3 class="text-center">{{ $data['student']->first_name }} {{ $data['student']->last_name }}</h3>
-            <p><strong>Nivel: {{ $data['course']->name }} - BILINGÜE SIERRA</strong></p>
+            <p><strong>Nivel Educación: {{ $data['course']->name }} - BILINGÜE SIERRA</strong></p>
             <p>Se obtuvo las siguientes calificaciones durante el presente año lectivo.</p>
             <table class="table">
+                <thead>
+                    <tr>
+                        <th>Asignaturas</th>
+                        <th>Aporte</th>
+                        <th>Proyecto 1</th>
+                        <th>Evaluación</th>
+                        <th>Promedio</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr>
-                        <th rowspan="2">ASIGNATURA</th>
-                        <th colspan="2">
-                            PROMEDIO ANUAL
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>CALIFICACIÓN CUANTITATIVA</th>
-                        <th>EQUIVALENCIA</th>
-                    </tr>
-                    
                     @php
                         $acc = 0;
                         $countSubjects = $data['subjects']->count();
                     @endphp
                     @if ($countSubjects > 0)
                         @foreach ($data['subjects'] as $subject)
+                            @php
+                                $note = $data['notes']->where('subject_id', $subject->id)?->first();
+                                $trimesterKeyAverage = ['averageFirstTrimester', 'averageSecondTrimester', 'averageThirdTrimester']
+                            @endphp
                             <tr>
                                 <td>
-                                    {{ Normalizer::normalize($subject->name) }}
+                                    {{ $subject->name }}
                                 </td>
-                                <td>
+                                @if ($note)
+                                    <td>
+                                        {{-- {{ $note->{{'partial_trimester_'$data['trimester']}}-> }} --}}
+                                        {{ ($note->{'partial_trimester_'.$data['trimester']} /10) ?? 0 }}
+                                    </td>
+                                    <td>
+                                        {{ ($note->{'integrating_project_'.$data['trimester']} /10) ?? 0 }}
+                                    </td>
+                                    <td>
+                                        {{ ($note->{'evaluation_mechanism_'.$data['trimester']} /10) ?? 0 }}
+                                    </td>
+                                    <td>
+                                        @php
+                                            $acc += $note->{$trimesterKeyAverage[$data['trimester'] -1]} ?? 0;
+                                        @endphp
+                                        {{
+                                            $note->{$trimesterKeyAverage[$data['trimester'] -1]} ?? 0
+                                        }}
+                                    </td>
+                                @else
+                                    <td colspan="4"> 
+                                        No existen notas en esta materia
+                                    </td>
+                                @endif
+                                {{-- <td>
                                     @php
                                         $note = $data['notes']->where('subject_id', $subject->id)?->first()->noteFinal ?? 0;
                                         $acc += $note;
@@ -105,16 +130,16 @@
                                 </td>
                                 <td>
                                     {{ $note >= 7 ? 'APROBADO' : 'REPROBADO' }}
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                         <tr>
                             <td><strong>Promedio</strong> </td>
-                            <td>
-                                {{ $acc / $countSubjects ?? 0 }}
+                            <td colspan="3" style="border:none !important;">
+                                {{-- {{ $acc / $countSubjects ?? 0 }} --}}
                             </td>
                             <td>
-                                {{ $acc / $countSubjects ?? 0 >= 7 ? 'APROBADO' : 'REPROBADO' }}
+                                {{ $acc / $countSubjects }}
                             </td>
                         </tr>
                     @else

@@ -20,7 +20,7 @@ export default function Authenticated({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
     // const { data: auth } = useFetch("/auth-info");
-    const {setAppInfo} = useContext(AppContext);
+    const {setAppInfo, setRole} = useContext(AppContext);
     const [period, setPeriod] = useState<IPeriod | null>(null);
     const [auth, setAuth] = useState<any | null>(null);
     useEffect(() => {
@@ -29,12 +29,18 @@ export default function Authenticated({
             .then((res) => {
                 console.log({res: res.data.user });
                 setAuth(res.data)
-
+                console.log(res.data.user.roles[0].name)
+                setRole(res.data.user.roles[0].name)
+                if (!res.data.user.roles[0].name) {
+                alert('No se puede obtener la información del usuario');
+                throw 'No se puede obtener la información del usuario';
+                }
                 setAppInfo(res.data)
                 setPeriod(res.data.currentState.period)
             })
             .catch((err) => {
-                console.log({ err });
+                alert('No se puede obtener la información del usuario');
+                throw err;
             });
             console.log({ auth });
     }, []);

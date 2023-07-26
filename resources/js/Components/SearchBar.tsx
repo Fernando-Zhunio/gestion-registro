@@ -29,6 +29,7 @@ const SearchBarComponent = ({
     withPaginator,
     rowsPerPageOptions,
     width = 2,
+    params = {},
     onIsLoading,
     onSetData,
     onError,
@@ -83,19 +84,16 @@ const SearchBarComponent = ({
 
     async function fetchUrl(page: number | null = null) {
         handlerSetIsLoading(true);
-        const params = {
+        const _params = {
             search: searchText,
             page: page || paginator.page + 1,
             pageSize: paginator.pageSize,
+            ...params,
         }
-        router.get(path, params, {
+        router.get(path, _params, {
             preserveState: true,
             onSuccess: (data: any) => {
-                // handlerSetData((data.props.data as any)?.data || []);
-                // paginator = {
-                //     page: props.data.current_page
-                // }
-                // console.log(data.props.data)
+
                 setPaginator({
                     page: data.props.data.current_page - 1,
                     pageSize: data.props.data.per_page,

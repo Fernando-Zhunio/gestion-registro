@@ -18,43 +18,40 @@ import Avatar from "@mui/material/Avatar";
 import SelectSearch from "@/Shared/components/SelectSearch";
 import Select from "@/Components/Select";
 import { AppContext } from "@/Context/AppContext";
-
+import { IParallel } from "../Parallels/types/parallel.types";
+declare const axios
 const NotesIndex = ({
     data,
     metadata: { subjects },
 }: ResponsePaginator<IStudent, { subjects: ISubject }>) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dataEdit, setDataEdit] = useState<INote | undefined>(undefined);
-    const { appInfo } = useContext(AppContext)
+    const [parallels, setParallels] = useState<IParallel[]>([]);
+    const [params, setParams] = useState({
+        period_id: null,
+        parallel_id: null,
+    });
+    const { appInfo } = useContext(AppContext);
     function openPeriod(row: INote | undefined): void {
         setDataEdit(row);
         setIsOpen(true);
     }
     const { delete: _deleteCourse } = useForm();
 
-    function deleteCourse(id: number): void {
-        showAlert({
-            title: "¿Estás seguro de eliminar esta nota?",
-            text: "Esta acción no se puede deshacer",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Si, eliminar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                _deleteCourse(`/notes/${id}`, {
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        showAlert({
-                            title: "Nota eliminado",
-                            icon: "success",
-                        });
-                    },
-                    onError: () => {},
-                    preserveState: true,
-                });
-            }
+    function getParallelsByPeriod(period_id: number) {
+        setParallels([]);
+        setParams((curr) => {
+            return { ...curr, period_id };
         });
+        axios
+            .get(`/notes/periods/${period_id}/parallels`)
+            .then(({ data }) => {
+                // console.log({ data });
+                setParallels(data.data);
+            })
+            .catch(() => {
+                setParallels([]);
+            });
     }
 
     // function getPeriods
@@ -192,21 +189,41 @@ const NotesIndex = ({
                 title="Notas"
                 withPaginator={true}
                 notLoadDataOnInit={true}
+                params={params}
                 buttons={
                     <>
-                        
                         <select
+                            onChange={(e) =>
+                                getParallelsByPeriod(+e.target.value)
+                            }
+                            value={params.period_id}
                             className={`border py-2 px-3 border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm`}
                         >
-                            {
-                                appInfo?.periods?.map(res => {
-                                    return (
-                                        <option key={res.id} selected={res.id == appInfo.currentState.period_id} value={res.id}>
-                                            {res.promotion}
-                                        </option>
-                                    )
-                                })
-                            }
+                            <option value="">Seleccion un periodo</option>
+                            {appInfo?.periods?.map((res) => {
+                                return (
+                                    <option key={res.id} value={res.id}>
+                                        {res.promotion}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                        <select
+                            value={params.parallel_id}
+                            className={`border py-2 px-3 border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm`}
+                            onChange={(e) => {
+                                setParams((curr) => {
+                                    return { ...curr, parallel_id: +e.target.value };
+                                });
+                            }}
+                        >
+                            {parallels?.map((res) => {
+                                return (
+                                    <option key={res.id} value={res.id}>
+                                        {res.name}
+                                    </option>
+                                );
+                            })}
                         </select>
                         <Link
                             href="/notes/create"
@@ -222,7 +239,9 @@ const NotesIndex = ({
                         {data?.data?.length < 1 && (
                             <div className="flex flex-col items-center">
                                 <img width={300} src="img/empty.svg" alt="" />
-                                <h3 className="text-gray-500 text-3xl">No se encontraron notas</h3>
+                                <h3 className="text-gray-500 text-3xl">
+                                    No se encontraron notas
+                                </h3>
                             </div>
                         )}
                         {data?.data?.map((student) => (
@@ -241,8 +260,8 @@ const NotesIndex = ({
                                             className={`ml-2 rounded-md px-2 py-1 text-white ${
                                                 student?.tuitions?.[0]
                                                     .approved == "1"
-                                                    ? "bg-red-600"
-                                                    : "bg-green-600"
+                                                    ? "bg-green-600"
+                                                    : "bg-red-600"
                                             }`}
                                         >
                                             {student?.tuitions?.[0].approved ==

@@ -1,4 +1,4 @@
-import { Paginator } from "@/Components/Paginator";
+import { SearchPaginator } from "@/Components/Paginator";
 import { useEffect, useContext, useState } from "react";
 import IndexPeriods from "./components/IndexPeriods";
 import SelectSearch from "@/Shared/components/SelectSearch";
