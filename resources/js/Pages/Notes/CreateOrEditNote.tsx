@@ -103,7 +103,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         setIsLoading(true);
         setPathStudents(path);
         console.log({ searchPaginator });
-        searchPaginator.current.getData(path);
+        (searchPaginator?.current as any)?.getData(path);
     }
 
     function onData(data: IStudent[]) {

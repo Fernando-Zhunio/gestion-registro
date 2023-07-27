@@ -6,7 +6,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<
     return (
         <>
             <Head title="Welcome" />
-            <Dashboard />
+            {/* <Dashboard /> */}
         </>
     );
 }

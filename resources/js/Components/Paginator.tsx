@@ -2,7 +2,7 @@ import { getDataPaginateService } from "@/services/paginate-service";
 import { PaginatorEvent } from "@/types/global";
 import TablePagination from "@mui/material/TablePagination";
 import { InputHTMLAttributes, forwardRef, useEffect, useState, useImperativeHandle } from "react";
-import { BsSearch } from "react-icons/bs";
+// import { BsSearch } from "react-icons/bs";
 
 type PropSearchPaginator = InputHTMLAttributes<HTMLInputElement> & {
     loadInit?: boolean;
@@ -11,7 +11,7 @@ type PropSearchPaginator = InputHTMLAttributes<HTMLInputElement> & {
     path: string;
     isDisabledBtn?: boolean;
     onData: (data: any) => any;
-    onError: (data: any) => any;
+    onError?: (data: any) => any;
 };
 export const SearchPaginator = forwardRef(
     (
@@ -79,7 +79,7 @@ export const SearchPaginator = forwardRef(
                 .catch((error) => {
                     setIsLoading(false);
                     console.log(error)
-                    onError(error);
+                   onError && onError(error);
                 });
         }
         return (
@@ -98,7 +98,8 @@ export const SearchPaginator = forwardRef(
                         disabled={isLoading || isDisabledBtn}
                         className="center w-10 h-10 m-2 rounded-full bg-slate-800 shadow-sm"
                     >
-                        <BsSearch className="text-white" />
+                        {/* <BsSearch className="text-white" /> */}
+                        <i className="fa-solid fa-magnifying-glass text-white"></i>
                     </button>
                 </div>
                 <div>{children}</div>

@@ -34,7 +34,7 @@ export class ManagerSchedule {
                 // e.stopPropagation();
                 if (!this.isCell(e)) return;
                 if (!this.overlayElement) {
-                    const columnIndex = e.target?.cellIndex;
+                    const columnIndex = (e.target as any)?.cellIndex;
                     this.generateElement(columnIndex, this.initialCell?.parentNode.rowIndex);
                 }
                 // this.overlayElement = td

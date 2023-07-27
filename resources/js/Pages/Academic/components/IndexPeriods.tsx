@@ -40,13 +40,13 @@ const IndexPeriods = () => {
                     }
                 </tbody>
             </table>
-            <SearchPaginator path='/academic/periods' onData={getPeriods} />
+            {/* <SearchPaginator path='/academic/periods' onError={} onData={getPeriods} />
             <DialogCustom
                 title="Crear Periodo"
                 open={isOpen}
             >
                 
-            </DialogCustom>
+            </DialogCustom> */}
 
         </div>
     )

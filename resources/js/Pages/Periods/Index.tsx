@@ -78,7 +78,7 @@ const PeriodsIndex = ({data}: ResponsePaginator<IPeriod>) => {
                 </TableContainer>
             </SearchBarComponent>
 
-            {isOpen && <CreateOrEditPeriod setIsOpen={setIsOpen}  isOpen={isOpen} period={dataEdit || undefined} isEdit/>}
+            {isOpen && <CreateOrEditPeriod setIsOpen={setIsOpen}  isOpen={isOpen} period={dataEdit || undefined}/>}
         </div>
     );
 };

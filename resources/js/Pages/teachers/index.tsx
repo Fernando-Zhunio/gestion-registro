@@ -8,13 +8,13 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { VscPersonAdd } from "react-icons/vsc";
+// import { VscPersonAdd } from "react-icons/vsc";
 const IndexTeacher = ({ data }: { data: { data: ITeacher[] } }) => {
     function Buttons() {
         return (
             <>
                 <Link href="/teachers/create" className="btn-create btn-custom">
-                    <VscPersonAdd /> Agregar
+                    + Agregar
                 </Link>
             </>
         );

@@ -1,8 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import { FaChalkboardTeacher } from 'react-icons/fa';
-import { IoIosAdd } from 'react-icons/io';
 import { Card, CardContent, IconButton, Typography } from '@mui/material';
 export default function Dashboard({ auth, currentState }: PageProps<{ currentState: any }>) {
     return (
@@ -33,7 +31,7 @@ export default function Dashboard({ auth, currentState }: PageProps<{ currentSta
                             <span className='text-7xl'>{currentState.number_teachers}</span>
                             <div className="px-2 flex items-center justify-between w-full">
                                 <div className='flex items-center'>
-                                    <FaChalkboardTeacher className="mr-2" />
+                                <i className="fa-solid fa-chalkboard-user"></i>
                                     Profesores
                                 </div>
                                 <div className='flex gap-1'>
@@ -51,7 +49,7 @@ export default function Dashboard({ auth, currentState }: PageProps<{ currentSta
                             <span className='text-7xl'>{currentState.number_teachers}</span>
                             <div className="px-2 flex items-center justify-between w-full">
                                 <div className='flex items-center'>
-                                    <FaChalkboardTeacher className="mr-2" />
+                                <i className="fa-solid fa-chalkboard-user"></i>
                                     Profesores
                                 </div>
                                 <div className='flex gap-1'>
@@ -69,7 +67,7 @@ export default function Dashboard({ auth, currentState }: PageProps<{ currentSta
                             <span className='text-7xl'>{currentState.number_teachers}</span>
                             <div className="px-2 flex items-center justify-between w-full">
                                 <div className='flex items-center'>
-                                    <FaChalkboardTeacher className="mr-2" />
+                                <i className="fa-solid fa-chalkboard-user"></i>
                                     Profesores
                                 </div>
                                 <div className='flex gap-1'>
@@ -87,7 +85,7 @@ export default function Dashboard({ auth, currentState }: PageProps<{ currentSta
                             <span className='text-7xl'>{currentState.number_teachers}</span>
                             <div className="px-2 flex items-center justify-between w-full">
                                 <div className='flex items-center'>
-                                    <FaChalkboardTeacher className="mr-2" />
+                                <i className="fa-solid fa-chalkboard-user"></i>
                                     Profesores
                                 </div>
                                 <div className='flex gap-1'>

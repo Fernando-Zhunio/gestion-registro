@@ -19,15 +19,17 @@ import SelectSearch from "@/Shared/components/SelectSearch";
 import Select from "@/Components/Select";
 import { AppContext } from "@/Context/AppContext";
 import { IParallel } from "../Parallels/types/parallel.types";
-declare const axios
+import axios from "axios";
+// import {feFuncG} 
+// declare const axios
 const NotesIndex = ({
     data,
     metadata: { subjects },
-}: ResponsePaginator<IStudent, { subjects: ISubject }>) => {
+}: ResponsePaginator<IStudent, any>) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dataEdit, setDataEdit] = useState<INote | undefined>(undefined);
     const [parallels, setParallels] = useState<IParallel[]>([]);
-    const [params, setParams] = useState({
+    const [params, setParams] = useState<any>({
         period_id: null,
         parallel_id: null,
     });
@@ -40,12 +42,12 @@ const NotesIndex = ({
 
     function getParallelsByPeriod(period_id: number) {
         setParallels([]);
-        setParams((curr) => {
+        setParams((curr: any) => {
             return { ...curr, period_id };
         });
         axios
             .get(`/notes/periods/${period_id}/parallels`)
-            .then(({ data }) => {
+            .then(({ data }:{data:{data: IParallel[]}}) => {
                 // console.log({ data });
                 setParallels(data.data);
             })
@@ -211,8 +213,8 @@ const NotesIndex = ({
                         <select
                             value={params.parallel_id}
                             className={`border py-2 px-3 border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm`}
-                            onChange={(e) => {
-                                setParams((curr) => {
+                            onChange={(e: any) => {
+                                setParams((curr: any) => {
                                     return { ...curr, parallel_id: +e.target.value };
                                 });
                             }}

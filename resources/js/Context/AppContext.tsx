@@ -2,7 +2,7 @@ import { IAuthInfo } from "@/Models/auth";
 import { IAppInfo } from "@/Models/info-app";
 import { createContext, useState } from "react";
 
-const AppContext = createContext<{appInfo:IAppInfo, setAppInfo: (info: IAppInfo)=> any, role: string | null, setRole: (role: string)=> any}>({} as any);
+const AppContext = createContext<{appInfo:IAppInfo, setAppInfo: (info: IAppInfo)=> any, role: string | null, setRole: (role: string | null)=> any}>({} as any);
 
 const AppContextProvider = ({children, }: any) => {
     const [appInfo, setAppInfo] = useState<IAppInfo>({} as IAppInfo);
@@ -12,7 +12,7 @@ const AppContextProvider = ({children, }: any) => {
         role,
         setAppInfo,
         setRole
-    };
+    } as any;
     return (
         <AppContext.Provider value={contextValue}>
             {children}

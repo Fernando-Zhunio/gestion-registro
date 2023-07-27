@@ -14,7 +14,7 @@
         <script defer="" src="https://kit.fontawesome.com/3450a829c3.js" crossorigin="anonymous"></script>
         @routes
         @viteReactRefresh
-        @vite(['resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx"])
+        @vite(['resources/js/app.tsx'])
         @inertiaHead
     </head>
     <script>
