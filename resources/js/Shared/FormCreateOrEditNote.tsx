@@ -209,6 +209,7 @@ const FormCreateOrEditNote = ({
                                 control={control}
                                 name="observation"
                                 label="Observación"
+                                disabled={disabled}
                                 rows={3}
                             />
                         </div>
@@ -219,6 +220,8 @@ const FormCreateOrEditNote = ({
                                 label="Proyecto final 10%"
                                 type="number"
                                 max={10}
+                                min={0}
+                                disabled={disabled}
                                 onChange={(e: any) => {
                                     if (
                                         !isNaN(e.target.value) &&

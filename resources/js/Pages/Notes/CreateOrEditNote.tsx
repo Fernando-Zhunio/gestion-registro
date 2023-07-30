@@ -85,6 +85,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
 
     function onChangePeriod(e: any) {
         if (isLoading) return;
+        setValue("period_id", e.target.value);
         setValue("parallel_id", '');
         setStudents([]);
         setSelectStudent(null);

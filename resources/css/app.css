@@ -493,7 +493,7 @@ button:disabled.is-loading::after {
    box-shadow: 0 0px 22px 4px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)
 }
 
-input[disabled] {
+input[disabled], textarea[disabled], select[disabled] {
     cursor: not-allowed;
     opacity: 0.6;
     background-color: #dadada;
