@@ -96,17 +96,20 @@ class NoteController extends Controller
         /**
          * @var \App\Models\User $user
          */
+        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
         $user = request()->user();
         $teacher = $user->teacher;
         $isTeacher = $user->hasRole('teacher');
-        $parallels = Parallel::whereHas('schedules', function ($query) use ($teacher, $isTeacher) {
-            $isTeacher && $query->where('teacher_id', $teacher?->id);
-            $query->where('period_id', currentState()->period_id);
-        })->get();
+        // $parallels = Parallel::whereHas('schedules', function ($query) use ($teacher, $isTeacher, $period_id) {
+        //     $isTeacher && $query->where('teacher_id', $teacher?->id);
+        //     $query->where('period_id', $period_id);
+        // })->get();
+        $periods = getPeriodByRole();
+        $parallels = getParallelsByRoleAndPeriod($period_id);
 
         return Inertia::render('Notes/CreateOrEditNote', [
             'success' => true,
-            'data' => ['parallels' => $parallels],
+            'data' => ['currentPeriod' => $period_id, 'periods' => $periods, 'parallels' => $parallels],
         ]);
     }
 

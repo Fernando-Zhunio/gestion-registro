@@ -44,7 +44,7 @@ interface CreateOrEditNoteProps {
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     const { control, setValue, getValues, watch } = useForm({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [note, setNote] = useState<INote>();
+    const [note, setNote] = useState<INote | null>();
     const [students, setStudents] = useState<IStudent[]>([]);
     const [subjects, setSubjects] = useState<ISubject[]>([]);
     const [pathStudents, setPathStudents] = useState<string>("");
@@ -61,6 +61,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         setSelectStudent(null);
         setValue("subject_id", "");
         setSubjects([]);
+        setNote(null);
         if (!e.target.value) return;
         searchNotesStudent(e.target.value);
         getSubjects(e.target.value);
@@ -80,7 +81,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         const student = getValues("student");
         console.log({ parallel });
         if (isLoading) return;
-        searchNotesStudent(parallel, student);
+        searchNotesStudent(parallel);
     }
 
     function onChangePeriod(e: any) {
@@ -109,10 +110,6 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
 
     function searchNotesStudent(parallels: string) {
         let path = `/notes/by-teacher/${parallels}?period_id=${wathPeriod}`;
-        // if (student) {
-        //     path += `?search=${student}`;
-        // }
-        // if (path == pathStudents) return;
         setIsLoading(true);
         setPathStudents(path);
         console.log({ searchPaginator });

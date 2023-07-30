@@ -45,7 +45,7 @@
 }
 
 .MuiTableCell-head {
-    font-family: Figtree, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    font-family: 'Nunito', sans-serif !important;
 }
 
 .sidebar {
@@ -218,7 +218,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .MuiTableCell-head {
-    font-family: Figtree, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    font-family: 'Nunito', sans-serif !important;
 }
 
 .MuiPaper-root {
@@ -475,4 +475,26 @@ button:disabled.is-loading::after {
     /* border:1px solid #dadada; */
     padding-inline: 4px;
     display: inline-block;
+}
+
+.section-note-trimester {
+    position: relative;
+}
+
+.section-note-trimester h3 {
+    position: absolute;
+    top:-10px;
+    background-color: white;
+    padding-inline: 5px;
+    font-size: 13px;
+    color: #818181;
+}
+.shadow-lg-fz {
+   box-shadow: 0 0px 22px 4px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)
+}
+
+input[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: #dadada;
 }
