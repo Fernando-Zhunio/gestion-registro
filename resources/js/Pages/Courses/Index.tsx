@@ -94,11 +94,11 @@ const CoursesIndex = ({data}: ResponsePaginator<ICourse>) => {
                                     <TableCell>{row.nivel}</TableCell>
                                     <TableCell>
                                        <div className="flex gap-1">
-                                         <button onClick={() => openPeriod(row)} className="btn-icon btn-c-edit">
+                                         <button onClick={() => openPeriod(row)} className="btn-icon">
                                              <i className="fas fa-edit"></i>
                                          </button>
-                                         <button onClick={() => deleteCourse(row.id)} className="btn-icon btn-c-edit">
-                                         <i className="fa-solid fa-trash text-red-600"></i>
+                                         <button onClick={() => deleteCourse(row.id)} className="btn-icon">
+                                         <i className="fa-solid fa-trash"></i>
                                          </button>
                                        </div>
                                     </TableCell>
@@ -110,7 +110,7 @@ const CoursesIndex = ({data}: ResponsePaginator<ICourse>) => {
                 </TableContainer>
             </SearchBarComponent>
 
-            <CreateOrEditCourse setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/>
+            {isOpen && <CreateOrEditCourse setIsOpen={setIsOpen}  isOpen={isOpen} course={dataEdit || undefined}/>}
         </div>
     );
 };

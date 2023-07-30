@@ -22,9 +22,9 @@ class UpdatecourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:courses,name',
+            'name' => 'required|string|max:255|unique:courses,name,'. $this->route('course')->id,
             'description' => 'nullable|string|max:255',
-            'nivel' => 'required|string|max:255|unique:courses,name',
+            'nivel' => 'required|string|max:255|unique:courses,name,'. $this->route('course')->id,
             // 'journey' => 'required|string|max:255|in:Diurno,Nocturno',
             // 'specialty_id' => 'required|integer|exists:specialties,id|unique:course,name'
         ];

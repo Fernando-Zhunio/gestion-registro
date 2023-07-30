@@ -12,6 +12,7 @@ import Input from "@/Components/Input";
 import { useForm } from "react-hook-form";
 import InputDate from "@/Components/InputDate";
 import { patchValues } from "@/Helpers/patchValues";
+import { showToast } from "@/Helpers/alerts";
 
 interface CreateOrEditPeriodProps {
     // state: "create" | "edit";
@@ -114,8 +115,12 @@ export const CreateOrEditPeriod = ({
                 setIsOpen(false);
             },
             onError: (e: any) => {
-                console.log({ e });
                 setIsLoading(false);
+                showToast({
+                    icon: "error",
+                    text: Object.values(e).join("\n"),
+                    title: "Error al crear el estudiante",
+                });
             },
         };
         if (!period) {
@@ -133,44 +138,11 @@ export const CreateOrEditPeriod = ({
             >
                 <form onSubmit={handleSubmit(saveInServer)}>
                     <div className="grid grid-cols-1 gap-5">
-                        {/* <TextField
-                            required
-                            fullWidth
-                            label="Descripción"
-                            variant="filled"
-                            value={form.description}
-                            onChange={handlerSetForm}
-                            id="description"
-                            error={Boolean(errors.description)}
-                            helperText={errors.description}
-                        ></TextField> */}
-
                         <Input
                             name="observation"
                             control={control}
                             label="Observación"
                         />
-
-                        {/* <DatePicker
-                            onChange={(value: any) =>
-                                handleChangeDate("start_date", value)
-                            }
-                            className="w-full"
-                            slotProps={{
-                                textField: {
-                                    required: true,
-                                    variant: "filled",
-                                    fullWidth: true,
-                                    error: Boolean(errors.start_date),
-                                    helperText: errors.start_date,
-                                },
-                            }}
-                            format="DD/MM/YYYY"
-                            disableFuture
-                            value={form.start_date}
-                            label="Inicio"
-                            maxDate={form.end_date}
-                        /> */}
                         <InputDate
                             control={control}
                             readOnly
@@ -180,27 +152,6 @@ export const CreateOrEditPeriod = ({
                             setValue={setValue}
                         />
 
-                        {/* <DatePicker
-                            onChange={(value: any) =>
-                                handleChangeDate("end_date", value)
-                            }
-                            className="w-full"
-                            slotProps={{
-                                textField: {
-                                    required: true,
-                                    variant: "filled",
-                                    fullWidth: true,
-                                    error: Boolean(errors.end_date),
-                                    helperText: errors.end_date,
-                                },
-                            }}
-                            format="DD/MM/YYYY"
-                            disableFuture
-                            minDate={form.start_date}
-                            value={form.end_date}
-                            label="Finalización"
-                        /> */}
-
                         <InputDate
                             readOnly
                             control={control}
@@ -209,18 +160,6 @@ export const CreateOrEditPeriod = ({
                             rules={{ required: true }}
                             setValue={setValue}
                         />
-
-                        {/* <TextField
-                            fullWidth
-                            required
-                            label="Promoción"
-                            variant="filled"
-                            value={form.promotion}
-                            id="promotion"
-                            onChange={handlerSetForm}
-                            error={Boolean(errors.promotion)}
-                            helperText={errors.promotion}
-                        ></TextField> */}
 
                         <Input
                             control={control}
@@ -251,24 +190,6 @@ export const CreateOrEditPeriod = ({
                         </div>
                     </div>
                 </form>
-                {/* <DialogActions slot="slotAction">
-                    <Button
-                        disabled={isLoading}
-                        onClick={saveInServer}
-                        variant="contained"
-                        color="success"
-                    >
-                        Guardar{" "}
-                        <i className="fa-regular fa-paper-plane ml-2"></i>
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => setIsOpen(false)}
-                    >
-                        Cerrar <i className="fa-solid fa-xmark ml-2"></i>
-                    </Button>
-                </DialogActions> */}
             </DialogCustom>
         </div>
     );

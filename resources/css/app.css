@@ -94,7 +94,11 @@
     gap: 4px;
     border: none;
     border-radius: 10px;
-    padding: 5px 15px;
+    padding: 8px 15px;
+}
+
+.btn-custom:hover {
+    opacity: 0.9;
 }
 
 .btn {
@@ -146,6 +150,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: gray;
 }
 
 .btn-icon:hover {
