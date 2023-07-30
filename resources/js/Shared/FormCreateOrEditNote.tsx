@@ -283,7 +283,7 @@ export function InputsTrimester({
 }) {
     const [partialFirst, setPartialFirst] = useState(0);
     const [ponderateFirst, setPonderateFirst] = useState(0);
-    const watchPartialFirst = watch(
+    const wPartial = watch(
         [
             `partial_trimester_${trimester}`,
             `integrating_project_${trimester}`,
@@ -292,18 +292,19 @@ export function InputsTrimester({
         [0, 0, 0]
     );
     useEffect(() => {
-        // console.log(watchPartialFirst);
+        console.log(wPartial);
         const partial = (
-            (watchPartialFirst.reduce(
-                (a: number, b: number) => (+a || 0) + (+b || 0),
-                0
-            ) || 0) / 10
+            // (watchPartialFirst.reduce(
+            //     (a: number, b: number) => (+a || 0) + (+b || 0),
+            //     0
+            // ) || 0) / 10
+            (((+wPartial[0] || 0)* 9) + ((+wPartial[1] || 0)/2) + ((+wPartial[2] || 0)/2)) / 10
         ).toFixed(2);
         const ponderate = (+partial / 3.3333333333333).toFixed(2);
         setPonderateFirst(ponderate as any);
         setPartialFirst(+partial);
         getData(+partialFirst, +ponderateFirst);
-    }, [watchPartialFirst]);
+    }, [wPartial]);
     return (
         <div className="grid grid-cols-12 gap-4">
             <div className="col-span-3">
@@ -313,14 +314,10 @@ export function InputsTrimester({
                     label="Aporte 90%"
                     type="number"
                     min="0"
-                    max="90"
+                    max="10"
                     disabled={disabled}
                     onChange={(e: any) => {
-                        console.log(
-                            e.target.value,
-                            !isNaN(e.target.value) && e.target.value <= 90
-                        );
-                        if (!isNaN(e.target.value) && e.target.value <= 90) {
+                        if (!isNaN(e.target.value) && e.target.value <= 10) {
                             setValue(
                                 `partial_trimester_${trimester}`,
                                 e.target.value
@@ -336,11 +333,10 @@ export function InputsTrimester({
                     label="Proyecto 5%"
                     type="number"
                     min="0"
-                    max="5"
+                    max="10"
                     disabled={disabled}
                     onChange={(e: any) => {
-                        console.log(e.target.value, e.target.value <= 5);
-                        if (!isNaN(e.target.value) && e.target.value <= 5) {
+                        if (!isNaN(e.target.value) && e.target.value <= 10) {
                             setValue(
                                 `integrating_project_${trimester}`,
                                 e.target.value
@@ -355,10 +351,11 @@ export function InputsTrimester({
                     name={`evaluation_mechanism_${trimester}`}
                     label="Evaluación 5%"
                     disabled={disabled}
-                    max={5}
+                    min={0}
+                    max={10}
                     type="number"
                     onChange={(e: any) => {
-                        if (e.target.value <= 5) {
+                        if (!isNaN(e.target.value) && e.target.value <= 10) {
                             setValue(
                                 `evaluation_mechanism_${trimester}`,
                                 e.target.value

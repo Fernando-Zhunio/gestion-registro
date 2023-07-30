@@ -38,7 +38,11 @@ import { IPeriod } from "@/Models/period";
 
 interface CreateOrEditNoteProps {
     state: "create" | "edit";
-    data?: { parallels: IParallel[], currentPeriod: number, periods: IPeriod[] };
+    data?: {
+        parallels: IParallel[];
+        currentPeriod: number;
+        periods: IPeriod[];
+    };
 }
 
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
@@ -54,6 +58,10 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     const watchParallel = watch("parallel_id");
     const watchSubject = watch("subject_id");
     const wathPeriod = watch("period_id");
+
+    useEffect(() => {
+        setValue("period_id", data?.currentPeriod);
+    }, [data]);
     function onChangeParallel(e: any) {
         if (isLoading) return;
         setValue("parallel_id", e.target.value);
@@ -66,35 +74,18 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         getSubjects(e.target.value);
     }
 
-    function handlerOnClickBtnSearchStudent() {
-        const parallel = getValues("parallel_id");
-        if (!parallel) {
-            showToast({
-                icon: "error",
-                title: "Error",
-                text: "Debe seleccionar un paralelo",
-            });
-            setIsLoading(false);
-            return;
-        }
-        const student = getValues("student");
-        console.log({ parallel });
-        if (isLoading) return;
-        searchNotesStudent(parallel, student);
-    }
-
     function onChangePeriod(e: any) {
         if (isLoading) return;
         setValue("period_id", e.target.value);
-        setValue("parallel_id", '');
+        setValue("parallel_id", "");
         setStudents([]);
         setSelectStudent(null);
-        setValue("subject_id", '');
+        setValue("subject_id", "");
         setSubjects([]);
         // if (!e.target.value) return;
         // searchNotesStudent(null);
         // getSubjects(e.target.value);
-    } 
+    }
 
     const getSubjects = useCallback(
         (watchParallel: number) => {
@@ -109,14 +100,9 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     );
 
     function searchNotesStudent(parallels: string) {
-        let path = `/notes/by-teacher/${parallels}?period_id=${wathPeriod}`;
-        // if (student) {
-        //     path += `?search=${student}`;
-        // }
-        // if (path == pathStudents) return;
+        let path = `/notes/parallels/${parallels}/search-students?period_id=${wathPeriod}`;
         setIsLoading(true);
         setPathStudents(path);
-        console.log({ searchPaginator });
         (searchPaginator?.current as any)?.getData(path);
     }
 
@@ -158,7 +144,6 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
             });
     }
 
-
     return (
         <div>
             <div>
@@ -169,24 +154,33 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                     <div className="col-span-4 gap-4">
                         <div className="shadow-lg-fz p-3 rounded-xl">
                             <div className="mt-3">
-                            <Select
-                                disabled={isLoading}
-                                name="period_id"
-                                label="Periodo"
-                                control={control}
-                                onChange={onChangePeriod}
-                            >
-                                <option value="" className="text-gray-500">
-                                    Seleccione una opción
-                                </option>
-                                {data?.periods?.map((item) => {
-                                    return (
-                                        <option selected={item.id === data.currentPeriod} key={item.id} value={item.id}>
-                                            {item.promotion} {data.currentPeriod === item.id && "(Actual)" }
-                                        </option>
-                                    );
-                                })}
-                            </Select>
+                                <Select
+                                    disabled={isLoading}
+                                    name="period_id"
+                                    label="Periodo"
+                                    control={control}
+                                    onChange={onChangePeriod}
+                                >
+                                    <option value="" className="text-gray-500">
+                                        Seleccione una opción
+                                    </option>
+                                    {data?.periods?.map((item) => {
+                                        return (
+                                            <option
+                                                selected={
+                                                    item.id ===
+                                                    data.currentPeriod
+                                                }
+                                                key={item.id}
+                                                value={item.id}
+                                            >
+                                                {item.promotion}{" "}
+                                                {data.currentPeriod ===
+                                                    item.id && "(Actual)"}
+                                            </option>
+                                        );
+                                    })}
+                                </Select>
                             </div>
                             <Select
                                 disabled={isLoading}
@@ -240,7 +234,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                     onError={onError}
                                     onData={onData}
                                     path={pathStudents}
-                                    isDisabledBtn={!(!!watchParallel)}
+                                    isDisabledBtn={!!!watchParallel}
                                     placeholder="Buscar estudiante"
                                 >
                                     <div>
@@ -251,11 +245,6 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                                         selected={
                                                             selectStudent?.id ===
                                                             student.id
-                                                        }
-                                                        onClick={(event) =>
-                                                            selectedStudent(
-                                                                student
-                                                            )
                                                         }
                                                         key={student.id}
                                                     >
@@ -285,7 +274,16 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                                                             student.doc_number
                                                                         }
                                                                     </Typography>
-                                                                    <button className="hover:bg-blue-500 mx-2 bg-blue-600 px-2 py-1 text-white rounded-md">
+                                                                    <button
+                                                                        onClick={(
+                                                                            event
+                                                                        ) =>
+                                                                            selectedStudent(
+                                                                                student
+                                                                            )
+                                                                        }
+                                                                        className="hover:bg-blue-500 mx-2 bg-blue-600 px-2 py-1 text-white rounded-md"
+                                                                    >
                                                                         Seleccionar
                                                                     </button>
                                                                 </>

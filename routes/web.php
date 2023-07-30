@@ -90,7 +90,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/periods/{period}/parallels', [NoteController::class, 'getParallels'])->name('notes.parallels');
         Route::get('/parallels/{parallel}/subjects', [NoteController::class, 'getSubjectByParallel'])->name('notes.getSubjectByParallel');
         Route::get('/student/{student}', [NoteController::class, 'getNoteByStudent'])->name('notes.getNoteByStudent');
-        Route::get('/by-teacher/{parallel}', [NoteController::class, 'getNotesByTeacher'])->name('notes.getNotesByTeacher');
+        Route::get('/parallels/{parallel}/search-students', [NoteController::class, 'searchStudentByParallels'])->name('notes.searchStudentByParallels');
         Route::post('/', [NoteController::class, 'store'])->name('notes.store');
         Route::put('/{note}', [NoteController::class, 'update'])->name('notes.update');
         Route::delete('/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');

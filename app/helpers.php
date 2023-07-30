@@ -134,13 +134,13 @@ if (!function_exists('getPeriodByRole')) {
             $student_id = $user->student->id;
             $parallel = Period::whereHas('tuitions', function ($query) use ($student_id) {
                 $query->where('student_id', $student_id);
-            })->get();
+            })->where('id', '<=', currentState()->period_id)->get();
             return $parallel;
         } else  if ($user->hasRole('teacher')) {
             $teacher_id = $user->teacher->id;
             $parallel = Period::whereHas('schedules', function ($query) use ($teacher_id) {
                 $query->where('teacher_id', $teacher_id);
-            })->get();
+            })->where('id', '<=', currentState()->period_id)->get();
             return $parallel;
         }
 

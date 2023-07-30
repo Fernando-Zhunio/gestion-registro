@@ -113,11 +113,11 @@ class NoteController extends Controller
         ]);
     }
 
-    public function getNotesByTeacher(Parallel $parallel)
+    public function searchStudentByParallels(Parallel $parallel)
     {
         $pageSize = request()->get('pageSize', 10);
         $search = request()->get('search', null);
-        $period_id = currentState()->period_id;
+        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
         $parallel_id = $parallel->id;
         /**
          * @var \App\Models\User $user
@@ -129,9 +129,6 @@ class NoteController extends Controller
                 $query->where('parallel_id', $parallel_id);
                 $query->where('period_id', $period_id);
             })
-            // ->with('notes', function ($query) use ($user, $isTeacher, $period_id) {
-            //     $query->orWhere('period_id', $period_id)->first();
-            // })
             ->paginate($pageSize);
         return response()->json([
             'success' => true,
