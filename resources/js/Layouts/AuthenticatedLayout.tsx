@@ -48,12 +48,13 @@ export default function Authenticated({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <div className="min-h-screen">
                     <nav className="border-b border-gray-100 header-main">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="flex justify-between h-16">
+                        <div className=" mx-auto px-4 sm:px-6 lg:px-4">
+                            <div className="flex justify-between h-16 w-full">
                                 <div className="flex">
-                                    <div className="shrink-0 flex items-center">
+                                    <div className="shrink-0 flex items-center uppercase font-bold">
                                         <Link href="/">
-                                            <ApplicationLogo className="block h-9 w-auto fill-current" />
+                                           {/* <img src="/img/logo-colegio.jpeg" className="block h-9 w-auto fill-current" /> */}
+                                           Unidad Educativa Mariano Valla 
                                         </Link>
                                     </div>
 
