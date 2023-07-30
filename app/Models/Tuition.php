@@ -36,7 +36,7 @@ class Tuition extends Model
 
     public function parallel()
     {
-        return $this->belongsTo('App\Models\parallel');
+        return $this->belongsTo('App\Models\Parallel');
     }
 
 }

@@ -32,21 +32,21 @@ class Course extends Model
 
     public function subjects()
     {
-        return $this->hasMany('App\Models\subject');
+        return $this->hasMany('App\Models\Subject');
     }
 
     public function parallels()
     {
-        return $this->hasMany('App\Models\parallel');
+        return $this->hasMany('App\Models\Parallel');
     }
 
     public function students()
     {
-        return $this->hasMany('App\Models\student');
+        return $this->hasMany('App\Models\Student');
     }
 
     public function specialty()
     {
-        return $this->belongsTo('App\Models\specialty');
+        return $this->belongsTo('App\Models\Specialty');
     }
 }

@@ -19,11 +19,11 @@ class Period extends Model
 
     public function schedules()
     {
-        return $this->hasMany('App\Models\schedule');
+        return $this->hasMany('App\Models\Schedule');
     }
 
     public function tuitions()
     {
-        return $this->hasMany('App\Models\tuition');
+        return $this->hasMany('App\Models\Tuition');
     }
 }

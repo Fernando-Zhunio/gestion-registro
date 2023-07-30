@@ -17,6 +17,6 @@ class Specialty extends Model
 
     public function courses()
     {
-        return $this->hasMany('App\Models\course');
+        return $this->hasMany('App\Models\Course');
     }
 }

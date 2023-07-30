@@ -30,12 +30,12 @@ class Student extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Models\course');
+        return $this->belongsTo('App\Models\Course');
     }
 
     public function representative()
     {
-        return $this->belongsTo('App\Models\representative');
+        return $this->belongsTo('App\Models\Representative');
     }
 
     public function user()

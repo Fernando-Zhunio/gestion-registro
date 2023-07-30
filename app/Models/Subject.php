@@ -22,11 +22,11 @@ class Subject extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Models\course');
+        return $this->belongsTo('App\Models\Course');
     }
 
     public function schedules()
     {
-        return $this->hasMany('App\Models\schedule');
+        return $this->hasMany('App\Models\Schedule');
     }
 }

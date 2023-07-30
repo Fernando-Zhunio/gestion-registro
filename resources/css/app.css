@@ -354,7 +354,13 @@ button:disabled.is-loading::after {
     border-color: transparent;
     border-right: white 2px solid;
     border-top: white 2px solid;
-  }
+}
+
+@keyframes isLoading {
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
 .table-schedule td, th {
     height: 35px !important;
@@ -434,7 +440,7 @@ button:disabled.is-loading::after {
     color: white;
 }
 
-.sidebar ul li i{
+.sidebar ul li i {
 
     border: 1px solid #dadada;
     padding: 4px;
@@ -459,6 +465,7 @@ button:disabled.is-loading::after {
     gap: 5px;
     flex-wrap: wrap;
 }
+
 .content-note-index p {
     /* border:1px solid #dadada; */
     padding-inline: 4px;

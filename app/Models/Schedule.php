@@ -38,22 +38,22 @@ class Schedule extends Model
 
     public function subject()
     {
-        return $this->belongsTo('App\Models\subject');
+        return $this->belongsTo('App\Models\Subject');
     }
 
     public function parallel()
     {
-        return $this->belongsTo('App\Models\parallel');
+        return $this->belongsTo('App\Models\Parallel');
     }
 
     public function period()
     {
-        return $this->belongsTo('App\Models\period');
+        return $this->belongsTo('App\Models\Period');
     }
 
     public function teacher()
     {
-        return $this->belongsTo('App\Models\teacher');
+        return $this->belongsTo('App\Models\Teacher');
     }
 
     

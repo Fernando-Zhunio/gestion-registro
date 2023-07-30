@@ -75,7 +75,8 @@ const CoursesIndex = ({data}: ResponsePaginator<ICourse>) => {
                                 <TableCell>id</TableCell>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
-                                <TableCell>nivel</TableCell>
+                                <TableCell>Nivel</TableCell>
+                                <TableCell>Acciones</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

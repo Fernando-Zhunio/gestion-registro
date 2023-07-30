@@ -38,7 +38,7 @@ class Teacher extends Model
 
     public function schedules()
     {
-        return $this->hasMany('App\Models\schedule');
+        return $this->hasMany('App\Models\Schedule');
     }
 
     public function contractsTeacher()
