@@ -33,7 +33,7 @@ class TuitionController extends Controller
         // $tuitions = BuilderForRoles::PaginateSearch($builder, 'student.first_name');
         $search = request()->get('search', '');
         $period_id = request('period_id', null) ?? currentState()->period_id;
-        $tuitions = Tuition::whereHas('student', function($query) use($search, $period_id) {
+        $tuitions = Tuition::whereHas('student', function ($query) use ($search, $period_id) {
             $query->search($search, 'first_name', ['last_name']);
         })->with('student', 'course', 'period')->where('period_id', $period_id)->paginate();
         return Inertia::render('Tuitions/Index', [
@@ -58,7 +58,7 @@ class TuitionController extends Controller
         // $currentPeriod = currentState()->period_id;
         // return $currentPeriod;
         $students = Student::search($search, 'first_name', ['last_name'])
-        /* ->whereHas('tuitions', function ($query) use ($currentPeriod) {
+            /* ->whereHas('tuitions', function ($query) use ($currentPeriod) {
             $query->where('period_id', $currentPeriod);
         }) */->with('course')->paginate($pageSize);
 
@@ -119,36 +119,41 @@ class TuitionController extends Controller
      */
     public function store(Request $request)
     {
-        $requestStudent = $request->all()['student'];
+        $parallel_id = $request->get('parallel_id');
+        $course_id = $request->get('course_id');
+        // $requestStudent = $request->all()['student'];
         // validateParallel($request->parallel_id, $request->course_id);
-        validateParallel( $requestStudent['parallel_id'], $requestStudent['course_id']);
+        validateParallel($parallel_id, $course_id);
         DB::beginTransaction();
-        // dd($requestStudent);
         $request->validate($this->rulesStudent());
-        $representative_id = null;
-        $requestRepresentative = $request->all()['representative'];
+        // $representative_id = null;
+        // $requestRepresentative = $request->all()['representative'];
 
-        if ($request->has('representative_id') && !empty($request->representative_id)) {
-            $representative_id = $request->representative_id;
-        } else {
-            $request->validate($this->rulesRepresentative());
-        }
+        // if ($request->has('representative_id') && !empty($request->representative_id)) {
+        //     $representative_id = $request->representative_id;
+        // } else {
+        //     $request->validate($this->rulesRepresentative());
+        // }
         try {
-            if (!$representative_id) {
-                $representative = Representative::create($requestRepresentative);
-                $representative_id = $representative->id;
-            }
-
-            $user = $this->generateUserStudent($requestStudent['first_name'] . ' ' . $requestStudent['last_name'], $requestStudent['email']);
+            // if (!$representative_id) {
+            //     $representative = Representative::create($requestRepresentative);
+            //     $representative_id = $representative->id;
+            // }
+            $data = $request->all();
+            // $representative_id = $data['representative_id'];
             $currentPeriod = currentState()->period_id;
-            $requestStudent['photo'] = $this->generateFile($requestStudent['photo']);
-            unset($requestStudent['email']);
-            $student = Student::create(array_merge($requestStudent, ['representative_id' => $representative_id, 'user_id' => $user->id]));
+
+            $user = $this->generateUserStudent($data['first_name'] . ' ' . $data['last_name'], $data['email']);
+
+            $data['photo'] = $this->generateFile($data['photo']);
+            $data['user_id'] = $user->id;
+            // unset($requestStudent['email']);
+            $student = Student::create($data);
             Tuition::create([
                 'student_id' => $student->id,
                 'period_id' => $currentPeriod,
                 'course_id' => $student->course_id,
-                'parallel_id' => $requestStudent['parallel_id'],
+                'parallel_id' => $data['parallel_id'],
                 'status' => '1',
                 'approved' => '0'
             ]);
@@ -156,20 +161,21 @@ class TuitionController extends Controller
             return to_route('tuitions.index');
         } catch (\Exception $e) {
             DB::rollBack();
-             validationException(
+            validationException(
                 'student',
                 'No se pudo crear la matricula intentelo nuevamente',
             );
         }
     }
 
-    public function renew(Request $request, Student $student) {
+    public function renew(Request $request, Student $student)
+    {
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'parallel_id' => 'required|exists:parallels,id',
         ], $request->all());
         validateParallel($request->parallel_id, $request->course_id);
-        
+
         Tuition::create([
             'student_id' => $student->id,
             'period_id' => currentState()->period_id,
@@ -178,26 +184,25 @@ class TuitionController extends Controller
             'status' => '1',
             'approved' => '0'
         ]);
-
     }
 
     public function rulesStudent(): array
     {
         return [
-            'student.first_name' => 'required|string|max:255',
-            'student.last_name' => 'required|string|max:255',
-            'student.email' => 'required|email|unique:users,email',
-            'student.phone' => 'nullable|digits:10|max:255',
-            'student.address' => 'required|string|max:1000',
-            'student.doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
-            'student.doc_number' => 'required|string|unique:students,doc_number|max:255',
-            'student.birthday' => 'required|date',
-            'student.gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
-            'student.photo' => 'required|file|max:1024|mimes:jpeg,jpg,png',
-            'student.previous_institution' => 'required|string|max:255',
-            'student.illness_or_disability' => 'nullable|string|max:255',
-            'student.course_id' => 'required|integer|exists:courses,id',
-            'student.representative_id' => 'nullable|integer|exists:representatives,id',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'nullable|digits:10|max:255',
+            'address' => 'required|string|max:1000',
+            'doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
+            'doc_number' => 'required|string|unique:students,doc_number|max:255',
+            'birthday' => 'required|date',
+            'gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
+            'photo' => 'required|file|max:1024|mimes:jpeg,jpg,png',
+            'previous_institution' => 'required|string|max:255',
+            'illness_or_disability' => 'nullable|string|max:255',
+            'course_id' => 'required|integer|exists:courses,id',
+            'representative_id' => 'required|integer|exists:representatives,id',
         ];
     }
 
@@ -262,35 +267,82 @@ class TuitionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function update(UpdatetuitionRequest $request, Tuition $tuition)
-    // {
-    //     DB::beginTransaction();
-    //     $request->validated();
+    public function update(UpdatetuitionRequest $request, Tuition $tuition)
+    {
+        $parallel_id = $request->parallel_id;
+        $course_id = $request->course_id;
 
-    //     try {
-    //         $dataRepresentative = $request->all()['representative'];
-    //         $representative = Representative::create($request->all()['representative']);
-    //         $user = $this->generateUserStudent($dataRepresentative['first_name'].' '.$dataRepresentative['last_name'], $dataRepresentative['email']);
-    //         $dataStudent = $request->all()['student'];
-    //         $currentPeriod = currentState()->period_id;
-    //         if (isset($dataStudent['photo'])) {
-    //             $dataStudent['photo'] = $this->generateFile($dataStudent['photo']);
-    //         }
-    //         $student = Student::create(array_merge($dataStudent, ['representative_id' => $representative->id, 'user_id' => $user->id]));
-    //         Tuition::create([
-    //             'student_id' => $student->id,
-    //             'period_id' => $currentPeriod,
-    //             'course_id' => $student->course_id,
-    //             // 'status' => '1',
-    //             // 'approved' => '1'
-    //         ]);
-    //         DB::commit();
-    //         return to_route('tuitions.index');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         throw new ValidationException($e->getMessage());
-    //     }
-    // }
+        validateParallel($parallel_id, $course_id);
+
+        DB::beginTransaction();
+        // $request->validate($this->rulesStudent());
+        // $representative_id = null;
+        // $requestRepresentative = $request->all()['representative'];
+
+        // if ($request->has('representative_id') && !empty($request->representative_id)) {
+        //     $representative_id = $request->representative_id;
+        // } else {
+        //     $request->validate($this->rulesRepresentative());
+        // }
+        try {
+            // if (!$representative_id) {
+            //     $representative = Representative::create($requestRepresentative);
+            //     $representative_id = $representative->id;
+            // }
+
+            // $user = $this->generateUserStudent($requestStudent['first_name'] . ' ' . $requestStudent['last_name'], $requestStudent['email']);
+
+            // unset($requestStudent['email']);
+            // $student = Student::create(array_merge($requestStudent, ['representative_id' => $representative_id, 'user_id' => $user->id]));
+            // Tuition::create([
+            //     'student_id' => $student->id,
+            //     'period_id' => $currentPeriod,
+            //     'course_id' => $student->course_id,
+            //     'parallel_id' => $requestStudent['parallel_id'],
+            //     'status' => '1',
+            //     'approved' => '0'
+            // ]);
+            $dataStudent = [
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'doc_type' => $request->doc_type,
+                'doc_number' => $request->doc_number,
+                'birthday' => $request->birthday,
+                'gender' => $request->gender,
+                'previous_institution' => $request->previous_institution,
+                'illness_or_disability' => $request->illness_or_disability,
+                'representative_id' => $request->representative_id,
+            ];
+
+            $currentPeriod = currentState()->period_id;
+            if ($request->has('photo') && !empty($request->photo)) {
+                $dataStudent['photo'] = $this->generateFile($request->get('photo'));
+            }
+            $tuition->student()->update($dataStudent);
+            $tuition->update([
+                'parallel_id' => $request->parallel_id,
+                'course_id' => $request->course_id,
+            ]);
+            
+            /**
+             * @var \App\Models\User $user
+             */
+            $user = auth()->user();
+            $user->update([
+                'name' => $request->first_name . ' ' . $request->last_name,
+            ]);
+            DB::commit();
+            return to_route('tuitions.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            validationException(
+                'student',
+                'No se pudo crear la matricula intentelo nuevamente',
+            );
+        }
+    }
 
     /**
      * Remove the specified resource from storage.

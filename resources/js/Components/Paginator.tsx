@@ -61,15 +61,21 @@ export const SearchPaginator = forwardRef(
             }));
         }
         
-        function getData(_path: string | null = path) {
+        function getData(_path: string | null = path, params: {[key: string]: any} | null = null) {
             let __path = _path || path;
             console.log({ path });
             if(!__path) return;
             if(textSearch) {
                 __path += `?search=${textSearch}`;
             }
+            // if (params) {
+            //     Object.keys(params).forEach((key) => {
+            //         __path += `&${key}=${params[key]}`
+            //     })
+            // }
+            console.log({ __path });
             setIsLoading(true);
-            getDataPaginateService(__path, paginator.page, paginator.pageSize)
+            getDataPaginateService(__path, paginator.page, paginator.pageSize, params)
                 .then((response) => {
                     console.log({ response });
                     setIsLoading(false);

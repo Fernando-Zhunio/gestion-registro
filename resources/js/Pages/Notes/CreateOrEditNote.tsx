@@ -100,10 +100,10 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     );
 
     function searchNotesStudent(parallels: string) {
-        let path = `/notes/parallels/${parallels}/search-students?period_id=${wathPeriod}`;
+        let path = `/notes/parallels/${parallels}/search-students`;
         setIsLoading(true);
         setPathStudents(path);
-        (searchPaginator?.current as any)?.getData(path);
+        (searchPaginator?.current as any)?.getData(path, {period_id: wathPeriod});
     }
 
     function onData(data: IStudent[]) {

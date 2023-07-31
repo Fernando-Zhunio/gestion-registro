@@ -1,19 +1,11 @@
 import DialogCustom from "@/Components/DialogCustom";
-import TextField from "@mui/material/TextField";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
-import axios from "axios";
 import { router } from "@inertiajs/react";
-import DialogActions from "@mui/material/DialogActions";
 import { IParallel } from "./types/parallel.types";
 import { useForm } from "react-hook-form";
 import { useFetch } from "@/Hooks/UseFetch";
 import { showToast } from "@/Helpers/alerts";
-// import dayjs from "dayjs";
-// import Snackbar from "@mui/material/Snackbar";
-// import Alert from "@mui/material/Alert";
-// import { showToast } from "@/Helpers/alerts";
+;
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";

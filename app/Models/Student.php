@@ -22,16 +22,16 @@ class Student extends Model
         'photo',
         'previous_institution',
         'illness_or_disability',
-        'course_id',
+        // 'course_id',
         'representative_id',
         'user_id',
         // 'parallel_id',
     ];
 
-    public function course()
-    {
-        return $this->belongsTo('App\Models\Course');
-    }
+    // public function course()
+    // {
+    //     return $this->belongsTo('App\Models\Course');
+    // }
 
     public function representative()
     {

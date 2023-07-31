@@ -6,11 +6,15 @@ import localeEs from "air-datepicker/locale/es";
 import { IStudent } from "@/Pages/Students/types/student.types";
 import { IParallel } from "@/Pages/Parallels/types/parallel.types";
 import { useFetch } from "@/Hooks/UseFetch";
+import Input from "@/Components/Input";
+import Select from "@/Components/Select";
+import InputDate from "@/Components/InputDate";
 
 interface FormRepresentativeProps {
     // handlerSetForm: (key: any, value: any) => void;
     onSubmit?: (data: any) => void;
     // form: IStudent;
+    _parallels: IParallel[];
     errors: any;
     genders: { label: string; value: string }[];
     courses: { id: number; name: string; nivel: string }[];
@@ -18,17 +22,22 @@ interface FormRepresentativeProps {
     register: any;
     img?: string;
     validators?: { [key: string]: any };
+    control: any;
+    setValue: any;
 }
 
 export default function FormStudent({
     // handlerSetForm,
     // onSubmit,
     // form,
+    setValue,
     errors,
     genders,
     courses,
     docTypes,
     register,
+    control,
+    _parallels,
     img = "/img/avatar.png",
     validators,
 }: FormRepresentativeProps) {
@@ -65,6 +74,8 @@ export default function FormStudent({
             dateFormat: "yyyy-MM-dd",
         });
 
+        setParallels(_parallels);
+
         if (validators) {
             setValidator((prevState: any) => {
                 return {
@@ -97,7 +108,7 @@ export default function FormStudent({
         <>
             {/* Nombres */}
             <div className="md:col-span-6">
-                <label htmlFor="first_name">*Nombres:</label>
+                {/* <label htmlFor="first_name">*Nombres:</label>
                 <input
                     id="first_name"
                     type="text"
@@ -112,11 +123,18 @@ export default function FormStudent({
                     <small className="text-red-600">
                         Los nombres es requerido
                     </small>
-                )}
+                )} */}
+                <Input
+                    label="Nombres"
+                    type="text"
+                    name="first_name"
+                    control={control}
+                    rules={{ required: true }}
+                />
             </div>
             {/* Apellidos */}
             <div className="md:col-span-6">
-                <label htmlFor="last_name">*Apellidos:</label>
+                {/* <label htmlFor="last_name">*Apellidos:</label>
                 <input
                     type="text"
                     className={`${
@@ -128,7 +146,14 @@ export default function FormStudent({
                     <small className="text-red-600">
                         Los apellidos es requerido
                     </small>
-                )}
+                )} */}
+                <Input
+                    label="Apellidos" 
+                    type="text"
+                    name="last_name"
+                    control={control}
+                    rules={{ required: true }}
+                />
             </div>
 
             {/* Foto - photo */}
@@ -161,21 +186,27 @@ export default function FormStudent({
                 </div>
             </div>
             <div className="md:col-span-4">
-                <label htmlFor="phone">Teléfono</label>
+                {/* <label htmlFor="phone">Teléfono</label>
                 <input
                     type="number"
                     className={`form-control w-full `}
                     {...register("phone")}
+                /> */}
+                <Input
+                    label="Teléfono" 
+                    type="number"
+                    name="phone"
+                    control={control}
                 />
             </div>
             {/* genero - gender */}
             <div className="md:col-span-4">
-                <label htmlFor="gender">*Genero</label>
-                <select
-                    className={`${
-                        errors.gender && "invalid-control"
-                    } form-control w-full `}
-                    {...register("gender", { required: true })}
+                {/* <label htmlFor="gender">*Genero</label> */}
+                <Select
+                    label="Genero"
+                    name="gender"
+                    control={control}
+                    rules={{ required: true }}
                 >
                     {genders?.map((item: any, index: number) => {
                         return (
@@ -184,16 +215,16 @@ export default function FormStudent({
                             </option>
                         );
                     })}
-                </select>
-                {errors?.gender?.type === "required" && (
+                </Select>
+                {/* {errors?.gender?.type === "required" && (
                     <small className="text-red-600">
                         El Genero es requerido
                     </small>
-                )}
+                )} */}
             </div>
             {/* direccion - address */}
             <div className="md:col-span-8">
-                <label htmlFor="address">*Dirección:</label>
+                {/* <label htmlFor="address">*Dirección:</label>
                 <input
                     id="address"
                     type="text"
@@ -208,12 +239,19 @@ export default function FormStudent({
                     <small className="text-red-600">
                         La dirección es requerida
                     </small>
-                )}
+                )} */}
+                <Input
+                    label="Dirección" 
+                    type="text"
+                    name="address"
+                    control={control}
+                    rules={{ required: true }}
+                />
             </div>
 
             {/* fecha de nacimiento - birthday */}
             <div className="md:col-span-3">
-                <label htmlFor="birthday">*Fecha de nacimiento:</label>
+                {/* <label htmlFor="birthday">*Fecha de nacimiento:</label>
                 <input
                     id="birthday"
                     type="text"
@@ -229,7 +267,14 @@ export default function FormStudent({
                     <small className="text-red-600">
                         La fecha de nacimiento es requerida
                     </small>
-                )}
+                )} */}
+                <InputDate
+                    label="Fecha de nacimiento"
+                    name="birthday"
+                    control={control}
+                    rules={{ required: true }}
+                    setValue={setValue}
+                />
             </div>
 
             {/* curso - course_id */}
@@ -286,7 +331,7 @@ export default function FormStudent({
 
             {/* numero de identificacion - doc_number */}
             <div className="md:col-span-3">
-                <label htmlFor="doc_number">*Numero de identificacion:</label>
+                {/* <label htmlFor="doc_number">*Numero de identificacion:</label>
                 <input
                     id="doc_number"
                     type="text"
@@ -301,12 +346,19 @@ export default function FormStudent({
                     <small className="text-red-600">
                         El numero de identificacion es requerido
                     </small>
-                )}
+                )} */}
+                 <Input
+                    label="Numero de identificacion" 
+                    type="text"
+                    name="doc_number"
+                    control={control}
+                    rules={{ required: true }}
+                />
             </div>
 
             {/* anterior institucion - previous_institution */}
             <div className="md:col-span-4">
-                <label htmlFor="previous_institution">
+                {/* <label htmlFor="previous_institution">
                     Anterior institución:
                 </label>
                 <input
@@ -325,17 +377,30 @@ export default function FormStudent({
                     <small className="text-red-600">
                         La anterior institución es requerido
                     </small>
-                )}
+                )} */}
+                 <Input
+                    label="Anterior institución" 
+                    type="text"
+                    name="previous_institution"
+                    control={control}
+                    rules={{ required: true }}
+                />
             </div>
 
             <div className="md:col-span-4">
-                <label htmlFor="illness_or_disability">Discapacidad:</label>
+                {/* <label htmlFor="illness_or_disability">Discapacidad:</label>
                 <input
                     id="illness_or_disability"
                     type="text"
                     placeholder="Ingrese la discapacidad"
                     className={`form-control w-full`}
                     {...register("illness_or_disability")}
+                /> */}
+                 <Input
+                    label="Discapacidad" 
+                    type="text"
+                    name="illness_or_disability"
+                    control={control}
                 />
             </div>
 

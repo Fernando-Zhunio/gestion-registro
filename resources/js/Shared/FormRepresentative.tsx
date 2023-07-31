@@ -3,34 +3,52 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import localeEs from "air-datepicker/locale/es";
 import { IRepresentative } from "@/Pages/Representatives/types/representatives";
+import Input from "@/Components/Input";
+import Select from "@/Components/Select";
+import DialogCustom from "@/Components/DialogCustom";
+import { showToast } from "@/Helpers/alerts";
+import { router } from "@inertiajs/react";
 
 interface FormRepresentativeProps {
     // handlerSetForm: (key: any, value: any) => void;
     // onSubmit: (data: any) => void;
     // form: IRepresentative;
-    errors: any;
-    genders: { label: string; value: string }[];
-    courses: { id: number; name: string; nivel: string }[];
-    docTypes: { label: string; value: string }[];
-    register: any;
+    // errors: any;
+    // genders: { label: string; value: string }[];
+    // courses: { id: number; name: string; nivel: string }[];
+    // docTypes: { label: string; value: string }[];
+    // register: any;
+    representative: IRepresentative | null;
+    isOpen: boolean;
+    setOpen: (isOpen: boolean) => void;
+    returnJson?: boolean;
 }
 
 export default function FormRepresentative({
-    // handlerSetForm,
-    errors,
-    // onSubmit,
-    // form,
-    register,
-    // errors: errorsInertia,
-    genders,
-    // courses,
-    docTypes,
-}: FormRepresentativeProps) {
-    // const {
-    //     register,
-    //     formState: { errors },
-    //     handleSubmit,
-    // } = useForm();
+    representative,
+    isOpen,
+    setOpen,
+    returnJson,
+}: // handlerSetForm,
+// errors,
+// // onSubmit,
+// // form,
+// register,
+// // errors: errorsInertia,
+// genders,
+// // courses,
+// docTypes,
+FormRepresentativeProps) {
+    const {
+        // register,
+        formState: { errors },
+        handleSubmit,
+        control,
+    } = useForm({
+        defaultValues: representative || {},
+    });
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     // const [preview, setPreview] = useState<any>(null);
 
     // useEffect(() => {
@@ -55,191 +73,167 @@ export default function FormRepresentative({
     //     }
     // }
 
-    // const onSubmit = (data: any) => {
-    //     console.log(data);
-    // };
+    const onSubmit = (data: any) => {
+        setIsLoading(true);
+        const options = {
+            preserveState: true,
+            onSuccess: (e: any) => {
+                console.log({ e });
+                setIsLoading(false);
+                setOpen(false);
+                // reset();
+            },
+            onError: (e: { [s: string]: unknown } | ArrayLike<unknown>) => {
+                console.log({ e });
+                showToast({
+                    icon: "error",
+                    text: Object.values(e).join("\n"),
+                    title: "Error al crear el representante",
+                });
+                setIsLoading(false);
+            },
+        };
+
+        if (!representative) {
+            router.post("/representatives", {...data, returnJson}, options);
+        } else {
+            router.put(`/representatives/${representative?.id}`, data, options);
+        }
+    };
     return (
-        <>
-            {/* Nombres - r_first_name */}
-            <div className="md:col-span-6">
-                <label htmlFor="r_first_name">*Nombres:</label>
-                <input
-                    id="r_first_name"
-                    type="text"
-                    placeholder="Ingrese el nombre"
-                    className={`${
-                        errors.r_first_name && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_first_name", { required: true })}
-                    aria-invalid={errors.r_first_name ? "true" : "false"}
-                />
-                {errors?.r_first_name?.type === "required" && (
-                    <small className="text-red-600">
-                        Los nombres es requerido
-                    </small>
-                )}
-            </div>
-            {/* Apellidos - r_last_name */}
-            <div className="md:col-span-6">
-                <label htmlFor="r_last_name">*Apellidos:</label>
-                <input
-                    type="text"
-                    className={`${
-                        errors.r_last_name && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_last_name", { required: true })}
-                />
-                {errors?.r_last_name?.type === "required" && (
-                    <small className="text-red-600">
-                        Los apellidos es requerido
-                    </small>
-                )}
-            </div>
-
-            {/* correo electronico - r_email */}
-            <div className="md:col-span-4">
-                <label htmlFor="r_email">*Correo electrónico:</label>
-                <input
-                    id="r_email"
-                    type="text"
-                    placeholder="Ingrese la fecha de nacimiento"
-                    className={`${
-                        errors.r_email && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_email", { required: true })}
-                    aria-invalid={errors.r_email ? "true" : "false"}
-                />
-                {errors?.r_email?.type === "required" && (
-                    <small className="text-red-600">
-                        El correo es requerido
-                    </small>
-                )}
-            </div>
-
-            {/* telefono - r_phone */}
-            <div className="md:col-span-4">
-                <label htmlFor="r_phone">Teléfono</label>
-                <input
-                    type="number"
-                    min={0}
-                    className={`form-control w-full `}
-                    {...register("r_phone", { required: true })}
-                />
-                {errors?.r_phone?.type === "required" && (
-                    <small className="text-red-600">
-                        El teléfono es requerido
-                    </small>
-                )}
-            </div>
-
-            {/* genero - r_gender */}
-            <div className="md:col-span-4">
-                <label htmlFor="r_gender">*Genero</label>
-                <select
-                    id="r_gender"
-                    className={`${
-                        errors.r_gender && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_gender", { required: true })}
+        <div>
+            <DialogCustom
+                open={isOpen}
+                title={`${
+                    !representative ? "Creando" : "Editando"
+                } Representante`}
+            >
+                <form
+                    className="grid md:grid-cols-12 grid-cols-1 gap-4"
+                    onSubmit={handleSubmit(onSubmit)}
                 >
-                    {genders?.map((item: any, index: number) => {
-                        return (
-                            <option key={index} value={item.value}>
-                                {item.label}
-                            </option>
-                        );
-                    })}
-                </select>
-                {errors?.r_gender?.type === "required" && (
-                    <small className="text-red-600">
-                        El Genero es requerido
-                    </small>
-                )}
-            </div>
+                    <div className="md:col-span-6">
+                        <Input
+                            control={control}
+                            type="text"
+                            name="first_name"
+                            label="Nombres"
+                            rules={{ required: true }}
+                        />
+                    </div>
 
-            {/* direccion - r_address */}
-            <div className="md:col-span-8">
-                <label htmlFor="r_address">*Dirección:</label>
-                <input
-                    id="r_address"
-                    type="text"
-                    placeholder="Ingrese la dirección"
-                    className={`${
-                        errors.r_address && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_address", { required: true })}
-                    aria-invalid={errors.r_address ? "true" : "false"}
-                />
-                {errors?.r_address?.type === "required" && (
-                    <small className="text-red-600">
-                        La dirección es requerida
-                    </small>
-                )}
-            </div>
+                    <div className="md:col-span-6">
+                        <Input
+                            control={control}
+                            type="text"
+                            name="last_name"
+                            label="Apellidos"
+                            rules={{ required: true }}
+                        />
+                    </div>
 
-            {/* tipo de documento - r_doc_type */}
-            <div className="md:col-span-4">
-                <label htmlFor="r_doc_type">*Tipo de documento</label>
-                <select
-                    className={`${
-                        errors.r_doc_type && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_doc_type", { required: true })}
-                >
-                    {docTypes?.map((item: any) => {
-                        return (
-                            <option key={item.value} value={item.value}>
-                                {item.label}
-                            </option>
-                        );
-                    })}
-                </select>
-                {errors?.r_doc_type?.type === "required" && (
-                    <small className="text-red-600">
-                        El tipo de documento es requerido
-                    </small>
-                )}
-            </div>
+                    <div className="md:col-span-6">
+                        <Input
+                            control={control}
+                            type="text"
+                            name="email"
+                            label="Correo electrónico"
+                            rules={{ required: true }}
+                        />
+                    </div>
 
-            {/* numero de documento - r_doc_number */}
-            <div className="md:col-span-4">
-                <label htmlFor="r_doc_number">*Numero de identificación:</label>
-                <input
-                    id="r_doc_number"
-                    type="text"
-                    placeholder="Ingrese la fecha de nacimiento"
-                    className={`${
-                        errors.r_doc_number && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_doc_number", { required: true })}
-                    aria-invalid={errors.r_doc_number ? "true" : "false"}
-                />
-                {errors?.r_doc_number?.type === "required" && (
-                    <small className="text-red-600">
-                        El numero de identificación es requerido
-                    </small>
-                )}
-            </div>
+                    <div className="md:col-span-6">
+                        <Select
+                            control={control}
+                            name="doc_type"
+                            label="Tipo de documento"
+                            rules={{ required: true }}
+                            defaultValue={''}
+                        >
+                            <option value={''}>Seleccione una opción</option>
+                            <option value={1}>Cédula de ciudadanía</option>
+                            <option value={2}>Pasaporte</option>
+                            <option value={3}>Cédula de extranjería</option>
+                        </Select>
+                    </div>
 
-            {/* ocupación - r_occupation */}
-            <div className="md:col-span-4">
-                <label htmlFor="r_occupation">*Ocupación:</label>
-                <input
-                    id="r_occupation"
-                    type="text"
-                    placeholder="Ingrese la fecha de nacimiento"
-                    className={`${
-                        errors.r_occupation && "invalid-control"
-                    } form-control w-full `}
-                    {...register("r_occupation", { required: true })}
-                    aria-invalid={errors.r_occupation ? "true" : "false"}
-                />
-                {errors?.r_occupation?.type === "required" && (
-                    <small className="text-red-600">
-                        La ocupación es requerido
-                    </small>
-                )}
-            </div>
-        </>
+                    <div className="md:col-span-6">
+                        <Input
+                            control={control}
+                            type="number"
+                            name="phone"
+                            label="Teléfono"
+                            rules={{ required: true }}
+                        />
+                    </div>
+
+                    <div className="md:col-span-6">
+                        <Select
+                            control={control}
+                            name="gender"
+                            label="Genero"
+                            rules={{ required: true }}
+                            defaultValue={''}
+                        >
+                            <option value={''}>Seleccione una opción</option>
+                            <option value={1}>Masculino</option>
+                            <option value={2}>Femenino</option>
+                        </Select>
+                    </div>
+
+                    <div className="md:col-span-6">
+                        <Input
+                            control={control}
+                            type="text"
+                            name="address"
+                            label="Dirección"
+                            rules={{ required: true }}
+                        />
+                    </div>
+
+                    <div className="md:col-span-6">
+                        <Input
+                            label="Número de identificación"
+                            type="number"
+                            name="doc_number"
+                            control={control}
+                            rules={{ required: true }}
+                        />
+                    </div>
+
+                    <div className="md:col-span-6">
+                        <Input
+                            label="Ocupación"
+                            type="text"
+                            name="occupation"
+                            control={control}
+                            rules={{ required: true }}
+                        />
+                    </div>
+                    <div className="md:col-span-12 mt-3">
+                        <div className="flex items-center gap-2">
+                            <button
+                                disabled={isLoading}
+                                className={`rounded-md bg-slate-800 text-white px-3 py-2 ${
+                                    isLoading ? "is-loading" : ""
+                                }`}
+                                type="submit"
+                            >
+                                Guardar{" "}
+                                <i className="fa-regular fa-paper-plane ml-2"></i>
+                            </button>
+                            
+                            <button
+                                className="rounded-md bg-red-500 text-white px-3 py-2 "
+                                type="button"
+                                onClick={() => setOpen(false)}
+                            >
+                                Cerrar <i className="fa-solid fa-xmark ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </DialogCustom>
+        </div>
     );
 }

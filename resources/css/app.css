@@ -214,7 +214,7 @@ input:focus, textarea:focus, select:focus {
 
 .search-bar {
     padding: 1px 15px;
-    background: #dfe1e9;
+    /* background: #dfe1e9; */
 }
 
 .MuiTableCell-head {

@@ -31,129 +31,83 @@ import Avatar from "@mui/material/Avatar";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import { IPeriod } from "@/Models/period";
-// import dayjs from "dayjs";
-// import Snackbar from "@mui/material/Snackbar";
-// import Alert from "@mui/material/Alert";
-// import { showToast } from "@/Helpers/alerts";
+import { ITuition } from "../Tuitions/types/tuition";
+import FormCreateOrEditNoteStudent from "@/Shared/FormCreateOrEditNoteStudent";
 
 interface CreateOrEditNoteProps {
-    state: "create" | "edit";
-    data?: { parallels: IParallel[], currentPeriod: number, periods: IPeriod[] };
+    data: { tuitions: ITuition[]; student: IStudent; currentPeriod: number };
 }
 
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
-    const { control, setValue, getValues, watch } = useForm({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [note, setNote] = useState<INote | null>();
-    const [students, setStudents] = useState<IStudent[]>([]);
+    const [tuition, setTuition] = useState<ITuition>();
     const [subjects, setSubjects] = useState<ISubject[]>([]);
+    // const [period_id, setPeriodId] = useState<number | ''>(data.currentPeriod);
+    const [subject_id, setSubjectId] = useState<number | "">("");
     const [pathStudents, setPathStudents] = useState<string>("");
-    const [selectStudent, setSelectStudent] = useState<IStudent | null>(null);
-    const searchPaginator = useRef(null);
 
-    const watchParallel = watch("parallel_id");
-    const watchSubject = watch("subject_id");
-    const wathPeriod = watch("period_id");
-    function onChangeParallel(e: any) {
+    function onChangeTuition(e: any) {
         if (isLoading) return;
-        setValue("parallel_id", e.target.value);
-        setStudents([]);
-        setSelectStudent(null);
-        setValue("subject_id", "");
         setSubjects([]);
         setNote(null);
-        if (!e.target.value) return;
-        searchNotesStudent(e.target.value);
-        getSubjects(e.target.value);
+        setSubjectId("");
+        const tuition = data.tuitions.find((x) => x.id == e.target.value);
+        setTuition(tuition);
+        if (!tuition) return;
+        const parallel_id = tuition?.parallel_id!;
+        getSubjects(e.target.value, parallel_id);
     }
 
-    function handlerOnClickBtnSearchStudent() {
-        const parallel = getValues("parallel_id");
-        if (!parallel) {
-            showToast({
-                icon: "error",
-                title: "Error",
-                text: "Debe seleccionar un paralelo",
-            });
-            setIsLoading(false);
-            return;
-        }
-        const student = getValues("student");
-        console.log({ parallel });
-        if (isLoading) return;
-        searchNotesStudent(parallel);
-    }
-
-    function onChangePeriod(e: any) {
-        if (isLoading) return;
-        setValue("parallel_id", '');
-        setStudents([]);
-        setSelectStudent(null);
-        setValue("subject_id", '');
-        setSubjects([]);
-        // if (!e.target.value) return;
-        // searchNotesStudent(null);
-        // getSubjects(e.target.value);
-    } 
+    // function onChangeSubject(e: any) {
+    //     if (isLoading) return;
+    //     setSubjectId(e.target.value);
+    //     if (!e.target.value) return;
+    //     // getSubjects(e.target.value, data.student.id);
+    // }
 
     const getSubjects = useCallback(
-        (watchParallel: number) => {
+        (period_id: number, parallel_id: number) => {
             axios
-                .get(`/notes/parallels/${watchParallel}/subjects`)
+                .get(
+                    `/notes/parallels/${parallel_id}/subjects?period_id=${period_id}`
+                )
                 .then(({ data }) => {
-                    console.log({ data });
                     setSubjects(data.data);
                 });
         },
-        [watchParallel]
+        [tuition]
     );
 
-    function searchNotesStudent(parallels: string) {
-        let path = `/notes/by-teacher/${parallels}?period_id=${wathPeriod}`;
-        setIsLoading(true);
-        setPathStudents(path);
-        console.log({ searchPaginator });
-        (searchPaginator?.current as any)?.getData(path);
-    }
-
-    function onData(data: IStudent[]) {
-        console.log({ data });
-        setIsLoading(false);
-        setStudents(data);
-    }
-
-    function onError(error: any) {
-        setIsLoading(false);
-        showToast({
-            icon: "error",
-            title: "Error",
-            text: "No se pudo obtener los datos",
-        });
-    }
-
-    function selectedStudent(student: IStudent) {
-        if (selectStudent?.id === student.id) return;
-        if (!watchSubject) {
+    function onChangeSubject(e: any) {
+        setNote(null);
+        setSubjectId(e.target.value);
+        if (!e.target.value) return;
+        if (!tuition) {
             showToast({
                 icon: "error",
-                text: "Debe seleccionar un materia",
+                text: "Debe seleccionar un periodo",
             });
             return;
         }
+        setSubjectId(e.target.value);
         setIsLoading(true);
-        setSelectStudent(null);
         axios
-            .get(`/notes/student/${student.id}?subject_id=${watchSubject}`)
+            .get(
+                `/notes/student/${data.student.id}?subject_id=${e.target.value}`
+            )
             .then(({ data }) => {
-                setSelectStudent(student);
                 setNote(data.data?.note);
                 setIsLoading(false);
             })
             .catch((err) => {
                 setIsLoading(false);
+                showToast({
+                    icon: "error",
+                    text: "Error al cargar notas, por favor intente nuevamente",
+                });
             });
     }
-
 
     return (
         <div>
@@ -165,56 +119,54 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                     <div className="col-span-4 gap-4">
                         <div className="shadow-lg-fz p-3 rounded-xl">
                             <div className="mt-3">
-                            <Select
-                                disabled={isLoading}
-                                name="period_id"
-                                label="Periodo"
-                                control={control}
-                                onChange={onChangePeriod}
-                            >
-                                <option value="" className="text-gray-500">
-                                    Seleccione una opción
-                                </option>
-                                {data?.periods?.map((item) => {
-                                    return (
-                                        <option selected={item.id === data.currentPeriod} key={item.id} value={item.id}>
-                                            {item.promotion} {data.currentPeriod === item.id && "(Actual)" }
-                                        </option>
-                                    );
-                                })}
-                            </Select>
-                            </div>
-                            <Select
-                                disabled={isLoading}
-                                name="parallel_id"
-                                label="Paralelo"
-                                placeholder="Buscar paralelo"
-                                control={control}
-                                onChange={onChangeParallel}
-                            >
-                                <option value="" className="text-gray-500">
-                                    Seleccione una opción
-                                </option>
-                                {data?.parallels?.map((item) => {
-                                    return (
-                                        <option key={item.id} value={item.id}>
-                                            {item.name}
-                                        </option>
-                                    );
-                                })}
-                            </Select>
-                            <div className="mt-3">
-                                <Select
+                                <label htmlFor="tuition">Periodo</label>
+                                <select
+                                    defaultValue={""}
                                     disabled={isLoading}
-                                    name="subject_id"
-                                    label="Materia"
-                                    control={control}
-                                    onChange={(e) => {
-                                        setValue("subject_id", e.target.value);
-                                        setSelectStudent(null);
-                                    }}
+                                    id="tuition"
+                                    onChange={onChangeTuition}
+                                    className="border py-2 px-3 w-full block border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm "
                                 >
-                                    <option value="">
+                                    <option
+                                        value={""}
+                                        className="text-gray-500"
+                                    >
+                                        Seleccione una opción
+                                    </option>
+                                    {data.tuitions?.map((item) => {
+                                        return (
+                                            <option
+                                                selected={
+                                                    item.period.id ===
+                                                    data.currentPeriod
+                                                }
+                                                key={item.id}
+                                                value={item.id}
+                                            >
+                                                {item.period.promotion}{" "}
+                                                {data.currentPeriod ===
+                                                    item.period.id &&
+                                                    "(Actual)"}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            </div>
+                            {tuition && <div className="mt-3">
+                                <div>Paralelo</div>
+                                <div className="my-2 p-3 bg-gray-200 text-gray-600">{tuition?.parallel.name}</div>
+                            </div>}
+                            <div className="mt-3">
+                                <label htmlFor="subject_id">Materia</label>
+                                <select
+                                    disabled={isLoading}
+                                    defaultValue={""}
+                                    value={subject_id}
+                                    id="subject_id"
+                                    className="border py-2 px-3 w-full block border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm "
+                                    onChange={onChangeSubject}
+                                >
+                                    <option value={""}>
                                         Seleccione una opción
                                     </option>
                                     {subjects?.map((item) => {
@@ -227,10 +179,10 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                             </option>
                                         );
                                     })}
-                                </Select>
+                                </select>
                             </div>
                             <hr />
-                            <div className="mt-3">
+                            {/* <div className="mt-3">
                                 <SearchPaginator
                                     ref={searchPaginator}
                                     onError={onError}
@@ -293,7 +245,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                         </List>
                                     </div>
                                 </SearchPaginator>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="col-span-8 gap-5">
@@ -303,19 +255,15 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                     Estudiante seleccionado:
                                 </div>
                                 <h4 className="m-0">
-                                    {selectStudent?.first_name}{" "}
-                                    {selectStudent?.last_name}
+                                    {data.student?.first_name}{" "}
+                                    {data.student?.last_name}
                                 </h4>
-                                <small># ID: {selectStudent?.doc_number}</small>
+                                <small># ID: {data.student?.doc_number}</small>
                             </div>
                         </div>
-                        <FormCreateOrEditNote
-                            parallel_id={watchParallel}
-                            student_id={selectStudent?.id}
-                            subject_id={watchSubject}
-                            note={note}
-                            disabled={wathPeriod != data?.currentPeriod}
-                        />
+                        {subject_id && (
+                            <FormCreateOrEditNoteStudent note={note} />
+                        )}
                     </div>
                 </div>
             </div>

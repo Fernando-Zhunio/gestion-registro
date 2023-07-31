@@ -157,11 +157,6 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                         <form onSubmit={handleSubmit(saveInServer)} className="col-span-12 border px-4 py-3 rounded-lg mt-5">
                             <div className="col-span-12 flex justify-between items-center">
                                 <h2 className="flex items-center text-slate-700 border-b-1 font-bold text-2xl gap-2">
-                                    {/* <img
-                                        className="h-16 w-16 object-cover rounded-full"
-                                        src={student.photo || "/img/avatar.png"}
-                                        alt="Current profile photo"
-                                    />{" "} */}
                                     <Avatar
                                         src={student.photo || "/img/avatar.png"}
                                     />
@@ -227,10 +222,6 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                             student.doc_type as any
                                         ]
                                     }
-                                </div>
-                                <div className="md:col-span-3">
-                                    <h3 className="bold text-2xl">Curso:</h3>
-                                    {student.course?.name}
                                 </div>
                                 <div className="md:col-span-3">
                                     <h3 className="bold text-2xl">

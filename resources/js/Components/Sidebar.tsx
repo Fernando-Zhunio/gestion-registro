@@ -25,7 +25,7 @@ const Sidebar = ({items}: {items:IItemSidebar[]}) => {
         <li><Link href="/teachers" as="button" type="button">Profesores</Link></li> */}
         {items.map((item, index) => {
           return (
-            <li className={url === item.path  ? 'active' : ''} key={item.path}><Link  href={item.path} as="button" type="button"><i className={item.icon}></i> {item.name}</Link></li>
+            <li className={url.includes(item.path)   ? 'active' : ''} key={item.path}><Link  href={item.path} as="button" type="button"><i className={item.icon}></i> {item.name}</Link></li>
           )
         })}
       </ul>

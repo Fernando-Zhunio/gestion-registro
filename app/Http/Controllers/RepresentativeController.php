@@ -17,7 +17,7 @@ class RepresentativeController extends Controller
     {
         $search = request('search', null);
         $pageSize = request('pageSize', 10);
-        $representatives = Representative::search($search, 'first_name', ['last_name', 'doc_type'])->paginate($pageSize);
+        $representatives = Representative::search($search, 'first_name', ['last_name', 'doc_type'])->orderBy('id', 'desc')->paginate($pageSize);
         return Inertia::render('Representatives/Index', [
             'success' => true,
             'data' => $representatives,
@@ -48,7 +48,8 @@ class RepresentativeController extends Controller
      */
     public function store(StorerepresentativeRequest $request)
     {
-        //
+        $representative = Representative::create($request->all());
+        return $request->get('returnJson', null) ? response()->json(['success' => true, 'data' => $representative]) : to_route('representatives.index');
     }
 
     /**
@@ -72,7 +73,8 @@ class RepresentativeController extends Controller
      */
     public function update(UpdaterepresentativeRequest $request, Representative $representative)
     {
-        //
+        $representative->update($request->all());
+        return to_route('representatives.index');
     }
 
     /**

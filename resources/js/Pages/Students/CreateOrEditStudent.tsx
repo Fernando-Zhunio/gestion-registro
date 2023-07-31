@@ -14,15 +14,16 @@ import { useForm } from "react-hook-form";
 import DialogSearch from "@/Components/DialogSearch";
 import FormStudent from "@/Shared/FormStudent";
 import { showToast } from "@/Helpers/alerts";
+import { IParallel } from "../Parallels/types/parallel.types";
+import { ITuition } from "../Tuitions/types/tuition";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
 // import { showToast } from "@/Helpers/alerts";
 const studentKeys = [
-    "id",
     "first_name",
     "last_name",
-    "email",
+    // "email",
     "phone",
     "address",
     "doc_type",
@@ -32,9 +33,9 @@ const studentKeys = [
     "photo",
     "previous_institution",
     "illness_or_disability",
-    "course_id",
+    // "course_id",
     "representative_id",
-    "user_id",
+    // "user_id",
 ];
 interface CreateOrEditCourseProps {
     data?: IStudent;
@@ -42,6 +43,8 @@ interface CreateOrEditCourseProps {
     courses: any[];
     docTypes: any[];
     periods: any[];
+    parallels: IParallel[];
+    tuition: ITuition;
 }
 
 const CreateOrEditStudent = ({
@@ -50,12 +53,15 @@ const CreateOrEditStudent = ({
     courses,
     docTypes,
     periods,
+    parallels,
+    tuition,
 }: CreateOrEditCourseProps) => {
     const {
         register,
         formState: { errors },
         handleSubmit,
         setValue,
+        control,
     } = useForm();
 
     const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -75,6 +81,8 @@ const CreateOrEditStudent = ({
             });
             console.log({ student });
             onSelectRow(student.representative);
+            setValue('parallel_id', tuition.parallel_id);
+            setValue('course_id', tuition.course_id);
         }
         console.log({ data });
     }, [data]);
@@ -102,11 +110,7 @@ const CreateOrEditStudent = ({
         } else {
             values.photo = values.photo[0];
         }
-        router.post(
-            route("students.update", data?.id),
-            { ...values, _method: "PUT" },
-            options
-        );
+        router.put(`/tuitions/${tuition.id}`, values, options);
     }
 
     function closeModalRepresentativeSelect(): void {
@@ -142,6 +146,9 @@ const CreateOrEditStudent = ({
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid md:grid-cols-12 gap-4">
                             <FormStudent
+                                setValue={setValue}
+                                control={control}
+                                _parallels={parallels}
                                 courses={courses}
                                 docTypes={docTypes}
                                 genders={genders}
@@ -191,8 +198,8 @@ const CreateOrEditStudent = ({
                             </div>
                         </div>
                         <button
-                            // disabled={isLoading}
-                            className="rounded-md mt-3 bg-slate-800 text-white px-3 py-2"
+                            disabled={isLoading}
+                            className={`rounded-md mt-3 bg-slate-800 text-white px-3 py-2 ${isLoading ? "is-loading" : ""}`}
                             type="submit"
                         >
                             Guardar{" "}

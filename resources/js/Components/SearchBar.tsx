@@ -2,7 +2,7 @@ import { PaginatorEvent, ResponsePaginator } from "@/types/global";
 import { router, usePage } from "@inertiajs/react";
 import { CircularProgress, TablePagination } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 interface SearchBarProps {
     path: string;
@@ -21,7 +21,7 @@ interface SearchBarProps {
     rowsPerPageOptions?: number[];
 }
 
-const SearchBarComponent = ({
+const SearchBarComponent = forwardRef(({
     path,
     title,
     placeholder,
@@ -35,7 +35,10 @@ const SearchBarComponent = ({
     onError,
     children,
     buttons,
-}: SearchBarProps) => {
+}: SearchBarProps, ref) => {
+    useImperativeHandle(ref, () => ({
+        fetchUrl
+      }));
     const [data, setData] = useState<any[]>([]);
     const [pass, setPass] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<any>(false);
@@ -82,13 +85,14 @@ const SearchBarComponent = ({
         onError && onError(error);
     }
 
-    async function fetchUrl(page: number | null = null) {
+    async function fetchUrl(page: number | null = null, params2: {[key: string]: any} | null = null) {
         handlerSetIsLoading(true);
         const _params = {
             search: searchText,
             page: page || paginator.page + 1,
             pageSize: paginator.pageSize,
             ...params,
+            ...params2
         }
         router.get(path, _params, {
             preserveState: true,
@@ -120,7 +124,7 @@ const SearchBarComponent = ({
             <div className="flex flex-grow gap-2 items-center justify-between position-sticky">
                 <div className="flex flex-grow items-center gap-2">
                     <h2 className="text-3xl">{title}</h2>
-                    <div style={{'flexGrow': `0.${width || 2}`}} className="search-bar bg-white shadow-sm rounded-md px-2 flex items-center">
+                    <div style={{'flexGrow': `0.${width || 2}`}} className="search-bar bg-slate-200 shadow-sm rounded-md px-2 flex items-center">
                         <button onClick={onClickSearch} className="btn-search">
                             <i className="fa-solid fa-search text-gray-500"></i>
                         </button>
@@ -166,6 +170,6 @@ const SearchBarComponent = ({
             </div>
         </div>
     );
-};
+});
 
 export default SearchBarComponent;

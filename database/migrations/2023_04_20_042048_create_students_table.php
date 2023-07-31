@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('previous_institution');
             $table->string('photo');
             $table->string('illness_or_disability')->nullable();
-            $table->foreignId('course_id')->constrained('courses');
+            // $table->foreignId('course_id')->constrained('courses');
             $table->foreignId('representative_id')->constrained();
             $table->foreignId('user_id')->constrained('users');
             // $table->foreignId('parallel_id')->constrained('parallels');

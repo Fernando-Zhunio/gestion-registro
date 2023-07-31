@@ -13,7 +13,7 @@ class StorerepresentativeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,10 +26,10 @@ class StorerepresentativeRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students,email',
+            'email' => 'required|email|unique:representatives,email',
             'phone' => 'required|string|max:255',
             'address' => 'required|string|max:1000',
-            'doc_type' => 'required|string|max:255|in:' . ConstDocuments::CI . ',' . ConstDocuments::PASSPORT . ',' . ConstDocuments::FOREIGNER_ID,
+            'doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
             'doc_number' => 'required|string',
             'gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
             'occupation' => 'required|string|max:255',

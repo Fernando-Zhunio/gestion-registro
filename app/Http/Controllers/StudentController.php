@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Http\Requests\StorestudentRequest;
 use App\Http\Requests\UpdatestudentRequest;
 use App\Models\Course;
+use App\Models\Parallel;
 use App\Models\Period;
 use App\Models\Tuition;
 use App\Traits\GenerateFile;
@@ -30,12 +31,16 @@ class StudentController extends Controller
         // BuilderSearchClass(Student::class, 'first_name', ['last_name']);
         // $students = Student::search(request()->get('search', ''))->paginate();
         $period_id = request('period_id', null) ?? currentState()->period_id;
-        $students = Student::search(request()->get('search', ''))->whereHas('tuitions', function($query) use($period_id) {
+        $students = Student::search(request()->get('search', ''))
+        ->with('tuitions.course', 'representative')
+        ->whereHas('tuitions', function($query) use($period_id) {
             return $query->where('period_id', $period_id);
         })->paginate();
+        $periods = Period::all();
         return Inertia::render('Students/Index', [
             'success' => true,
             'data' => $students,
+            'metadata' => ['periods' =>$periods],
         ]);
     }
 
@@ -70,11 +75,13 @@ class StudentController extends Controller
     {
         $student->load('representative');
         $currentPeriod = currentState()->period_id;
+        $tuition = Tuition::with('course')->where('student_id', $student->id)->where('period_id', $currentPeriod)->first();
         $period = Period::find($currentPeriod);
         $courses = Course::all();
         $genders = ConstMiscellany::getGendersSelect();
         $docTypes = ConstMiscellany::getDocTypesSelect();
         $courses = Course::all();
+        $parallels = Parallel::where('course_id', $tuition->course_id)->get();
         return Inertia::render('Students/CreateOrEditStudent', [
             'success' => true,
             'data' => $student,
@@ -82,6 +89,8 @@ class StudentController extends Controller
             'courses' => $courses,
             'docTypes' => $docTypes,
             'periods' => [$period],
+            'parallels' => $parallels,
+            'tuition' => $tuition,
         ]);
     }
 

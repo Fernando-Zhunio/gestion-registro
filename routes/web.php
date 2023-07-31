@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [NoteController::class, 'index'])->name('notes.index');
         Route::get('/create', [NoteController::class, 'create'])->name('notes.create');
         Route::get('/periods/{period}/parallels', [NoteController::class, 'getParallels'])->name('notes.parallels');
+        Route::get('/periods/{period}/subjects/{subject}', [NoteController::class, 'getSubjectByPeriod'])->name('notes.getSubjectByPeriod');
         Route::get('/parallels/{parallel}/subjects', [NoteController::class, 'getSubjectByParallel'])->name('notes.getSubjectByParallel');
         Route::get('/student/{student}', [NoteController::class, 'getNoteByStudent'])->name('notes.getNoteByStudent');
         Route::get('/parallels/{parallel}/search-students', [NoteController::class, 'searchStudentByParallels'])->name('notes.searchStudentByParallels');
@@ -117,6 +118,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/parallels', [TuitionController::class, 'parallelsIndex'])->name('tuitions.parallels');
         // Route::get('{tuition}/edit', [TuitionController::class, 'edit'])->name('tuitions.edit');
         Route::post('/', [TuitionController::class, 'store'])->name('tuitions.store');
+        Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
         Route::post('/students/{student}', [TuitionController::class, 'renew'])->name('tuitions.renew');
         // Route::put('/{tuition}', [TuitionController::class, 'update'])->name('tuitions.update');
         Route::delete('/{tuition}', [TuitionController::class, 'destroy'])->name('tuitions.destroy');

@@ -23,7 +23,7 @@ class SidebarItem
             'path' => '/notes',
             'icon' => 'fas fa-clipboard-list',
             'name' => 'Notas',
-            'forRoles' => ['admin', 'teacher']
+            'forRoles' => ['admin', 'teacher', 'student']
         ],
         [
             'path' => '/students',
@@ -41,7 +41,7 @@ class SidebarItem
             'path' => '/tuitions',
             'icon' => 'fas fa-money-bill-alt',
             'name' => 'Matriculas',
-            'forRoles' => ['admin', 'secretary']
+            'forRoles' => ['admin', 'secretary', 'student']
         ],
         [
             'path' => '/subjects',

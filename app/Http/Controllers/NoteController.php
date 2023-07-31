@@ -22,25 +22,55 @@ class NoteController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['role:teacher|super-admin|admin'])->except('index');
+        $this->middleware(['role:teacher|super-admin|admin'])->except(['index', 'getSubjectByParallel', 'getNoteByStudent']);
     }
     public function index()
     {
         // $builder = Note::query();
-        $search = request()->get('search', '');
-        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
-        $parallel_id = request()->get('parallel_id', 1) ?? null;
+        // $search = request()->get('search', '');
+        // $period_id = request()->get('period_id', null) ?? currentState()->period_id;
+        // $parallel_id = request()->get('parallel_id', 1) ?? null;
 
-        $students = Student::search($search, 'first_name', ['last_name', 'doc_number'])->whereHas('tuitions', function ($query) use ($parallel_id, $period_id) {
-            $query->where('parallel_id', $parallel_id);
-            $query->where('period_id', $period_id);
-        })->with('currentNotes', 'tuitions')->paginate(10);
-        $subjectsOfParallel = $this->_getSubjectByParallel($parallel_id, $period_id);
+        // $students = Student::search($search, 'first_name', ['last_name', 'doc_number'])->whereHas('tuitions', function ($query) use ($parallel_id, $period_id) {
+        //     $query->where('parallel_id', $parallel_id);
+        //     $query->where('period_id', $period_id);
+        // })->with('currentNotes', 'tuitions')->paginate(10);
+        // $subjectsOfParallel = $this->_getSubjectByParallel($parallel_id, $period_id);
         
-        return Inertia::render('Notes/Index', [
+        // return Inertia::render('Notes/Index', [
+        //     'success' => true,
+        //     'data' => $students,
+        //     'metadata' => ['subjects' => $subjectsOfParallel],
+        // ]);
+
+        if (auth()->user()->hasRole('student')) {
+            return $this->indexForStudent();
+        }
+        
+        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
+        $periods = getPeriodByRole();
+        $parallels = getParallelsByRoleAndPeriod($period_id);
+
+        return Inertia::render('Notes/CreateOrEditNote', [
             'success' => true,
-            'data' => $students,
-            'metadata' => ['subjects' => $subjectsOfParallel],
+            'data' => ['currentPeriod' => $period_id, 'periods' => $periods, 'parallels' => $parallels],
+        ]);
+    }
+
+    private function indexForStudent() {
+        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
+        // $periods = getPeriodByRole();
+        // $parallels = getParallelsByRoleAndPeriod($period_id);
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = auth()->user();
+        $student = $user->student;
+        $tuitions = Tuition::with('course', 'period', 'parallel')->where('student_id', $student->id)->get();
+
+        return Inertia::render('Notes/CreateOrEditNoteForStudent', [
+            'success' => true,
+            'data' => ['currentPeriod' => $period_id, 'tuitions' => $tuitions, 'student' => $student],
         ]);
     }
 
@@ -66,11 +96,16 @@ class NoteController extends Controller
 
     public function getSubjectByParallel(Parallel $parallel)
     {
-        $schedules = $this->_getSubjectByParallel($parallel->id, currentState()->period_id);
+        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
+        $schedules = $this->_getSubjectByParallel($parallel->id, $period_id);
         return response()->json([
             'success' => true,
             'data' => $schedules,
         ]);
+    }
+
+    public function getSubjectByPeriod(Period $period) {
+
     }
 
     private function _getSubjectByParallel(int $parallel_id, int $period_id)
@@ -119,11 +154,11 @@ class NoteController extends Controller
         $search = request()->get('search', null);
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
         $parallel_id = $parallel->id;
-        /**
-         * @var \App\Models\User $user
-         */
-        $user = auth()->user();
-        $isTeacher = $user->hasRole('teacher');
+        // /**
+        //  * @var \App\Models\User $user
+        //  */
+        // $user = auth()->user();
+        // $isTeacher = $user->hasRole('teacher');
         $notes = Student::search($search, 'first_name', ['last_name', 'doc_number'])
             ->whereHas('tuitions', function ($query) use ($period_id, $parallel_id) {
                 $query->where('parallel_id', $parallel_id);

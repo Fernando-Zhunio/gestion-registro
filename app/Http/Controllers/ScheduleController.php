@@ -110,7 +110,7 @@ class ScheduleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(schedule $schedule)
+    public function show(Schedule $schedule)
     {
         //
     }
@@ -118,7 +118,7 @@ class ScheduleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(schedule $schedule)
+    public function edit(Schedule $schedule)
     {
         //
     }
@@ -126,7 +126,7 @@ class ScheduleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatescheduleRequest $request, schedule $schedule)
+    public function update(UpdatescheduleRequest $request, Schedule $schedule)
     {
         $data = $request->all();
         $period_id = currentState()->period_id;
@@ -160,7 +160,7 @@ class ScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(schedule $schedule)
+    public function destroy(Schedule $schedule)
     {
         $schedule->delete();
         return response()->json([

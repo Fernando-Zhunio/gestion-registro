@@ -5,6 +5,7 @@ use App\Models\Note;
 use App\Models\Parallel;
 use App\Models\Period;
 use App\Models\Student;
+use App\Models\Tuition;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -69,9 +70,7 @@ if (!function_exists('validateParallel')) {
             }
         }
         $currentState = currentState();
-        $countStudents = Student::where('parallel_id', $parallel->id)->whereHas('tuitions', function ($query) use ($currentState) {
-            $query->where('period_id', $currentState->period_id);
-        })->count();
+        $countStudents = Tuition::where('parallel_id', $parallel->id)->where('period_id', $currentState->period_id)->count();
         // dd($countStudents, $parallel->quota);
         if ($countStudents >= $parallel->quota) {
             validationException(
