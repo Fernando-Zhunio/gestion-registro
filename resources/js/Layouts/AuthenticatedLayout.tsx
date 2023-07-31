@@ -1,16 +1,16 @@
 import { useState, PropsWithChildren, ReactNode, useEffect, useContext } from "react";
-import ApplicationLogo from "@/Components/ApplicationLogo";
+// import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
+// import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
-import { User } from "@/types";
+// import { User } from "@/types";
 import Sidebar from "@/Components/Sidebar";
 import axios from "axios";
-import { useFetch } from "@/Hooks/UseFetch";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { AppContext, AppContextProvider } from "@/Context/AppContext";
+// import { useFetch } from "@/Hooks/UseFetch";
+// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AppContext } from "@/Context/AppContext";
 import { IPeriod } from "@/Models/period";
 
 export default function Authenticated({
@@ -45,7 +45,7 @@ export default function Authenticated({
             console.log({ auth });
     }, []);
     return (
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <>
                 <div className="min-h-screen">
                     <nav className="border-b border-gray-100 header-main">
                         <div className=" mx-auto px-4 sm:px-6 lg:px-4">
@@ -215,6 +215,6 @@ export default function Authenticated({
                         </div>
                     </main>
                 </div>
-            </LocalizationProvider>
+            </>
     );
 }

@@ -14,40 +14,13 @@ import { showAlert } from "@/Helpers/alerts";
 import { Link, useForm } from "@inertiajs/react";
 import { IPeriod } from "../Periods/types/period.types";
 import { AppContext } from "@/Context/AppContext";
+import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
 
-const StudentsIndex = ({data, metadata: {periods}}: ResponsePaginator<IStudent, any>) => {
+const StudentsIndex = ({data, metadata: {periods, current_period}}: ResponsePaginator<IStudent, any>) => {
     const {  delete: _deleteCourse } = useForm()
 
-    const [period_id, setPeriod_id] = useState<number>(0)
+    const [period_id, setPeriod_id] = useState<number>(current_period)
     const {appInfo} = useContext(AppContext)
-
-    // function deleteCourse(id: number): void {
-    //     showAlert({
-    //         title: '¿Estás seguro de eliminar este curso?',
-    //         text: 'Esta acción no se puede deshacer',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Si, eliminar',
-    //         cancelButtonText: 'Cancelar'
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             _deleteCourse(`/courses/${id}`, {
-    //                 preserveScroll: true,
-    //                 onSuccess: () => {
-    //                     showAlert({
-    //                         title: 'Curso eliminado',
-    //                         icon: 'success'
-    //                     })
-    //                 },
-    //                 onError: () => {
-
-    //                 },
-    //                 preserveState: true
-    //             })
-                
-    //         }
-    //     })
-    // }
 
     const refSearchBar: any = useRef()
 
@@ -120,17 +93,17 @@ const StudentsIndex = ({data, metadata: {periods}}: ResponsePaginator<IStudent, 
                                             {row.first_name}
                                         </TableCell>
                                         <TableCell>{row.last_name}</TableCell>
-                                        <TableCell>{row.email}</TableCell>
+                                        <TableCell>{row.user?.email}</TableCell>
                                         <TableCell>{row.address}</TableCell>
-                                        <TableCell>{row.doc_type}</TableCell>
+                                        <TableCell>{(ConstDocTypes() as any)[row.doc_type]}</TableCell>
                                         <TableCell>{row.doc_number}</TableCell>
                                         <TableCell>{row.birthday}</TableCell>
-                                        <TableCell>{row.gender}</TableCell>
+                                        <TableCell>{(ConstGender() as any)[row.gender]}</TableCell>
                                         <TableCell>{row.previous_institution}</TableCell>
                                         <TableCell>{row?.tuitions?.[0].course.name}</TableCell>
                                         <TableCell>{row.representative.first_name}</TableCell>
                                         <TableCell>
-                                           {appInfo.currentState.period_id == period_id && <div className="flex gap-1">
+                                           {appInfo.currentState?.period_id == period_id && <div className="flex gap-1">
                                              <Link href={"/students/"+ row.id + '/edit'}  className="btn-icon">
                                                  <i className="fas fa-edit"></i>
                                              </Link>

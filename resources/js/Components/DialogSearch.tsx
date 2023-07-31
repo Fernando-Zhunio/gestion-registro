@@ -9,6 +9,7 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 // import { TableBody, TableCell } from "@mui/material";
 import EmptyState from "../Components/EmptyState";
+import DialogCustom from "./DialogCustom";
 interface DialogSearchProps {
     isOpen: boolean;
     close: () => void;
@@ -57,8 +58,12 @@ export function DialogSearch({
         close();
     }
     return (
-        <div className="dialog-custom">
-            <div className="dialog-custom-container md:w-2/4">
+        // <div className="dialog-custom">
+        <div>
+            {/* <div className="dialog-custom-container md:w-2/4"> */}
+            <DialogCustom
+                open={isOpen}  
+            >
                 <div className="bg-slate-200 rounded-md flex justify-between items-center px-3">
                     <input
                         placeholder={placeholder || "Buscador"}
@@ -68,7 +73,7 @@ export function DialogSearch({
                         type="text"
                     />
                     <span>
-                        <button className="border p-2">
+                        <button onClick={fetchGetRepresentatives} className="border p-2">
                             <i className="fa-solid fa-magnifying-glass"></i>
                         </button>
                         {isLoading && (
@@ -104,16 +109,6 @@ export function DialogSearch({
                                             </TableCell>
                                         )
                                     )}
-                                    {/* <TableCell>#</TableCell>
-                                <TableCell>Nombres</TableCell>
-                                <TableCell>Apellidos</TableCell>
-                                <TableCell>Correo</TableCell>
-                                <TableCell>Dirección</TableCell>
-                                <TableCell>Tipo Doc</TableCell>
-                                <TableCell>Numero Doc</TableCell>
-                                <TableCell>Sexo</TableCell>
-                                <TableCell>Curso</TableCell>
-                                <TableCell>Periodo</TableCell> */}
                                 </TableRow>
                             </TableHead>
                             {body || (
@@ -134,7 +129,8 @@ export function DialogSearch({
                         </Table>
                     )}
                 </div>
-            </div>
+            </DialogCustom>
+            {/* </div> */}
         </div>
     );
 }

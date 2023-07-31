@@ -30,7 +30,6 @@ class StudentFactory extends Factory
             'photo' => $this->faker->imageUrl(50, 50),
             'previous_institution' => $this->faker->text,
             'illness_or_disability' => $this->faker->text,
-            'course_id' => $this->faker->randomFloat(0, 1, 10),
             'representative_id' => Representative::factory()->create()->id,
             'user_id' => User::factory()->create()->id,
         ];

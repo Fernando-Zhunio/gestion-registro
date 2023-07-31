@@ -15,6 +15,7 @@ import { showToast } from "@/Helpers/alerts";
 import { IRepresentative } from "@/Pages/Representatives/types/representatives";
 import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
 import Input from "@/Components/Input";
+import FormRepresentativeResponseJson from "@/Shared/FormRepresentativeResponseJson";
 
 interface FormCreateOrEditTuitionProps {
     // handlerSetForm: (key: any, value: any) => void;
@@ -24,6 +25,7 @@ interface FormCreateOrEditTuitionProps {
 
     openSearch: (type?: "student" | "representative") => void;
     representative?: IRepresentative | null;
+    setRepresentative: (representative: IRepresentative | null) => void;
     clearRepresentative: () => void;
 }
 
@@ -63,6 +65,7 @@ const FormCreateOrEditTuition = ({
     // handlerSetForm,
     openSearch,
     representative,
+    setRepresentative,
     isEdit,
     clearRepresentative,
 }: FormCreateOrEditTuitionProps) => {
@@ -135,6 +138,7 @@ const FormCreateOrEditTuition = ({
            })
            return;
         }
+        data['representative_id'] = representative.id;
         router.post(route("tuitions.store"), data, options);
         // }
     };
@@ -248,8 +252,10 @@ const FormCreateOrEditTuition = ({
                 </div>
             </form>
             {isOpen && (
-                <FormRepresentative
-                    returnJson={true}
+                <FormRepresentativeResponseJson
+                    returnData={(data: IRepresentative) => {
+                        setRepresentative(data);
+                    }}
                     representative={null}
                     isOpen={isOpen}
                     setOpen={setIsOpen}

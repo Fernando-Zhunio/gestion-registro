@@ -49,7 +49,7 @@ class RepresentativeController extends Controller
     public function store(StorerepresentativeRequest $request)
     {
         $representative = Representative::create($request->all());
-        return $request->get('returnJson', null) ? response()->json(['success' => true, 'data' => $representative]) : to_route('representatives.index');
+        return $request->expectsJson() ? response()->json(['success' => true, 'data' => $representative]) :  to_route('representatives.index');
     }
 
     /**

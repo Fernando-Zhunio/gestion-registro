@@ -88,7 +88,7 @@ export default function FormStudent({
 
     function handleFileChange(key: string, e: any) {
         const selectedFile = e.target.files[0];
-        console.log({ selectedFile });
+        // console.log({ selectedFile });
 
         if (selectedFile) {
             // handlerSetForm(key, selectedFile);
@@ -101,9 +101,6 @@ export default function FormStudent({
         }
     }
 
-    // const onSubmit = (data: any) => {
-    //     console.log(data);
-    // };
     return (
         <>
             {/* Nombres */}
@@ -148,7 +145,7 @@ export default function FormStudent({
                     </small>
                 )} */}
                 <Input
-                    label="Apellidos" 
+                    label="Apellidos"
                     type="text"
                     name="last_name"
                     control={control}
@@ -193,7 +190,7 @@ export default function FormStudent({
                     {...register("phone")}
                 /> */}
                 <Input
-                    label="Teléfono" 
+                    label="Teléfono"
                     type="number"
                     name="phone"
                     control={control}
@@ -207,7 +204,9 @@ export default function FormStudent({
                     name="gender"
                     control={control}
                     rules={{ required: true }}
+                    defaultValue={""}
                 >
+                    <option value="">Seleccione una opción</option>
                     {genders?.map((item: any, index: number) => {
                         return (
                             <option key={index} value={item.value}>
@@ -241,7 +240,7 @@ export default function FormStudent({
                     </small>
                 )} */}
                 <Input
-                    label="Dirección" 
+                    label="Dirección"
                     type="text"
                     name="address"
                     control={control}
@@ -272,6 +271,7 @@ export default function FormStudent({
                     label="Fecha de nacimiento"
                     name="birthday"
                     control={control}
+                    readOnly={true}
                     rules={{ required: true }}
                     setValue={setValue}
                 />
@@ -279,7 +279,7 @@ export default function FormStudent({
 
             {/* curso - course_id */}
             <div className="md:col-span-3">
-                <label htmlFor="course_id">Curso</label>
+                {/* <label htmlFor="course_id">Curso</label>
                 <select
                     className={`${
                         errors.course_id && "invalid-control"
@@ -302,18 +302,44 @@ export default function FormStudent({
                     <small className="text-red-600">
                         El curso es requerido
                     </small>
-                )}
+                )} */}
+                <Select
+                    label="Curso"
+                    name="course_id"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue={""}
+                    onChange={($event: any) => {
+                        setValue("course_id", $event.target.value);
+                        getParallelsByCourse($event.target.value);
+                    }}
+                >
+                    <option value="">Seleccione una opción</option>
+                    {courses?.map((item: any) => {
+                        return (
+                            <option key={item.id} value={item.id}>
+                                {item.name} - {item.nivel}
+                            </option>
+                        );
+                    })}
+                </Select>
             </div>
 
             {/* tipo de documento - doc_type */}
             <div className="md:col-span-3">
-                <label htmlFor="course_id">*Tipo de documento</label>
-                <select
-                    className={`${
-                        errors.doc_type && "invalid-control"
-                    } form-control w-full `}
-                    {...register("doc_type", { required: true })}
+                {/* <label htmlFor="course_id">*Tipo de documento</label> */}
+                <Select
+                    // className={`${
+                    //     errors.doc_type && "invalid-control"
+                    // } form-control w-full `}
+                    // {...register("doc_type", { required: true })}
+                    label="Tipo de documento"
+                    name="doc_type"
+                    control={control}
+                    rules={{ required: true }}
+                    defaultValue={""}
                 >
+                    <option value="">Seleccione una opción</option>
                     {docTypes?.map((item: any) => {
                         return (
                             <option key={item.value} value={item.value}>
@@ -321,12 +347,12 @@ export default function FormStudent({
                             </option>
                         );
                     })}
-                </select>
-                {errors?.course_id?.type === "required" && (
+                </Select>
+                {/* {errors?.course_id?.type === "required" && (
                     <small className="text-red-600">
                         El curso es requerido
                     </small>
-                )}
+                )} */}
             </div>
 
             {/* numero de identificacion - doc_number */}
@@ -347,8 +373,8 @@ export default function FormStudent({
                         El numero de identificacion es requerido
                     </small>
                 )} */}
-                 <Input
-                    label="Numero de identificacion" 
+                <Input
+                    label="Numero de identificacion"
                     type="text"
                     name="doc_number"
                     control={control}
@@ -378,8 +404,8 @@ export default function FormStudent({
                         La anterior institución es requerido
                     </small>
                 )} */}
-                 <Input
-                    label="Anterior institución" 
+                <Input
+                    label="Anterior institución"
                     type="text"
                     name="previous_institution"
                     control={control}
@@ -396,8 +422,8 @@ export default function FormStudent({
                     className={`form-control w-full`}
                     {...register("illness_or_disability")}
                 /> */}
-                 <Input
-                    label="Discapacidad" 
+                <Input
+                    label="Discapacidad"
                     type="text"
                     name="illness_or_disability"
                     control={control}
@@ -406,13 +432,15 @@ export default function FormStudent({
 
             {/* paralelo - parallel_id */}
             <div className="md:col-span-3">
-                <label htmlFor="course_id">Paralelo</label>
+                <label htmlFor="parallel_id">*Paralelo</label>
                 <select
                     className={`${
-                        errors.course_id && "invalid-control"
+                        errors.parallel_id && "invalid-control"
                     } form-control w-full `}
                     {...register("parallel_id", { required: true })}
+                    defaultValue={""}
                 >
+                    <option value="">Seleccione una opción</option>
                     {parallels?.map((item) => {
                         return (
                             <option key={item.id} value={item.id}>
@@ -421,9 +449,9 @@ export default function FormStudent({
                         );
                     })}
                 </select>
-                {errors?.course_id?.type === "required" && (
+                {errors?.parallel_id?.type === "required" && (
                     <small className="text-red-600">
-                        El curso es requerido
+                        El paralelo es requerido
                     </small>
                 )}
             </div>

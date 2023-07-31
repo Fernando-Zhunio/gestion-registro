@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,7 +21,7 @@ class ParallelFactory extends Factory
             'name' => $this->faker->name,
             'description' => $this->faker->text,
             'quota' => 40,
-            'registered' => $this->faker->randomNumber(2),
+            'course_id' => Course::inRandomOrder()->first()->id,
         ];
     }
 }

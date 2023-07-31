@@ -35,7 +35,8 @@ class TuitionController extends Controller
         $period_id = request('period_id', null) ?? currentState()->period_id;
         $tuitions = Tuition::whereHas('student', function ($query) use ($search, $period_id) {
             $query->search($search, 'first_name', ['last_name']);
-        })->with('student', 'course', 'period')->where('period_id', $period_id)->paginate();
+        })->with('student', 'course', 'period', 'student.user', 'parallel')
+        ->where('period_id', $period_id)->orderBy('created_at', 'desc')->paginate();
         return Inertia::render('Tuitions/Index', [
             'success' => true,
             'data' => $tuitions,
@@ -60,7 +61,7 @@ class TuitionController extends Controller
         $students = Student::search($search, 'first_name', ['last_name'])
             /* ->whereHas('tuitions', function ($query) use ($currentPeriod) {
             $query->where('period_id', $currentPeriod);
-        }) */->with('course')->paginate($pageSize);
+        }) */->paginate($pageSize);
 
         return response()->json([
             'success' => true,
@@ -152,14 +153,15 @@ class TuitionController extends Controller
             Tuition::create([
                 'student_id' => $student->id,
                 'period_id' => $currentPeriod,
-                'course_id' => $student->course_id,
-                'parallel_id' => $data['parallel_id'],
+                'course_id' => $course_id,
+                'parallel_id' => $parallel_id,
                 'status' => '1',
                 'approved' => '0'
             ]);
             DB::commit();
             return to_route('tuitions.index');
         } catch (\Exception $e) {
+            dd($e);
             DB::rollBack();
             validationException(
                 'student',
@@ -176,6 +178,17 @@ class TuitionController extends Controller
         ], $request->all());
         validateParallel($request->parallel_id, $request->course_id);
 
+        $tuition = Tuition::where([
+            'student_id' => $student->id,
+            'period_id' => currentState()->period_id,
+        ]);
+        if ($tuition->exists()) {
+            $tuition->update([
+                'course_id' => $request->course_id,
+                'parallel_id' => $request->parallel_id
+            ]);
+            return to_route('tuitions.index');
+        }
         Tuition::create([
             'student_id' => $student->id,
             'period_id' => currentState()->period_id,
@@ -184,6 +197,7 @@ class TuitionController extends Controller
             'status' => '1',
             'approved' => '0'
         ]);
+        return to_route('tuitions.index');
     }
 
     public function rulesStudent(): array
@@ -206,20 +220,20 @@ class TuitionController extends Controller
         ];
     }
 
-    private function rulesRepresentative()
-    {
-        return [
-            'representative.first_name' => 'required|string|max:255',
-            'representative.last_name' => 'required|string|max:255',
-            'representative.email' => 'required|email|unique:representatives,email',
-            'representative.phone' => 'required|string|max:255',
-            'representative.address' => 'required|string|max:1000',
-            'representative.doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
-            'representative.doc_number' => 'required|string|unique:representatives,doc_number|max:255',
-            'representative.gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
-            'representative.occupation' => 'required|string|max:255',
-        ];
-    }
+    // private function rulesRepresentative()
+    // {
+    //     return [
+    //         'representative.first_name' => 'required|string|max:255',
+    //         'representative.last_name' => 'required|string|max:255',
+    //         'representative.email' => 'required|email|unique:representatives,email',
+    //         'representative.phone' => 'required|string|max:255',
+    //         'representative.address' => 'required|string|max:1000',
+    //         'representative.doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
+    //         'representative.doc_number' => 'required|string|unique:representatives,doc_number|max:255',
+    //         'representative.gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
+    //         'representative.occupation' => 'required|string|max:255',
+    //     ];
+    // }
 
     private function generateUserStudent($name, $email)
     {

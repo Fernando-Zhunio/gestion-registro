@@ -26,4 +26,6 @@ export interface IStudent {
     // parallel?: IParallel;
     notes?: INote[];
     tuitions?: ITuition[];
+    user_id: number;
+    user: any;
 }

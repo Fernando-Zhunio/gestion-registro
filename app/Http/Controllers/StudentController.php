@@ -32,7 +32,7 @@ class StudentController extends Controller
         // $students = Student::search(request()->get('search', ''))->paginate();
         $period_id = request('period_id', null) ?? currentState()->period_id;
         $students = Student::search(request()->get('search', ''))
-        ->with('tuitions.course', 'representative')
+        ->with('tuitions.course', 'representative', 'user')
         ->whereHas('tuitions', function($query) use($period_id) {
             return $query->where('period_id', $period_id);
         })->paginate();
@@ -40,7 +40,7 @@ class StudentController extends Controller
         return Inertia::render('Students/Index', [
             'success' => true,
             'data' => $students,
-            'metadata' => ['periods' =>$periods],
+            'metadata' => ['periods' =>$periods, 'current_period' => $period_id],
         ]);
     }
 

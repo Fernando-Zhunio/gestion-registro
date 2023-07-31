@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Link, useForm } from "@inertiajs/react";
 import { ITuition } from "./types/tuition";
 import { ResponsePaginator } from "@/types/global";
+import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
 
 export default function IndexTuitions({data}: ResponsePaginator<ITuition>) {
     return (
@@ -40,6 +41,7 @@ export default function IndexTuitions({data}: ResponsePaginator<ITuition>) {
                                 <TableCell>Numero Doc</TableCell>
                                 <TableCell>Sexo</TableCell>
                                 <TableCell>Curso</TableCell>
+                                <TableCell>Paralelo</TableCell>
                                 <TableCell>Periodo</TableCell>
                             </TableRow>
                         </TableHead>
@@ -55,12 +57,13 @@ export default function IndexTuitions({data}: ResponsePaginator<ITuition>) {
                                         {row.student.first_name}
                                     </TableCell>
                                     <TableCell>{row.student.last_name}</TableCell>
-                                    <TableCell>{row.student.email}</TableCell>
+                                    <TableCell>{row.student?.user?.email}</TableCell>
                                     <TableCell>{row.student.address}</TableCell>
-                                    <TableCell>{row.student.doc_type}</TableCell>
+                                    <TableCell>{(ConstDocTypes() as any)[row.student.doc_type]}</TableCell>
                                     <TableCell>{row.student.doc_number}</TableCell>
-                                    <TableCell>{row.student.gender}</TableCell>
+                                    <TableCell>{(ConstGender() as any)[row.student.gender]}</TableCell>
                                     <TableCell>{row.course.name}</TableCell>
+                                    <TableCell>{row.parallel.name}</TableCell>
                                     <TableCell>{row.period.promotion}</TableCell>
                                     <TableCell>
                                        <div className="flex gap-1">

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Parallel;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,13 +18,15 @@ class TuitionFactory extends Factory
      */
     public function definition(): array
     {
+            $parallel =  Parallel::inRandomOrder()->first();
+            
         return [
             'status' => $this->faker->randomElement([1, 2, 3]),
             'approved' => strval($this->faker->randomElement([0, 1])),
             'student_id' => Student::factory()->create()->id,
-            'course_id' => $this->faker->randomFloat(0, 1, 10),
+            'course_id' => $parallel->course_id,
             'period_id' => 1,
-            'parallel_id' => $this->faker->randomFloat(0, 1, 10),
+            'parallel_id' => $parallel->id,
         ];
     }
 }

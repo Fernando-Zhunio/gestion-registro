@@ -8,37 +8,23 @@ import Select from "@/Components/Select";
 import DialogCustom from "@/Components/DialogCustom";
 import { showToast } from "@/Helpers/alerts";
 import { router } from "@inertiajs/react";
+import axios from "axios";
 
 interface FormRepresentativeProps {
-    // handlerSetForm: (key: any, value: any) => void;
-    // onSubmit: (data: any) => void;
-    // form: IRepresentative;
-    // errors: any;
-    // genders: { label: string; value: string }[];
-    // courses: { id: number; name: string; nivel: string }[];
-    // docTypes: { label: string; value: string }[];
-    // register: any;
     representative: IRepresentative | null;
     isOpen: boolean;
     setOpen: (isOpen: boolean) => void;
+    returnData?: (data: IRepresentative) => void;
 }
 
-export default function FormRepresentative({
+export default function FormRepresentativeResponseJson({
     representative,
     isOpen,
     setOpen,
-}: // handlerSetForm,
-// errors,
-// // onSubmit,
-// // form,
-// register,
-// // errors: errorsInertia,
-// genders,
-// // courses,
-// docTypes,
+    returnData,
+}:
 FormRepresentativeProps) {
     const {
-        // register,
         formState: { errors },
         handleSubmit,
         control,
@@ -47,55 +33,43 @@ FormRepresentativeProps) {
     });
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    // const [preview, setPreview] = useState<any>(null);
-
-    // useEffect(() => {
-    //     new AirDatepicker('#birthday', {
-    //         locale: localeEs,
-
-    //     })
-    // }, []);
-
-    // function handleFileChange(key: string, e: any) {
-    //     const selectedFile = e.target.files[0];
-    //     console.log({ selectedFile });
-
-    //     if (selectedFile) {
-    //         handlerSetForm(key, selectedFile);
-
-    //         const reader = new FileReader();
-    //         reader.onload = () => {
-    //             setPreview(reader.result);
-    //         };
-    //         reader.readAsDataURL(selectedFile);
-    //     }
-    // }
 
     const onSubmit = (data: any) => {
         setIsLoading(true);
-        const options = {
-            preserveState: true,
-            onSuccess: (e: any) => {
-                console.log({ e });
-                setIsLoading(false);
+        if (!representative) {
+            axios.post("/representatives", {...data}, {
+                headers: { "Content-Type": "multipart/form-data", "Accept": "application/json" },
+            })
+            .then((response) => {
+                returnData && returnData(response.data.data);
                 setOpen(false);
-                // reset();
-            },
-            onError: (e: { [s: string]: unknown } | ArrayLike<unknown>) => {
-                console.log({ e });
+            }).catch((error) => {
+                console.log(error)
+
                 showToast({
                     icon: "error",
-                    text: Object.values(e).join("\n"),
+                    text: Object.values(error.response.data.errors).join("\n"),
                     title: "Error al crear el representante",
                 });
                 setIsLoading(false);
-            },
-        };
-
-        if (!representative) {
-            router.post("/representatives", {...data}, options);
+            })
         } else {
-            router.put(`/representatives/${representative?.id}`, data, options);
+            axios.put(`/representatives/${representative?.id}`, data, {
+                headers: { "Content-Type": "multipart/form-data", "Accept": "application/json" },
+            })
+            .then((response) => {
+                returnData && returnData(response.data.data);
+                setOpen(false);
+
+            }).catch((error) => {
+                console.log(error)
+                showToast({
+                    icon: "error",
+                    text: Object.values(error.response.data.errors).join("\n"),
+                    title: "Error al crear el representante",
+                });
+                setIsLoading(false);
+            })
         }
     };
     return (

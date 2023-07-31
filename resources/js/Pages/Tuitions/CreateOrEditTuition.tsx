@@ -12,9 +12,10 @@ import { IRepresentative } from "../Representatives/types/representatives";
 import { IParallel } from "../Parallels/types/parallel.types";
 import { useFetch } from "@/Hooks/UseFetch";
 import { useForm } from "react-hook-form";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { Avatar } from "@mui/material";
 import axios from "axios";
+import { showToast } from "@/Helpers/alerts";
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
@@ -135,7 +136,22 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
 
     function saveInServer(data : any) {
         console.log({data})
-        axios.post("/tuitions/students/"+student?.id, data);
+        const options = {
+            forceFormData: true,
+            onSuccess: () => {
+                setIsLoading(false);
+            },
+            onError: (error: any) => {
+                console.log({ error });
+                setIsLoading(false);
+                showToast({
+                    icon: "error",
+                    text: Object.values(error).join("\n"),
+                    title: "Error al crear el estudiante",
+                });
+            },
+        };
+        router.post("/tuitions/students/"+student?.id, data, options);
     }
 
 
@@ -300,7 +316,7 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                                 <div className="col-span-12 my-3">
                                     <button
                                         disabled={isLoading}
-                                        className="rounded-md bg-slate-800 text-white px-3 py-2"
+                                        className={`rounded-md bg-slate-800 text-white px-3 py-2 ${isLoading ? "is-loading" : ""}`}
                                         type="submit"
                                     >
                                         Generar matricula{" "}
@@ -313,6 +329,7 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                         <FormCreateOrEditTuition
                             isEdit={isEdit}
                             openSearch={openSearch}
+                            setRepresentative={setRepresentative}
                             representative={representative}
                             clearRepresentative={clearRepresentative}
                         ></FormCreateOrEditTuition>
