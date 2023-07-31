@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IStudent } from "./types/student.types";
 import {  ResponsePaginator } from "@/types/global";
 // import { CreateOrEditCourse } from "./CreateOrEditStudent";
@@ -22,7 +22,17 @@ const StudentsIndex = ({data, metadata: {periods, current_period}}: ResponsePagi
     const [period_id, setPeriod_id] = useState<number>(current_period)
     const {appInfo} = useContext(AppContext)
 
-    const refSearchBar: any = useRef()
+
+    const refSearchBar: any = useRef();
+    useEffect(() => {
+        setPeriod_id(current_period)
+    }, [current_period])
+
+    function onChangePeriod(e: any) {
+        // setPeriod_id(e.target.value);
+        // refSearchBar.current.fetchUrl(null, { period_id: e.target.value });
+        
+    }
 
     return (
         <div className="">
@@ -36,6 +46,7 @@ const StudentsIndex = ({data, metadata: {periods, current_period}}: ResponsePagi
                 buttons={
                     <>
                         <select
+                            value={period_id}
                             onChange={($event: any) =>{
                                 console.log($event.target.value)
                                 setPeriod_id($event.target.value)
@@ -51,7 +62,6 @@ const StudentsIndex = ({data, metadata: {periods, current_period}}: ResponsePagi
                     </>
                 }
                 >
-                {/* {JSON.stringify(periods)} */}
                 <div className="overflow-x-auto">
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">

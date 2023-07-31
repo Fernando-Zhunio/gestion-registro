@@ -39,6 +39,7 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId } }: R
                 buttons={
                     <>
                         <select name="period" id=""
+                            value={period_id}
                             onChange={onChangePeriod}
                         >
                             {
