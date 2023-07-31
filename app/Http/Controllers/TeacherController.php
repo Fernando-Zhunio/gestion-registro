@@ -24,11 +24,11 @@ class TeacherController extends Controller
         $onlyCurrent = $request->get('onlyCurrent', true);
         $currentState = currentState();
         $teachersBuilder = Teacher::query();
-        $teachersBuilder->search($request->get('search', null));
-        if ($onlyCurrent) {
-            $teachersBuilder->where('period_id', $currentState->period_id);
-        }
-        $teachers = $teachersBuilder->paginate(10);
+        $teachersBuilder->search($request->get('search'), 'first_name', ['last_name', 'doc_number']);
+        // if ($onlyCurrent) {
+        //     $teachersBuilder->where('period_id', $currentState->period_id);
+        // }
+        $teachers = $teachersBuilder->orderBy('id', 'DESC')->paginate(10);
         return Inertia::render('Teachers/Index', [
             'success' => true,
             'data' => $teachers,

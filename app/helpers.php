@@ -155,9 +155,9 @@ if (!function_exists('addAverageInNotes')) {
          * @var \App\Models\User $user
          */
         foreach ($notes as $key => $note) {
-            $note['averageFirstTrimester'] =( ($note?->partial_trimester_1 ?? 0) + ($note?->integrating_project_1 ?? 0) + ($note?->evaluation_mechanism_1 ?? 0)) / 10;
-            $note['averageSecondTrimester'] =( ($note?->partial_trimester_2 ?? 0) + ($note?->integrating_project_2 ?? 0) + ($note?->evaluation_mechanism_2 ?? 0)) / 10;
-            $note['averageThirdTrimester'] =( ($note?->partial_trimester_3 ?? 0) + ($note?->integrating_project_3 ?? 0) + ($note?->evaluation_mechanism_3 ?? 0)) / 10;
+            $note['averageFirstTrimester'] =((($note?->partial_trimester_1 ?? 0) * 9) + (($note?->integrating_project_1 ?? 0)/2) + (($note?->evaluation_mechanism_1 ?? 0) / 2)) / 10;
+            $note['averageSecondTrimester'] =( (($note?->partial_trimester_2 ?? 0) * 9) + (($note?->integrating_project_2 ?? 0) / 2) + (($note?->evaluation_mechanism_2 ?? 0) / 2)) / 10;
+            $note['averageThirdTrimester'] =( (($note?->partial_trimester_3 ?? 0) * 9) + (($note?->integrating_project_3 ?? 0) / 2) + (($note?->evaluation_mechanism_3 ?? 0) / 2)) / 10;
             $note['noteFinal'] = round((($note['averageFirstTrimester']  + $note['averageSecondTrimester'] + $note['averageThirdTrimester']) / 3.3333333333) + (($note->project_final ?? 0) / 10), 2);
             // dd($note, $note['noteFinal']);
         }

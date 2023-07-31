@@ -31,6 +31,7 @@ class StoreteacherRequest extends FormRequest
                 'email',
                 'max:255',
                 'unique:teachers,email',
+                'unique:users,email',
             ],
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',

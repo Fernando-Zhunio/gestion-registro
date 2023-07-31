@@ -100,13 +100,13 @@
                                 @if ($note)
                                     <td>
                                         {{-- {{ $note->{{'partial_trimester_'$data['trimester']}}-> }} --}}
-                                        {{ ($note->{'partial_trimester_'.$data['trimester']} /10) ?? 0 }}
+                                        {{ ($note->{'partial_trimester_'.$data['trimester']}) ?? 0 }}
                                     </td>
                                     <td>
-                                        {{ ($note->{'integrating_project_'.$data['trimester']} /10) ?? 0 }}
+                                        {{ ($note->{'integrating_project_'.$data['trimester']}) ?? 0 }}
                                     </td>
                                     <td>
-                                        {{ ($note->{'evaluation_mechanism_'.$data['trimester']} /10) ?? 0 }}
+                                        {{ ($note->{'evaluation_mechanism_'.$data['trimester']}) ?? 0 }}
                                     </td>
                                     <td>
                                         @php

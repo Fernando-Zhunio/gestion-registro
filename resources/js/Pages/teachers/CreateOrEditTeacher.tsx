@@ -30,8 +30,6 @@ import { patchValues } from "@/Helpers/patchValues";
 import Input from "@/Components/Input";
 import Textarea from "@/Components/Textarea";
 
-// import { useFormValidation } from "@/Hooks/FormValidation";
-// import { Validator } from "@/Classes/Validator";
 const CreateOrEditTeacher = ({
     isEdit,
     teacher,
@@ -161,6 +159,7 @@ const CreateOrEditTeacher = ({
 
     const onSubmit = (_data: any) => {
         console.log({ _data });
+        setIsLoading(true);
         if (!isEdit) {
             router.post("/teachers", _data, {
                 preserveState: true,
@@ -393,7 +392,7 @@ const CreateOrEditTeacher = ({
                         <div className="mt-5">
                             <button
                                 disabled={isLoading}
-                                className="btn-custom btn-store"
+                                className={`btn-custom bg-slate-800 text-white ${isLoading ? "is-loading" : ""}`}
                             >
                                 Guardar
                                 <i className="fa-regular fa-paper-plane"></i>

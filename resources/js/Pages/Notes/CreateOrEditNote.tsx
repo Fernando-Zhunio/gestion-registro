@@ -1,26 +1,14 @@
 import DialogCustom from "@/Components/DialogCustom";
-import TextField from "@mui/material/TextField";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useContext } from "react";
 import { INote } from "./types/note.types";
-import Button from "@mui/material/Button";
 import axios from "axios";
 import { router } from "@inertiajs/react";
-import DialogActions from "@mui/material/DialogActions";
 import SelectSearch from "@/Shared/components/SelectSearch";
 import { useForm } from "react-hook-form";
 import Select from "@/Components/Select";
 import { IParallel } from "../Parallels/types/parallel.types";
 import { showToast } from "@/Helpers/alerts";
 import { IStudent } from "../Students/types/student.types";
-import { ResponsePaginator } from "@/types/global";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import Divider from "@mui/material/Divider";
-import Input from "@/Components/Input";
 import { SearchPaginator } from "@/Components/Paginator";
 import FormCreateOrEditNote from "@/Shared/FormCreateOrEditNote";
 import { ISubject } from "../Subjects/types/subject.types";
@@ -31,6 +19,7 @@ import Avatar from "@mui/material/Avatar";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import { IPeriod } from "@/Models/period";
+import { AppContext } from "@/Context/AppContext";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
@@ -46,7 +35,13 @@ interface CreateOrEditNoteProps {
 }
 
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
-    const { control, setValue, getValues, watch } = useForm({});
+    const { control, setValue, watch } = useForm<any>({
+        defaultValues: {
+            period_id: data?.currentPeriod,
+            parallel_id: null,
+            subject_id: null,
+        }
+    });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [note, setNote] = useState<INote>();
     const [students, setStudents] = useState<IStudent[]>([]);
@@ -54,12 +49,14 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     const [pathStudents, setPathStudents] = useState<string>("");
     const [selectStudent, setSelectStudent] = useState<IStudent | null>(null);
     const searchPaginator = useRef(null);
+    const {appInfo} = useContext(AppContext);
 
     const watchParallel = watch("parallel_id");
     const watchSubject = watch("subject_id");
     const wathPeriod = watch("period_id");
 
     useEffect(() => {
+        console.log({ data });
         setValue("period_id", data?.currentPeriod);
     }, [data]);
     function onChangeParallel(e: any) {
@@ -76,21 +73,23 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
 
     function onChangePeriod(e: any) {
         if (isLoading) return;
-        setValue("period_id", e.target.value);
+        // setValue("period_id", e.target.value);
         setValue("parallel_id", "");
         setStudents([]);
         setSelectStudent(null);
         setValue("subject_id", "");
         setSubjects([]);
-        // if (!e.target.value) return;
-        // searchNotesStudent(null);
-        // getSubjects(e.target.value);
+        router.reload({
+            data: {
+                period_id: e.target.value,
+            }
+        })
     }
 
     const getSubjects = useCallback(
         (watchParallel: number) => {
             axios
-                .get(`/notes/parallels/${watchParallel}/subjects`)
+                .get(`/periods/${wathPeriod}/notes/parallels/${watchParallel}/subjects`)
                 .then(({ data }) => {
                     console.log({ data });
                     setSubjects(data.data);
@@ -133,7 +132,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         setIsLoading(true);
         setSelectStudent(null);
         axios
-            .get(`/notes/student/${student.id}?subject_id=${watchSubject}`)
+            .get(`periods/${wathPeriod}/notes/students/${student.id}/subjects/${watchSubject}`)
             .then(({ data }) => {
                 setSelectStudent(student);
                 setNote(data.data?.note);
@@ -316,7 +315,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                             student_id={selectStudent?.id}
                             subject_id={watchSubject}
                             note={note}
-                            disabled={wathPeriod != data?.currentPeriod}
+                            disabled={wathPeriod != appInfo.currentState?.period_id}
                         />
                     </div>
                 </div>

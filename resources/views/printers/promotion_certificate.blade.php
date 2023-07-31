@@ -114,7 +114,7 @@
                                 {{ $acc / $countSubjects ?? 0 }}
                             </td>
                             <td>
-                                {{ $acc / $countSubjects ?? 0 >= 7 ? 'APROBADO' : 'REPROBADO' }}
+                                {{ (($acc / $countSubjects) ?? 0) >= 7 ? 'APROBADO' : 'REPROBADO' }}
                             </td>
                         </tr>
                     @else

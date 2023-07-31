@@ -181,8 +181,10 @@ const CreateOrEditSchedule = ({
                             id="end_time"
                             control={control}
                             name="end_time"
+                            defaultValue={''}
                             rules={{ required: true }}
                         >
+                            <option value=""></option>
                             {hoursEnd.map((hour) => {
                                 return (
                                     <option

@@ -31,16 +31,17 @@ use App\Http\Controllers\PrinterController;
 |
 */
 
-Route::get('/', //function () {
+Route::get(
+    '/', //function () {
     // return Inertia::render('Welcome', [
     //     'canLogin' => Route::has('login'),
     //     'canRegister' => Route::has('register'),
     //     'laravelVersion' => Application::VERSION,
     //     'phpVersion' => PHP_VERSION,
     // ]
-// );
-// }
-[DashboardController::class, 'index']
+    // );
+    // }
+    [DashboardController::class, 'index']
 )->middleware('auth');
 
 
@@ -70,11 +71,20 @@ Route::middleware('auth')->group(function () {
         Route::put('/{teacher}', [TeacherController::class, 'update'])->name('teachers.update');
     });
 
+
+
     Route::prefix('periods')->group(function () {
         Route::get('/', [PeriodController::class, 'index'])->name('periods.index');
         // Route::get('/create', [PeriodController::class, 'create'])->name('period.create');
         Route::post('/', [PeriodController::class, 'store'])->name('period.store');
         Route::put('/{period}', [PeriodController::class, 'update'])->name('period.update');
+    });
+
+    Route::prefix('periods/{period}')->group(function () {
+        Route::prefix('notes')->group(function () {
+            Route::get('/parallels/{parallel}/subjects', [NoteController::class, 'getSubjectByParallel'])->name('notes.getSubjectByParallel');
+            Route::get('/students/{student}/subjects/{subject}', [NoteController::class, 'getNoteByStudent'])->name('notes.getNoteByStudent');
+        });
     });
 
     Route::prefix('courses')->group(function () {
@@ -90,17 +100,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/periods/{period}/parallels', [NoteController::class, 'getParallels'])->name('notes.parallels');
         Route::get('/periods/{period}/subjects/{subject}', [NoteController::class, 'getSubjectByPeriod'])->name('notes.getSubjectByPeriod');
         Route::get('/parallels/{parallel}/subjects', [NoteController::class, 'getSubjectByParallel'])->name('notes.getSubjectByParallel');
-        Route::get('/student/{student}', [NoteController::class, 'getNoteByStudent'])->name('notes.getNoteByStudent');
+        // Route::get('/student/{student}', [NoteController::class, 'getNoteByStudent'])->name('notes.getNoteByStudent');
         Route::get('/parallels/{parallel}/search-students', [NoteController::class, 'searchStudentByParallels'])->name('notes.searchStudentByParallels');
         Route::post('/', [NoteController::class, 'store'])->name('notes.store');
         Route::put('/{note}', [NoteController::class, 'update'])->name('notes.update');
         Route::delete('/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
     });
 
-    Route::prefix('printers')->group(function() {
-        Route::get('/students/{student}/promotion_certificate', [PrinterController::class, 'promotionCertificate'])->name('printers.promotionCertificate');
-        Route::get('/students/{student}/notes_student/trimester/{trimester}', [PrinterController::class, 'notesByTrimester'])->name('printers.notesByTrimester');
-
+    Route::prefix('printers')->group(function () {
+        Route::get('/periods/{period}/students/{student}/promotion_certificate', [PrinterController::class, 'promotionCertificate'])->name('printers.promotionCertificate');
+        Route::get('/periods/{period}/students/{student}/notes_student/trimester/{trimester}', [PrinterController::class, 'notesByTrimester'])->name('printers.notesByTrimester');
     });
 
     Route::prefix('students')->group(function () {
@@ -159,6 +168,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [ScheduleController::class, 'create'])->name('schedules.create');
         Route::get('/parallels/search', [ScheduleController::class, 'parallelSearch'])->name('parallelSearch');
         Route::get('/teachers/search', [ScheduleController::class, 'teacherSearch'])->name('teacherSearch');
+        Route::get('/periods/{period}/parallels', [NoteController::class, 'getParallels'])->name('schedules.parallels');
         Route::get('/subjects/search', [ScheduleController::class, 'subjectSearch'])->name('subjectSearch');
         Route::get('/parallels/{parallel}', [ScheduleController::class, 'schedulesByParallel'])->name('schedules.parallel');
         Route::post('/', [ScheduleController::class, 'store'])->name('schedules.store');
@@ -174,4 +184,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

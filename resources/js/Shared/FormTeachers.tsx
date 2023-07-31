@@ -181,6 +181,7 @@ const FormTeacher = ({ errors, register, control, setValue }: FormTeacherProps) 
                 <InputDate
                     setValue={setValue}
                     label="Inicio de contrato"
+                    readOnly={true}
                     control={control}
                     name="start_date"
                     id="start_date"

@@ -94,9 +94,9 @@ class NoteController extends Controller
         ]);
     }
 
-    public function getSubjectByParallel(Parallel $parallel)
+    public function getSubjectByParallel(Period $period, Parallel $parallel)
     {
-        $period_id = request()->get('period_id', null) ?? currentState()->period_id;
+        $period_id = $period->id;
         $schedules = $this->_getSubjectByParallel($parallel->id, $period_id);
         return response()->json([
             'success' => true,
@@ -171,12 +171,12 @@ class NoteController extends Controller
         ]);
     }
 
-    public function getNoteByStudent(Request $request, Student $student)
+    public function getNoteByStudent(Request $request, Period $period, Student $student, Subject $subject)
     {
-        $subject_id = $request->get('subject_id');
+        $subject_id = $subject->id;
 
         $note = Note::where('student_id', $student->id)
-            ->where('period_id', currentState()->period_id)
+            ->where('period_id', $period->id)
             ->where('subject_id', $subject_id)
             ->first();
 

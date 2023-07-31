@@ -39,20 +39,22 @@ const IndexTeacher = ({ data }: { data: { data: ITeacher[] } }) => {
                                 }}
                             >
                                 <TableCell>ID</TableCell>
+                                <TableCell>NOMBRES</TableCell>
                                 <TableCell>TITULO</TableCell>
                                 <TableCell>DIRECCIÓN</TableCell>
                                 <TableCell>NACIMIENTO</TableCell>
                                 <TableCell>DOCUMENTO</TableCell>
                                 <TableCell>EMAIL</TableCell>
-                                <TableCell>PERIODO</TableCell>
                                 <TableCell>TELÉFONO</TableCell>
                                 <TableCell>PRIMER DIA</TableCell>
+                                <TableCell>ACCIONES</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {data.data.map((row) => (
                                 <TableRow key={row.id}>
                                     <TableCell>{row.id}</TableCell>
+                                    <TableCell>{row.first_name} {row.last_name}</TableCell>
                                     <TableCell>{row.academic_title}</TableCell>
                                     <TableCell>{row.address}</TableCell>
                                     <TableCell>{row.birthday}</TableCell>
@@ -60,7 +62,7 @@ const IndexTeacher = ({ data }: { data: { data: ITeacher[] } }) => {
                                         {row.doc_type} - {row.doc_number}
                                     </TableCell>
                                     <TableCell>{row.email}</TableCell>
-                                    <TableCell>{row.period_id}</TableCell>
+                                    {/* <TableCell>{row.period_id}</TableCell> */}
                                     <TableCell>{row.phone}</TableCell>
                                     <TableCell>{row.working_day}</TableCell>
                                     <TableCell>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Period;
 use App\Models\schedule;
 use App\Http\Requests\StorescheduleRequest;
 use App\Http\Requests\UpdatescheduleRequest;
@@ -20,17 +21,18 @@ class ScheduleController extends Controller
      */
     public function index()
     { 
+        $parallels = getParallelsByRoleAndPeriod(currentState()->period_id);
         return Inertia::render('Schedules/Index', [
             'success' => true,
             'data' => [
-                'schedules' => Schedule::all(),
+                'parallels' => $parallels,
             ],
         ]);
     }
 
     public function schedulesByParallel(Request $request, $parallel_id)
     {
-        $period_id = currentState()->period_id;
+        $period_id = $request->get('period_id', null) ?? currentState()->period_id;
         $schedules = Schedule::with('teacher:id,first_name,last_name,doc_number', 'subject:id,name')
         ->where('period_id', $period_id)->where('parallel_id', $parallel_id)->get();
         return response()->json(['data' => $schedules, 'success' => true]);
@@ -121,6 +123,15 @@ class ScheduleController extends Controller
     public function edit(Schedule $schedule)
     {
         //
+    }
+
+    public function getParallels(Request $request, Period $period)
+    {
+        $parallels = getParallelsByRoleAndPeriod($period->id);
+        return response()->json([
+            'success' => true,
+            'data' => $parallels,
+        ]);
     }
 
     /**

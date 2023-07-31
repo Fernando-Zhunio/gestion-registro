@@ -14,18 +14,16 @@ use Normalizer;
 class PrinterController extends Controller
 {
 
-    public function promotionCertificate(Request $request, Student $student)
+    public function promotionCertificate(Request $request, Period $period, Student $student)
     {
-        $period_id = currentState()->period_id;
+        $period_id = $period->id;
         $tuition = Tuition::with('course')
             ->where('student_id', $student->id)
             ->where('period_id', $period_id)
             ->first();
-
         $data['period'] = Period::find($period_id);
         $data['student'] = $student;
         $data['course'] = $tuition->course;
-
         $data['subjects'] = $this->_getSubjectByParallel($tuition->parallel_id, $period_id);
         $data['notes'] = addAverageInNotes(Note::where('student_id', $student->id)->where('period_id', $period_id)->get());
         $view = view('printers.promotion_certificate', compact('data'))->render();
@@ -39,9 +37,9 @@ class PrinterController extends Controller
 
 
 
-public function notesByTrimester(Request $request, Student $student, int $trimester)
+public function notesByTrimester(Request $request, Period $period, Student $student, int $trimester)
     {
-        $period_id = currentState()->period_id;
+        $period_id = $period->id;
         $tuition = Tuition::with('course')
             ->where('student_id', $student->id)
             ->where('period_id', $period_id)
@@ -54,7 +52,7 @@ public function notesByTrimester(Request $request, Student $student, int $trimes
 
         $data['subjects'] = $this->_getSubjectByParallel($tuition->parallel_id, $period_id);
         $data['notes'] = addAverageInNotes(Note::where('student_id', $student->id)->where('period_id', $period_id)->get());
-        return view('printers.notes_student', compact('data'));
+        // return view('printers.notes_student', compact('data'));
         $view = view('printers.notes_student', compact('data'))->render();
         
         // $pdf = Pdf::loadView('printers.promotion_certificate', compact('data') );

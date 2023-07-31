@@ -40,6 +40,7 @@ class TuitionController extends Controller
         return Inertia::render('Tuitions/Index', [
             'success' => true,
             'data' => $tuitions,
+            'metadata' => ['currentPeriodId' => $period_id],
         ]);
     }
 

@@ -1,5 +1,12 @@
 import { ResponsePaginator } from "@/types/global";
-import { useCallback, useEffect, useMemo, useRef, useState, useContext } from "react";
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    useContext,
+} from "react";
 import { IParallel } from "../Parallels/types/parallel.types";
 import { ISchedule } from "./types/schedules.type";
 import CreateOrEditSchedule from "./components/CreateOrEditSchedule";
@@ -7,66 +14,134 @@ import { ManagerSchedule } from "./tools/manager-schedule";
 import SelectSearch from "@/Shared/components/SelectSearch";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { showQuestion } from "@/Helpers/alerts";
+import { showQuestion, showToast } from "@/Helpers/alerts";
 import { AppContext } from "@/Context/AppContext";
 
-
+const stateSchedule: any = {
+    period_id: null,
+    parallel: null,
+    current_period_id: null,
+}
 const IndexSchedule = ({
     data,
 }: ResponsePaginator<{ parallels: IParallel }>) => {
     const [schedule, setSchedule] = useState<ISchedule>();
-    const { role } = useContext(AppContext)
-    const [schedulesHours, setSchedulesHours] = useState<any[]>(ManagerSchedule.getHours());
-    const [schedulesDays, setSchedulesDays] = useState<{ value: any, label: string }[]>(ManagerSchedule.getDays());
+    const { role } = useContext(AppContext);
+    const [schedulesHours, setSchedulesHours] = useState<any[]>(
+        ManagerSchedule.getHours()
+    );
+    const [schedulesDays, setSchedulesDays] = useState<
+        { value: any; label: string }[]
+    >(ManagerSchedule.getDays());
     const [isOpen, setIsOpen] = useState(false);
-    const [blockedHours, setBlockedHours] = useState<boolean>(true);
+    // const [blockedHours, setBlockedHours] = useState<boolean>(true);
     const [parallel, setParallel] = useState<IParallel | null>(null);
+    const [period_id, setPeriodId] = useState<number | "">("");
     const [isEdit, setIsEdit] = useState<boolean>(false);
-    let [managerSchedule, setManagerSchedule] = useState<ManagerSchedule>()
-
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    let [managerSchedule, setManagerSchedule] = useState<ManagerSchedule>();
+    const [parallels, setParallels] = useState<IParallel[]>([]);
     useEffect(() => {
-        managerSchedule! = new ManagerSchedule('table-schedule');
+
+        managerSchedule! = new ManagerSchedule("table-schedule");
         setManagerSchedule(managerSchedule);
-        if (role == 'teacher' || role == 'student') return
+        if (role == "teacher" || role == "student") return;
         managerSchedule.subscribeClickSchedule(async (schedule) => {
+            // console.log(stateSchedule, appInfo, period_id);
+            // if (stateSchedule.period_id == appInfo.currentState.period_id) {
+            //     return;
+            // }
             const response = await showQuestion({
-                title: '¿Que desea hace al horario?',
-                cancelButtonText: 'Cancelar',
-                confirmButtonText: 'Eliminar',
-                text: '¿Seleccione una opción?',
+                title: "¿Que desea hace al horario?",
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Eliminar",
+                text: "¿Seleccione una opción?",
                 showCancelButton: true,
                 showConfirmButton: true,
                 showDenyButton: true,
-                denyButtonText: 'Editar',
+                denyButtonText: "Editar",
                 // confirmButtonColor: '#dc3545',
             });
             if (response.isConfirmed) {
                 const responseDelete = await showQuestion({
-                    title: '¿Esta seguro de eliminar el horario?',
-                    cancelButtonText: 'Cancelar',
+                    title: "¿Esta seguro de eliminar el horario?",
+                    cancelButtonText: "Cancelar",
                     showCancelButton: true,
-                    confirmButtonText: 'Eliminar',
-                })
+                    confirmButtonText: "Eliminar",
+                });
                 if (responseDelete.isConfirmed) {
                     await axios.delete(`/schedules/${schedule.schedule.id}`);
                     managerSchedule?.removeScheduleInView(schedule.schedule.id);
                 }
             } else if (response.isDenied) {
-                console.log('edit schedule', schedule.schedule)
+                console.log("edit schedule", schedule.schedule);
                 setIsEdit(true);
                 setSchedule(schedule.schedule);
                 setIsOpen(true);
             }
-        })
+        });
         const listener = (e: any) => onClickCell(e);
         managerSchedule.getTable().addEventListener("click", listener);
         return () => {
-            managerSchedule?.getTable().removeEventListener('click', listener);
+            managerSchedule?.getTable().removeEventListener("click", listener);
         };
     }, []);
 
+    function onChangePeriod(e: any) {
+        const value = e.target.value;
+        // setParallel(null)
+        managerSchedule?.refreshSchedules([]);
+        setPeriodId(() => {
+            return value;
+        });
+        setParallel(() => {
+            return null;
+        });
+        setParallels([]);
+        if (!value) return;
+        getParallels(value);
+    }
+
+    function onChangeParallel(event: any) {
+        const value = parallels.find(x => x.id == event.target.value);
+        managerSchedule?.refreshSchedules([]);
+        setParallel(() => {
+            return value || null
+        });
+        if (!value) return;
+        getScheduleByParallel(value.id);
+    }
+
+    function getParallels(period_id: number) {
+        setIsLoading(true);
+        axios
+            .get(`/schedules/periods/${period_id}/parallels`)
+            .then((response) => {
+                const parallels = response.data.data;
+                setParallels(parallels);
+                setIsLoading(false);
+            })
+            .catch(() => {
+                setIsLoading(false);
+                showToast({
+                    title: "Error",
+                    text: "Error al cargar los periodos",
+                    icon: "error",
+                });
+            });
+    }
+
     const onClickCell = (e: any) => {
-        if (role == 'teacher' || role == 'student') return
+        console.log({ e });
+        // if (!parallel || !period_id) {
+        //     showToast({
+        //         title: "Error",
+        //         text: "Seleccione un periodo y paralelo",
+        //         icon: "error",
+        //     });
+        //     return;
+        // }
+        if (role == "teacher" || role == "student") return;
         e.stopPropagation();
         if (!isCell(e)) return;
         setIsEdit(false);
@@ -79,7 +154,7 @@ const IndexSchedule = ({
             day: day.value,
             start_time: hour,
             end_time: null,
-            description: '',
+            description: "",
             parallel_id: parallel?.id,
         } as any);
         setIsOpen(true);
@@ -98,23 +173,52 @@ const IndexSchedule = ({
                 managerSchedule!?.addScheduleInView(schedule);
             }
         }
-    }
+    };
 
     function getScheduleByParallel(parallelId: number) {
-        axios.get(`/schedules/parallels/${parallelId}`)
+        setIsLoading(true);
+        axios
+            .get(`/schedules/parallels/${parallelId}?period_id=${period_id}`)
             .then((response) => {
                 managerSchedule?.refreshSchedules(response.data.data);
+                setIsLoading(false);
             })
+            .catch(() => {
+                setIsLoading(false);
+                showToast({
+                    title: "Error",
+                    text: "Error al cargar los horarios de este paralelo",
+                    icon: "error",
+                });
+            });
     }
 
-    const { control } = useForm();
+    // const { control } = useForm();
+    const { appInfo } = useContext(AppContext);
 
     return (
         <div>
-            <div>
-                <div className=" my-3">
+            <div className="grid grid-cols-12 my-3 gap-3">
+                <div className="col-span-4">
+                    <label htmlFor="period_id">Periodo</label>
+                    <select
+                        disabled={isLoading}
+                        onChange={onChangePeriod}
+                        className="border py-2 px-3 w-full block border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm"
+                        id="period_id"
+                    >
+                        <option value="">Seleccione una opción</option>
+
+                        {appInfo.periods?.map((period) => (
+                            <option key={period.id} value={period.id}>
+                                {period.promotion}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="col-span-4">
                     <label htmlFor="name">Paralelos:</label>
-                    <SelectSearch
+                    {/* <SelectSearch
                         className="z-10"
                         path="/schedules/parallels/search"
                         control={control}
@@ -122,17 +226,27 @@ const IndexSchedule = ({
                         disabled={true}
                         onChange={(e: any) => {
                             setParallel(e.item);
-                            setBlockedHours(false);
-                            getScheduleByParallel(e.item.id);
+                            // setBlockedHours(false);
+                                              (e.item.id);
                         }}
-                    />
-                </div>
-                <div>
-                    
+                    /> */}
+                    <select
+                        disabled={isLoading}
+                        onChange={onChangeParallel}
+                        className="border py-2 px-3 w-full block border-gray-300  focus:border-indigo-500  focus:ring-indigo-500 rounded-md shadow-sm"
+                        id="period_id"
+                    >
+                        <option value="">Seleccione una opcion</option>
+                        {parallels?.map((parallel) => (
+                            <option key={parallel.id} value={parallel.id}>
+                                {parallel.name}
+                            </option>
+                        ))}
+                    </select>
                 </div>
             </div>
             <div className="mt-4 relative">
-                {blockedHours && <div className="overlay-table"></div>}
+                {(!period_id || !parallel) ? <div className="overlay-table bg-slate-500/10 z-50"></div> : null}
                 <table
                     id="table-schedule"
                     className="table-auto table-schedule relative user-select-none w-full"
@@ -140,8 +254,14 @@ const IndexSchedule = ({
                     <thead>
                         <tr>
                             <th style={{ width: "63px" }}>Hora</th>
-                            {schedulesDays.map((day) => {
-                                return <th key={day.value} className="text-center"><div className="day-label">{day.label}</div></th>;
+                            {schedulesDays?.map((day) => {
+                                return (
+                                    <th key={day.value} className="text-center">
+                                        <div className="day-label">
+                                            {day.label}
+                                        </div>
+                                    </th>
+                                );
                             })}
                         </tr>
                     </thead>
@@ -150,7 +270,9 @@ const IndexSchedule = ({
                             return (
                                 <tr key={scheduleHour}>
                                     <td className="td-hour">
-                                        <div className="hour-label">{index != 0 ? scheduleHour : ''}</div>
+                                        <div className="hour-label">
+                                            {index != 0 ? scheduleHour : ""}
+                                        </div>
                                     </td>
                                     <td></td>
                                     <td></td>

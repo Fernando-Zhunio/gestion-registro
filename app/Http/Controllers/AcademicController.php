@@ -11,17 +11,17 @@ class AcademicController extends Controller
 {
     public function index()
     {
-        
+        $period_id = currentState()->period_id;
+        $periods = Period::where('id', '>', $period_id)->get();
         return Inertia::render('Academic/Index', [
             'success' => true,
             'data' => [
-                // 'schedules' => Schedule::all(),
+                'periods' => $periods,
             ],
         ]);
     }
 
     public function getPeriods(Request $request) {
-        $pageSize = $request->get('pageSize', null);
         /**
          * @var User $user
          */
