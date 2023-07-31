@@ -14,10 +14,10 @@ const FormCreateOrEditNoteStudent = ({
     // parallel_id,
 }: {
     note?: INote | null;
-    student_id?: number;
-    subject_id?: number;
-    parallel_id: number;
-    disabled: boolean;
+    // student_id?: number;
+    // subject_id?: number;
+    // parallel_id: number;
+    // disabled: boolean;
 }) => {
     // const {
     //     handleSubmit,
