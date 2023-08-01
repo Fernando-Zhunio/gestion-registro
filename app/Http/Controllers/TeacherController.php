@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\teacher;
+use App\Models\Teacher;
 use App\Http\Requests\StoreteacherRequest;
 use App\Http\Requests\UpdateteacherRequest;
 use App\Models\ContractTeacher;
@@ -114,7 +114,7 @@ class TeacherController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(teacher $teacher)
+    public function show(Teacher $teacher)
     {
         //
     }
@@ -122,7 +122,7 @@ class TeacherController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(teacher $teacher)
+    public function edit(Teacher $teacher)
     {
         return Inertia::render('Teachers/CreateOrEditTeacher', [
             'isEdit' => true,
@@ -133,7 +133,7 @@ class TeacherController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateteacherRequest $request, teacher $teacher)
+    public function update(UpdateteacherRequest $request, Teacher $teacher)
     {
         $data = $request->all();
         $teacher->update([
@@ -162,7 +162,7 @@ class TeacherController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(teacher $teacher)
+    public function destroy(Teacher $teacher)
     {
         //
     }
