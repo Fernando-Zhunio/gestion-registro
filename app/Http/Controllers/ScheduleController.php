@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Period;
-use App\Models\schedule;
+use App\Models\Schedule;
 use App\Http\Requests\StorescheduleRequest;
 use App\Http\Requests\UpdatescheduleRequest;
 use App\Models\Parallel;
 use App\Models\Subject;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class ScheduleController extends Controller
