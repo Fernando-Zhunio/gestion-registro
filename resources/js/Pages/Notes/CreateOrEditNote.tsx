@@ -95,7 +95,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                     setSubjects(data.data);
                 });
         },
-        [watchParallel]
+        [watchParallel, wathPeriod]
     );
 
     function searchNotesStudent(parallels: string) {
@@ -233,6 +233,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                     onError={onError}
                                     onData={onData}
                                     path={pathStudents}
+                                    params={{period_id: wathPeriod}}
                                     isDisabledBtn={!!!watchParallel}
                                     placeholder="Buscar estudiante"
                                 >

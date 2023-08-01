@@ -10,6 +10,7 @@ type PropSearchPaginator = InputHTMLAttributes<HTMLInputElement> & {
     children?: any;
     path: string;
     isDisabledBtn?: boolean;
+    params?: {[key: string]: any};
     onData: (data: any) => any;
     onError?: (data: any) => any;
 };
@@ -23,6 +24,7 @@ export const SearchPaginator = forwardRef(
             onData,
             onError,
             loadInit,
+            params,
             ...props
         }: PropSearchPaginator,
         ref
@@ -61,13 +63,14 @@ export const SearchPaginator = forwardRef(
             }));
         }
         
-        function getData(_path: string | null = path, params: {[key: string]: any} | null = null) {
+        function getData(_path: string | null = path, _params: {[key: string]: any} | null = null) {
             let __path = _path || path;
             console.log({ path });
             if(!__path) return;
             if(textSearch) {
                 __path += `?search=${textSearch}`;
             }
+            const __params = _params || params
             // if (params) {
             //     Object.keys(params).forEach((key) => {
             //         __path += `&${key}=${params[key]}`
@@ -75,7 +78,7 @@ export const SearchPaginator = forwardRef(
             // }
             console.log({ __path });
             setIsLoading(true);
-            getDataPaginateService(__path, paginator.page, paginator.pageSize, params)
+            getDataPaginateService(__path, paginator.page, paginator.pageSize, __params)
                 .then((response) => {
                     console.log({ response });
                     setIsLoading(false);
