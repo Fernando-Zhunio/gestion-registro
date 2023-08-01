@@ -31,7 +31,7 @@ class StudentController extends Controller
         // BuilderSearchClass(Student::class, 'first_name', ['last_name']);
         // $students = Student::search(request()->get('search', ''))->paginate();
         $period_id = request('period_id', null) ?? currentState()->period_id;
-        $students = Student::search(request()->get('search', ''))
+        $students = Student::search(request()->get('search', ''), 'first_name', ['last_name', 'doc_number'])
         ->with('tuitions.course', 'representative', 'user')
         ->whereHas('tuitions', function($query) use($period_id) {
             return $query->where('period_id', $period_id);
