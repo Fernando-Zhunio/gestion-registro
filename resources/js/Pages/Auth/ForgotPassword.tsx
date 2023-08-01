@@ -2,10 +2,10 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
-export default function ForgotPassword({ status }: { status?: string }) {
+const ForgotPassword = ({ status }: { status?: string }) => {
     const { data, setData, post, processing, errors } = useForm({
         email: '',
     });
@@ -17,8 +17,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Forgot Password" />
+        <>
+            {/* <Head title="Forgot Password" /> */}
 
             <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
             ¿Olvidaste tu contraseña? Ningún problema. Simplemente háganos saber su dirección de correo electrónico y le enviaremos un enlace de restablecimiento de contraseña que le permitirá elegir una nueva.
@@ -45,6 +45,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     </PrimaryButton>
                 </div>
             </form>
-        </GuestLayout>
+        </>
     );
 }
+
+ForgotPassword.layout = (page: React.ReactNode) => <GuestLayout children={page} />;
+
+export default ForgotPassword;

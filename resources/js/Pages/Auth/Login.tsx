@@ -28,7 +28,7 @@ const Login = ({ status, canResetPassword }: { status?: string, canResetPassword
 
     return (
         <>
-            <Head title="Inicio de sesion" />
+            {/* <Head title="Inicio de sesion" /> */}
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 

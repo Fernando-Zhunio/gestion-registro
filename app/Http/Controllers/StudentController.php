@@ -22,14 +22,6 @@ class StudentController extends Controller
     use GenerateFile;
     public function index()
     {
-        // $genders = ConstMiscellany::getGendersSelect();
-        // $docTypes = ConstMiscellany::getDocTypesSelect();
-        // $courses = Course::all();
-        // $builder = Student::query();
-        // $builder->with('course');
-        // $students = BuilderForRoles::PaginateSearch($builder, 'first_name', ['last_name', 'doc_number']);
-        // BuilderSearchClass(Student::class, 'first_name', ['last_name']);
-        // $students = Student::search(request()->get('search', ''))->paginate();
         $period_id = request('period_id', null) ?? currentState()->period_id;
         $students = Student::search(request()->get('search', ''), 'first_name', ['last_name', 'doc_number'])
         ->with('tuitions.course', 'representative', 'user')

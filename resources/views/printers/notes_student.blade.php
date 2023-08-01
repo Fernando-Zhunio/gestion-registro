@@ -65,7 +65,7 @@
                 <strong>“MARIANO VALLA SAGÑAY”</strong>
             </h4>
             <h5>COLTA – ECUADOR</h5>
-            <h5>Informe de calificaciones de 1er trimestre</h5>
+            <h5>Informe de calificaciones de {{$data['trimester']}}{{$data['trimester'] == 2 ? 'do' : 'er'}} trimestre</h5>
         </div>
         <div>
            

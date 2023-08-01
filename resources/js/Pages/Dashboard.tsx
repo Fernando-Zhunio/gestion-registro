@@ -5,7 +5,7 @@ import { Card, CardContent, IconButton, Typography } from '@mui/material';
 export default function Dashboard({ auth, currentState }: PageProps<{ currentState: any }>) {
     return (
         <>
-            <Head title="Dashboard" />
+            {/* <Head title="Dashboard" /> */}
             {/* 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
