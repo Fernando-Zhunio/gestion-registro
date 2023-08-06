@@ -53,15 +53,11 @@ export const CreateOrEditCourse = ({
             
             setState("edit");
         } else {
-            // reset()
             setState("create");
         }
         
     }, [data, isOpen]);
 
-    function handlerSetForm(e: any) {
-        // setForm({ ...form, [e.target.id]: e.target.value });
-    }
 
     function onSubmit(_data: any) {
         if (state === "create") {
@@ -133,19 +129,19 @@ export const CreateOrEditCourse = ({
                             )}
                         </div>
                         <div className="md:col-span-6">
-                            <label htmlFor="description">*Descripción:</label>
+                            <label htmlFor="observation">*Observación:</label>
                             <input
-                                id="description"
+                                id="observation"
                                 type="text"
-                                placeholder="Ingrese la descripción"
+                                placeholder="Ingrese la observación"
                                 className={`${
-                                    errors.description && "invalid-control"
+                                    errors.observation && "invalid-control"
                                 } form-control w-full `}
-                                {...register("description", { required: true })}
+                                {...register("observation", { required: true })}
                             />
-                            {errors?.description?.type === "required" && (
+                            {errors?.observation?.type === "required" && (
                                 <small className="text-red-600">
-                                    Los descripción es requerido
+                                    Este campo es requerido
                                 </small>
                             )}
                         </div>

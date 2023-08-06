@@ -18,6 +18,10 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct() {
+        $this->middleware(['role:super-admin|admin'])->except(['index', 'schedulesByParallel', 'parallelSearch']);
+    }
+    
     public function index()
     { 
         $parallels = getParallelsByRoleAndPeriod(currentState()->period_id);
@@ -25,6 +29,7 @@ class ScheduleController extends Controller
             'success' => true,
             'data' => [
                 'parallels' => $parallels,
+                'roles' => auth()->user()->roles,
             ],
         ]);
     }
@@ -140,6 +145,10 @@ class ScheduleController extends Controller
     {
         $data = $request->all();
         $period_id = currentState()->period_id;
+        if ($period_id != $schedule->period_id) {
+            validationException('period_id', 'Este horario no pertenece al periodo actual.');
+        }
+        $period_id = currentState()->period_id;
         $overlap = Schedule::where('day', $data['day'])
             ->where('id', '!=', $schedule->id)
             ->where('parallel_id', $data['parallel_id'])
@@ -172,6 +181,10 @@ class ScheduleController extends Controller
      */
     public function destroy(Schedule $schedule)
     {
+        $period_id = currentState()->period_id;
+        if ($period_id != $schedule->period_id) {
+            validationException('period_id', 'Este horario no pertenece al periodo actual.');
+        }
         $schedule->delete();
         return response()->json([
             'success' => true,

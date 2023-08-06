@@ -23,14 +23,16 @@ use Illuminate\Validation\ValidationException;
 class TuitionController extends Controller
 {
     use GenerateFile;
+
+    public function __construct() {
+        $this->middleware(['role:super-admin|admin|secretary'])->except(['index']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // $builder = Tuition::query();
-        // $builder->with('student', 'period', 'course');
-        // $tuitions = BuilderForRoles::PaginateSearch($builder, 'student.first_name');
+
         $search = request()->get('search', '');
         $period_id = request('period_id', null) ?? currentState()->period_id;
         $tuitions = Tuition::whereHas('student', function ($query) use ($search, $period_id) {
@@ -105,17 +107,6 @@ class TuitionController extends Controller
         ]);
     }
 
-    // private function validateParallel($courses_id, $parallel_id)
-    // {
-    //     $parallel = Parallel::where('course_id', $courses_id)->where('id', $parallel_id)->first();
-    //     // dd($parallel);
-    //     if (!$parallel) {
-    //         validationException(
-    //             'parallel_id',
-    //             'El paralelo no existe en el curso seleccionado',
-    //         );
-    //     }
-    // }
     /**
      * Store a newly created resource in storage.
      */
@@ -123,33 +114,18 @@ class TuitionController extends Controller
     {
         $parallel_id = $request->get('parallel_id');
         $course_id = $request->get('course_id');
-        // $requestStudent = $request->all()['student'];
-        // validateParallel($request->parallel_id, $request->course_id);
         validateParallel($parallel_id, $course_id);
         DB::beginTransaction();
         $request->validate($this->rulesStudent());
-        // $representative_id = null;
-        // $requestRepresentative = $request->all()['representative'];
-
-        // if ($request->has('representative_id') && !empty($request->representative_id)) {
-        //     $representative_id = $request->representative_id;
-        // } else {
-        //     $request->validate($this->rulesRepresentative());
-        // }
         try {
-            // if (!$representative_id) {
-            //     $representative = Representative::create($requestRepresentative);
-            //     $representative_id = $representative->id;
-            // }
+
             $data = $request->all();
-            // $representative_id = $data['representative_id'];
             $currentPeriod = currentState()->period_id;
 
             $user = $this->generateUserStudent($data['first_name'] . ' ' . $data['last_name'], $data['email']);
 
             $data['photo'] = $this->generateFile($data['photo']);
             $data['user_id'] = $user->id;
-            // unset($requestStudent['email']);
             $student = Student::create($data);
             Tuition::create([
                 'student_id' => $student->id,

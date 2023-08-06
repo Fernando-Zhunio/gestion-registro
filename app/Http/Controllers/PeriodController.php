@@ -13,6 +13,10 @@ class PeriodController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct() {
+        $this->middleware(['role:super-admin|admin']);
+    }
+    
     public function index(Request $request)
     {
         $search = $request->get('search', null);

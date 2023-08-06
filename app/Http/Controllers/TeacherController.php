@@ -16,6 +16,9 @@ use function PHPUnit\Framework\isEmpty;
 
 class TeacherController extends Controller
 {
+    public function __construct() {
+        $this->middleware(['role:super-admin|admin|secretary']);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -52,10 +55,6 @@ class TeacherController extends Controller
      */
     public function store(StoreteacherRequest $request)
     {
-        // $request->validated();
-        // DB::beginTransaction();
-
-        // try {
         $data = $request->all();
         $user = $this->generateUserTeacher($data['first_name'] . ' ' . $data['last_name'], $data['email']);
         $teacher = Teacher::create([
@@ -78,26 +77,7 @@ class TeacherController extends Controller
             'period_id' => currentState()->period_id,
             'user_id' => $user->id,
         ]);
-
         return redirect()->route('teachers.index');
-
-
-        // $teacher->contractsTeacher()->create([
-        //     'observation' => $data['observation'] ?? null,
-        //     'start_date' => isset($data['start_date']) && isEmpty(!$data['start_date']) ? date('Y-m-d', strtotime($data['start_date'])) : null,
-        //     'end_date' =>  isset($data['end_date']) && isEmpty(!$data['end_date']) ? date('Y-m-d', strtotime($data['end_date'])) : null,
-        //     'contract_file' => $data['contract_file'] ?? null,
-        //     'contract_state' => $data['contract_state'] ?? 1,
-        //     'contract_type' => $data['contract_type'],
-        //     'salary' => $data['salary'],
-        //     'period_id' => currentState()->period_id,
-        // ]);
-        //     DB::commit();
-        // } catch (\Throwable $th) {
-        //     DB::rollBack();
-        //     throw new \Exception($th->getMessage());
-        // }
-
     }
 
     private function generateUserTeacher($name, $email)

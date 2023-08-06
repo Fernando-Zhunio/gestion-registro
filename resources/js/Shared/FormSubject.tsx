@@ -117,20 +117,16 @@ FormCourseProps) {
             {/* Descripción */}
             <div className="md:col-span-6">
                 <div>
-                    <label htmlFor="description">*Descripción:</label>
+                    <label htmlFor="observation">*Observación:</label>
                     <textarea
-                        id="description"
+                        id="observation"
                         type="text"
-                        placeholder="Ingrese la descripción"
+                        placeholder="Ingrese la observación"
                         className={`
                          form-control w-full `}
-                        {...register("description")}
+                        {...register("observation")}
                     ></textarea>
-                    {/* {errors?.description?.type === "required" && (
-                        <small description="text-red-600">
-                            El nombre es requerido
-                        </small>
-                    )} */}
+                   
                 </div>
                 {isEdit &&  <div className="center mt-3">
                     <label htmlFor="name">Estado:</label>

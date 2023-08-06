@@ -23,7 +23,7 @@ class UpdatesubjectRequest extends FormRequest
     {
             return [
                 'name' => 'required|string|max:255',
-                'description' => 'nullable|string|max:255',
+                'observation' => 'nullable|string|max:255',
                 // 'nivel' => 'required|string|max:255',
                 // 'hours' => 'required|time|max:255',
                 'status' => 'boolean',

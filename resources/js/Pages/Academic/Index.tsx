@@ -9,8 +9,10 @@ import axios from "axios";
 import Select from "@/Components/Select";
 import { IParallel } from "../Parallels/types/parallel.types";
 import { IPeriod } from "../Periods/types/period.types";
+import TableUsersAcademic, { IUser } from "./components/TableUsersAcademic";
+import { ResponseDataPaginator } from "@/types/global";
 
-const AcademicIndex = ({data: {periods}}:{data: {periods: IPeriod[]}}) => {
+const AcademicIndex = ({data,metadata}:{data: ResponseDataPaginator<IUser> ,metadata: {periods: IPeriod[]}}) => {
     const { control, watch } = useForm();
     const { appInfo } = useContext(AppContext);
     console.log({ appInfo });
@@ -42,29 +44,18 @@ const AcademicIndex = ({data: {periods}}:{data: {periods: IPeriod[]}}) => {
             })
         })
     }
+
     return (
         <div>
             <h1 className="font-bold text-xl">Sección Académica</h1>
             <hr />
-            <div className="grid grid-cols-12 mt-4">
+            <div className="grid grid-cols-12 mt-4 gap-3">
                 <div className="col-span-3 border rounded-md p-4">
                     <h3 className="text-lg">Periodo Actual:</h3>
                     <p className="bg-green-500 rounded-lg inline-block text-white px-2">
                         {appInfo?.currentState?.period?.promotion}
                     </p>
                     <hr className="my-2" />
-                    {/* <SelectSearch
-                        label="Periodo a cambiar:"
-                        name="period_id"
-                        control={control}
-                        path="/academic/periods-next"
-                        cbMap={(period) => {
-                            return {
-                                label: period.promotion,
-                                value: period.id,
-                            };
-                        }}
-                    /> */}
                     <Select
                         label="Periodo a cambiar:"
                         control={control}
@@ -72,7 +63,7 @@ const AcademicIndex = ({data: {periods}}:{data: {periods: IPeriod[]}}) => {
                     >
                         <option value="">Seleccione una opción</option>
                         {
-                            periods.map((period) => (
+                            metadata.periods?.map((period) => (
                                 <option key={period.id} value={period.id}>
                                     {period.promotion}
                                 </option>
@@ -84,6 +75,9 @@ const AcademicIndex = ({data: {periods}}:{data: {periods: IPeriod[]}}) => {
                             Cambiar
                         </button>
                     </div>
+                </div>
+                <div className="col-span-9">
+                    <TableUsersAcademic />
                 </div>
             </div>
         </div>

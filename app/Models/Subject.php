@@ -14,8 +14,8 @@ class Subject extends Model
     protected $fillable = [
         'name',
         'observation',
-        'nivel',
-        'hours',
+        // 'nivel',
+        // 'hours',
         'status',
         'course_id'
     ];

@@ -26,24 +26,11 @@ class NoteController extends Controller
     }
     public function index()
     {
-        // $builder = Note::query();
-        // $search = request()->get('search', '');
-        // $period_id = request()->get('period_id', null) ?? currentState()->period_id;
-        // $parallel_id = request()->get('parallel_id', 1) ?? null;
-
-        // $students = Student::search($search, 'first_name', ['last_name', 'doc_number'])->whereHas('tuitions', function ($query) use ($parallel_id, $period_id) {
-        //     $query->where('parallel_id', $parallel_id);
-        //     $query->where('period_id', $period_id);
-        // })->with('currentNotes', 'tuitions')->paginate(10);
-        // $subjectsOfParallel = $this->_getSubjectByParallel($parallel_id, $period_id);
-        
-        // return Inertia::render('Notes/Index', [
-        //     'success' => true,
-        //     'data' => $students,
-        //     'metadata' => ['subjects' => $subjectsOfParallel],
-        // ]);
-
-        if (auth()->user()->hasRole('student')) {
+        /**
+         * @var \App\Models\User $user
+         */
+        $user = auth()->user();
+        if ($user->hasRole('student')) {
             return $this->indexForStudent();
         }
         

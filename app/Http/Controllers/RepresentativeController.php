@@ -10,6 +10,9 @@ use Inertia\Inertia;
 
 class RepresentativeController extends Controller
 {
+    public function __construct() {
+        $this->middleware(['role:super-admin|admin|secretary']);
+    }
     /**
      * Display a listing of the resource.
      */

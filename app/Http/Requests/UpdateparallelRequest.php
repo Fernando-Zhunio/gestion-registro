@@ -23,7 +23,7 @@ class UpdateparallelRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'description' => 'required|string|max:1000',
+            'observation' => 'nullable|string|max:1000',
             'quota' => 'required|integer',
             'registered' => 'required|integer',
             'course_id' => 'required|integer|exists:courses,id',

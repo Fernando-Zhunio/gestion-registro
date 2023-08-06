@@ -23,9 +23,8 @@ class StoreparallelRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:parallels,name',
-            'description' => 'required|string|max:1000',
+            'observation' => 'nullable|string|max:1000',
             'quota' => 'required|integer',
-            // 'registered' => 'nullable|integer',
             'course_id' => 'required|integer|exists:courses,id',
         ];
     }

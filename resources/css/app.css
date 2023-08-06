@@ -245,7 +245,6 @@ input:focus, textarea:focus, select:focus {
 .schedules-overlay {
     position: absolute;
     z-index: 1;
-    /* background-color: #9cc2fc; */
     padding: 5px;
     overflow: auto;
 }
@@ -328,7 +327,7 @@ input:focus, textarea:focus, select:focus {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    z-index: 100;
 }
 
 .container-table {
@@ -497,4 +496,8 @@ input[disabled], textarea[disabled], select[disabled] {
     cursor: not-allowed;
     opacity: 0.6;
     background-color: #dadada;
+}
+
+.border-t-1 {
+    border-top: 1px solid #dadada;
 }

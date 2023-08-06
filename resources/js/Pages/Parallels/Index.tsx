@@ -10,7 +10,7 @@ import { useState } from "react";
 import { IParallel } from "./types/parallel.types";
 import {  ResponsePaginator } from "@/types/global";
 import { CreateOrEditCourse } from "./CreateOrEditParallel";
-import { showAlert } from "@/Helpers/alerts";
+import { showAlert, showToast } from "@/Helpers/alerts";
 import { useForm } from "@inertiajs/react";
 
 
@@ -42,8 +42,12 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                             icon: 'success'
                         })
                     },
-                    onError: () => {
-
+                    onError: (error) => {
+                        showToast({
+                            icon: "error",
+                            text: error.message,
+                            title: "Error al crear el horario",
+                        });
                     },
                     preserveState: true
                 })
@@ -74,7 +78,7 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                             }}>
                                 <TableCell>id</TableCell>
                                 <TableCell>Nombre</TableCell>
-                                <TableCell>Descripción</TableCell>
+                                <TableCell>Observación</TableCell>
                                 <TableCell>Total registrados</TableCell>
                                 <TableCell>Total de cupos</TableCell>
                             </TableRow>

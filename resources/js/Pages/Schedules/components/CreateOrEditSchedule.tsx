@@ -88,10 +88,11 @@ const CreateOrEditSchedule = ({
             }) 
             .catch((error) => {
                 setIsLoading(false);
-                console.log({ error })
+                console.log({ error }, error.response.data.errors)
+
                 showToast({
                     icon: "error",
-                    text: Object.values(error).join("\n"),
+                    text: Object.values(error.response.data.errors).join("\n"),
                     title: "Error al actualizar el horario",
                 });
             });

@@ -73,9 +73,7 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                             }}>
                                 <TableCell>ID</TableCell>
                                 <TableCell>Nombre</TableCell>
-                                <TableCell>Descripción</TableCell>
-                                {/* <TableCell>Nivel</TableCell> */}
-                                {/* <TableCell>Horas</TableCell> */}
+                                <TableCell>Observación</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Curso</TableCell>
                                 <TableCell>Acciones</TableCell>
@@ -94,11 +92,8 @@ const StudentsIndex = ({data}: ResponsePaginator<ISubject>) => {
                                         {row.name}
                                     </TableCell>
                                     <TableCell>{row.observation}</TableCell>
-                                    {/* <TableCell>{row.nivel}</TableCell> */}
                                     <TableCell>{row.status == '1' ? 'Activo' : 'Inactivo'}</TableCell>
-                                    {/* <TableCell>{row.doc_type}</TableCell> */}
                                     <TableCell>{row.course?.name}</TableCell>
-
                                     <TableCell>
                                     <div className="flex gap-1">
                                          <button onClick={() => openDialog(row)} className="btn-icon btn-c-edit">

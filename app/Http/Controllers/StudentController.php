@@ -16,6 +16,10 @@ use Inertia\Inertia;
 
 class StudentController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware(['role:super-admin|admin|secretary']);
+    }
     /**
      * Display a listing of the resource.
      */

@@ -17,14 +17,13 @@ import axios from "axios";
 import { showQuestion, showToast } from "@/Helpers/alerts";
 import { AppContext } from "@/Context/AppContext";
 
-const stateSchedule: any = {
-    period_id: null,
-    parallel: null,
-    current_period_id: null,
-}
+interface IPropsScheduleIndex {
+    parallels: IParallel[];
+    roles: {name: 'student' | 'teacher' | 'super-admin'}[],
+};
 const IndexSchedule = ({
-    data,
-}: ResponsePaginator<{ parallels: IParallel }>) => {
+    data: {roles}
+}: {data: IPropsScheduleIndex}) => {
     const [schedule, setSchedule] = useState<ISchedule>();
     const { role } = useContext(AppContext);
     const [schedulesHours, setSchedulesHours] = useState<any[]>(
@@ -41,16 +40,15 @@ const IndexSchedule = ({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     let [managerSchedule, setManagerSchedule] = useState<ManagerSchedule>();
     const [parallels, setParallels] = useState<IParallel[]>([]);
-    useEffect(() => {
+    const [isAuthManager, setIsAuthManager] = useState<boolean>(false);
 
+    useEffect(() => {
         managerSchedule! = new ManagerSchedule("table-schedule");
         setManagerSchedule(managerSchedule);
-        if (role == "teacher" || role == "student") return;
+        const _isAuthManager = roles.some((res) => res.name === 'student' || res.name === 'teacher');
+        setIsAuthManager(_isAuthManager);
+        if (_isAuthManager) return;
         managerSchedule.subscribeClickSchedule(async (schedule) => {
-            // console.log(stateSchedule, appInfo, period_id);
-            // if (stateSchedule.period_id == appInfo.currentState.period_id) {
-            //     return;
-            // }
             const response = await showQuestion({
                 title: "¿Que desea hace al horario?",
                 cancelButtonText: "Cancelar",
@@ -70,8 +68,19 @@ const IndexSchedule = ({
                     confirmButtonText: "Eliminar",
                 });
                 if (responseDelete.isConfirmed) {
-                    await axios.delete(`/schedules/${schedule.schedule.id}`);
-                    managerSchedule?.removeScheduleInView(schedule.schedule.id);
+                    axios
+                        .delete(`/schedules/${schedule.schedule.id}`)
+                        .then((response) => {
+                            managerSchedule?.removeScheduleInView(schedule.schedule.id);
+                        })
+                        .catch((error) => {
+                            console.log({ error });
+                            showToast({
+                                icon: "error",
+                                text: error.response.data.message,
+                                title: "Error al crear el horario",
+                            });
+                        });
                 }
             } else if (response.isDenied) {
                 console.log("edit schedule", schedule.schedule);
@@ -103,10 +112,10 @@ const IndexSchedule = ({
     }
 
     function onChangeParallel(event: any) {
-        const value = parallels.find(x => x.id == event.target.value);
+        const value = parallels.find((x) => x.id == event.target.value);
         managerSchedule?.refreshSchedules([]);
         setParallel(() => {
-            return value || null
+            return value || null;
         });
         if (!value) return;
         getScheduleByParallel(value.id);
@@ -132,15 +141,6 @@ const IndexSchedule = ({
     }
 
     const onClickCell = (e: any) => {
-        console.log({ e });
-        // if (!parallel || !period_id) {
-        //     showToast({
-        //         title: "Error",
-        //         text: "Seleccione un periodo y paralelo",
-        //         icon: "error",
-        //     });
-        //     return;
-        // }
         if (role == "teacher" || role == "student") return;
         e.stopPropagation();
         if (!isCell(e)) return;
@@ -193,7 +193,6 @@ const IndexSchedule = ({
             });
     }
 
-    // const { control } = useForm();
     const { appInfo } = useContext(AppContext);
 
     return (
@@ -218,18 +217,6 @@ const IndexSchedule = ({
                 </div>
                 <div className="col-span-4">
                     <label htmlFor="name">Paralelos:</label>
-                    {/* <SelectSearch
-                        className="z-10"
-                        path="/schedules/parallels/search"
-                        control={control}
-                        name="paralelo_id"
-                        disabled={true}
-                        onChange={(e: any) => {
-                            setParallel(e.item);
-                            // setBlockedHours(false);
-                                              (e.item.id);
-                        }}
-                    /> */}
                     <select
                         disabled={isLoading}
                         onChange={onChangeParallel}
@@ -246,7 +233,9 @@ const IndexSchedule = ({
                 </div>
             </div>
             <div className="mt-4 relative">
-                {(!period_id || !parallel) ? <div className="overlay-table bg-slate-500/10 z-50"></div> : null}
+                {!period_id || !parallel || period_id != appInfo?.currentState?.period_id || isAuthManager ? (
+                    <div className="overlay-table bg-slate-500/10 z-50"></div>
+                ) : null}
                 <table
                     id="table-schedule"
                     className="table-auto table-schedule relative user-select-none w-full"

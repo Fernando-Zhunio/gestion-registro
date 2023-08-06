@@ -181,6 +181,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/periods', [AcademicController::class, 'getPeriods'])->name('academic.periods');
         Route::get('/periods-next', [AcademicController::class, 'getPeriodsNext'])->name('academic.getPeriodsNext');
         Route::post('periods/{period}/period-next', [AcademicController::class, 'changePeriod'])->name('academic.changePeriod');
+        Route::post('users', [AcademicController::class, 'storeUser'])->name('academic.storeUser');
+        Route::put('users/{user}', [AcademicController::class, 'updateUser'])->name('academic.updateUser');
+        Route::delete('users/{user}', [AcademicController::class, 'destroyUser'])->name('academic.destroyUser');
     });
 });
 
