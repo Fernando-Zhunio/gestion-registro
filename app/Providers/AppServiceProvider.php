@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
@@ -28,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // $this->renderExceptionValidation();
+        Carbon::setLocale('es');
     }
 
     // private function renderExceptionValidation()
@@ -44,4 +46,5 @@ class AppServiceProvider extends ServiceProvider
     //         ], 422);
     //     });
     // }
+
 }

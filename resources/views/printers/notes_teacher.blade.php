@@ -64,18 +64,20 @@
                 <strong>{{ env('NAME_COLLEGE') }}</strong> <br>
                 <strong>“MARIANO VALLA SAGÑAY”</strong>
             </h4>
-            <h5>COLTA – ECUADOR</h5>
-            <h5>Informe de calificaciones de {{$data['trimester']}}{{$data['trimester'] == 2 ? 'do' : 'er'}} trimestre</h5>
+            <h4>COLTA – ECUADOR</h4>
+            <h3>Informe de calificaciones de {{$data['trimester']}}{{$data['trimester'] == 2 ? 'do' : 'er'}} trimestre</h3>
         </div>
         <div>
            
-            <h3 class="text-center">{{ $data['student']->first_name }} {{ $data['student']->last_name }}</h3>
-            <p><strong>Nivel Educación: {{ $data['course']->name }} - BILINGÜE SIERRA</strong></p>
-            <p>Se obtuvo las siguientes calificaciones durante el presente año lectivo.</p>
+            <p>Año lectivo:: {{ $data['promotion'] }}</p>
+            <p>
+                <span>Paralelo: {{ $data['parallel'] }}</span>
+                <span style="float: right">Materia: {{ $data['subject'] }}</span>
+            </p>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Asignaturas</th>
+                        <th>Estudiante</th>
                         <th>Aporte</th>
                         <th>Proyecto 1</th>
                         <th>Evaluación</th>
@@ -85,17 +87,19 @@
                 <tbody>
                     @php
                         $acc = 0;
-                        $countSubjects = $data['subjects']->count();
+                        $countStudents = $data['students']->count();
                     @endphp
-                    @if ($countSubjects > 0)
-                        @foreach ($data['subjects'] as $subject)
+                    @if ($countStudents > 0)
+                        @foreach ($data['students'] as $student)
                             @php
-                                $note = $data['notes']->where('subject_id', $subject->id)?->first();
                                 $trimesterKeyAverage = ['averageFirstTrimester', 'averageSecondTrimester', 'averageThirdTrimester']
                             @endphp
                             <tr>
                                 <td>
-                                    {{ $subject->name }}
+                                    @php
+                                        $note = addAverageInNotes($student->notes)->first();
+                                    @endphp
+                                    {{ $student->first_name }} {{ $student->last_name }}
                                 </td>
                                 @if ($note)
                                     <td>
@@ -121,20 +125,31 @@
                                         No existen notas en esta materia
                                     </td>
                                 @endif
+                                {{-- <td>
+                                    @php
+                                        $note = $data['notes']->where('subject_id', $subject->id)?->first()->noteFinal ?? 0;
+                                        $acc += $note;
+                                    @endphp
+                                    {{ $note }}
+                                </td>
+                                <td>
+                                    {{ $note >= 7 ? 'APROBADO' : 'REPROBADO' }}
+                                </td> --}}
                             </tr>
                         @endforeach
                         <tr>
                             <td><strong>Promedio</strong> </td>
                             <td colspan="3" style="border:none !important;">
+                                {{-- {{ $acc / $countSubjects ?? 0 }} --}}
                             </td>
                             <td>
-                                {{ round($acc / $countSubjects, 2) }}
+                                {{ round($acc / $countStudents, 2) }}
                             </td>
                         </tr>
                     @else
                         <tr>
                             <td colspan="3">
-                                No hay asignaturas
+                                No hay estudiantes
                             </td>
                         </tr>
                     @endif

@@ -110,6 +110,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('printers')->group(function () {
         Route::get('/periods/{period}/students/{student}/promotion_certificate', [PrinterController::class, 'promotionCertificate'])->name('printers.promotionCertificate');
         Route::get('/periods/{period}/students/{student}/notes_student/trimester/{trimester}', [PrinterController::class, 'notesByTrimester'])->name('printers.notesByTrimester');
+        Route::get('/periods/{period}/students/{student}/certificate_tuition', [PrinterController::class, 'certificateTuition'])->name('printers.certificateTuition');
+        Route::get('/periods/{period}/notes_students/trimester/{trimester}', [PrinterController::class, 'notesByTeacher'])->name('printers.notesByTeacher');
     });
 
     Route::prefix('students')->group(function () {

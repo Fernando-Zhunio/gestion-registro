@@ -20,6 +20,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import { IPeriod } from "@/Models/period";
 import { AppContext } from "@/Context/AppContext";
+import DropdownFz from "@/Components/DropdownFz";
+import MenuItem from "@mui/material/MenuItem";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
@@ -40,7 +42,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
             period_id: data?.currentPeriod,
             parallel_id: null,
             subject_id: null,
-        }
+        },
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [note, setNote] = useState<INote>();
@@ -49,7 +51,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     const [pathStudents, setPathStudents] = useState<string>("");
     const [selectStudent, setSelectStudent] = useState<IStudent | null>(null);
     const searchPaginator = useRef(null);
-    const {appInfo} = useContext(AppContext);
+    const { appInfo } = useContext(AppContext);
 
     const watchParallel = watch("parallel_id");
     const watchSubject = watch("subject_id");
@@ -82,14 +84,16 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         router.reload({
             data: {
                 period_id: e.target.value,
-            }
-        })
+            },
+        });
     }
 
     const getSubjects = useCallback(
         (watchParallel: number) => {
             axios
-                .get(`/periods/${wathPeriod}/notes/parallels/${watchParallel}/subjects`)
+                .get(
+                    `/periods/${wathPeriod}/notes/parallels/${watchParallel}/subjects`
+                )
                 .then(({ data }) => {
                     console.log({ data });
                     setSubjects(data.data);
@@ -102,7 +106,9 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         let path = `/notes/parallels/${parallels}/search-students`;
         setIsLoading(true);
         setPathStudents(path);
-        (searchPaginator?.current as any)?.getData(path, {period_id: wathPeriod});
+        (searchPaginator?.current as any)?.getData(path, {
+            period_id: wathPeriod,
+        });
     }
 
     function onData(data: IStudent[]) {
@@ -132,7 +138,9 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         setIsLoading(true);
         setSelectStudent(null);
         axios
-            .get(`periods/${wathPeriod}/notes/students/${student.id}/subjects/${watchSubject}`)
+            .get(
+                `periods/${wathPeriod}/notes/students/${student.id}/subjects/${watchSubject}`
+            )
             .then(({ data }) => {
                 setSelectStudent(student);
                 setNote(data.data?.note);
@@ -147,7 +155,38 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         <div>
             <div>
                 <div className="col-span-12 mb-6">
-                    <h2 className="text-3xl">Notas</h2>
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-3xl">Notas</h2>
+                        <DropdownFz text="Impresiones">
+                            {(wathPeriod && watchParallel && watchSubject) ? <><MenuItem selected={false}>
+                                <a
+                                    href={`/printers/periods/${wathPeriod}/notes_students/trimester/1?parallel_id=${watchParallel}&subject_id=${watchSubject}`}
+                                    target="_blank"
+                                    className="text-gray-700 block px-4 py-2 text-sm"
+                                >
+                                    Trimestre 1
+                                </a>
+                            </MenuItem>
+                            <MenuItem>
+                                <a
+                                    href={`/printers/periods/${wathPeriod}/notes_students/trimester/2?parallel_id=${watchParallel}&subject_id=${watchSubject}`}
+                                    target="_blank"
+                                    className="text-gray-700 block px-4 py-2 text-sm"
+                                >
+                                    Trimestre 2
+                                </a>
+                            </MenuItem>
+                            <MenuItem>
+                                <a
+                                    href={`/printers/periods/${wathPeriod}/notes_students/trimester/3?parallel_id=${watchParallel}&subject_id=${watchSubject}`}
+                                    target="_blank"
+                                    className="text-gray-700 block px-4 py-2 text-sm"
+                                >
+                                    Trimestre 3
+                                </a>
+                            </MenuItem></> : <span className="text-gray-500 px-3 py-1">Seleccione un periodo, paralelo y materia</span>}
+                        </DropdownFz>
+                    </div>
                 </div>
                 <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-4 gap-4">
@@ -233,7 +272,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                     onError={onError}
                                     onData={onData}
                                     path={pathStudents}
-                                    params={{period_id: wathPeriod}}
+                                    params={{ period_id: wathPeriod }}
                                     isDisabledBtn={!!!watchParallel}
                                     placeholder="Buscar estudiante"
                                 >
@@ -316,7 +355,9 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                             student_id={selectStudent?.id}
                             subject_id={watchSubject}
                             note={note}
-                            disabled={wathPeriod != appInfo.currentState?.period_id}
+                            disabled={
+                                wathPeriod != appInfo.currentState?.period_id
+                            }
                         />
                     </div>
                 </div>

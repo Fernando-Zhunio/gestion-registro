@@ -39,10 +39,11 @@ class TuitionController extends Controller
             $query->search($search, 'first_name', ['last_name']);
         })->with('student', 'course', 'period', 'student.user', 'parallel')
         ->where('period_id', $period_id)->orderBy('created_at', 'desc')->paginate();
+        $role = auth()->user()->roles[0]->name;
         return Inertia::render('Tuitions/Index', [
             'success' => true,
             'data' => $tuitions,
-            'metadata' => ['currentPeriodId' => $period_id],
+            'metadata' => ['currentPeriodId' => $period_id, 'role' => $role],
         ]);
     }
 

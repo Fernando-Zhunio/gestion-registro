@@ -18,7 +18,7 @@ import DropdownFz from "@/Components/DropdownFz";
 import Divider from "@mui/material/Divider";
 import { AppContext } from "@/Context/AppContext";
 
-export default function IndexTuitions({ data, metadata: { currentPeriodId } }: ResponsePaginator<ITuition, any>) {
+export default function IndexTuitions({ data, metadata: { currentPeriodId, role } }: ResponsePaginator<ITuition, any>) {
    
     const [period_id, setPeriodId] = useState<number | "">(currentPeriodId);
     const { appInfo } = useContext(AppContext);
@@ -48,12 +48,12 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId } }: R
                                 ))
                             }
                         </select>
-                        <Link
+                        {role !== 'student' && <Link
                             href="/tuitions/create"
                             className="btn-custom btn-create"
                         >
                             Crear Matricula
-                        </Link>
+                        </Link>}
                     </>
                 }
             >
@@ -123,7 +123,7 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId } }: R
                                         {row.period.promotion}
                                     </TableCell>
                                     <TableCell>
-                                        <div className="flex gap-1">
+                                        {role !== 'student' && <div className="flex gap-1">
                                             <DropdownFz text="Impresiones">
                                                 <MenuItem>
                                                 <a
@@ -132,6 +132,16 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId } }: R
                                                     className="text-gray-700 block px-4 py-2 text-sm"
                                                 >
                                                     Certificado Promoción
+                                                </a>
+                                                
+                                                </MenuItem>
+                                                <MenuItem>
+                                                <a
+                                                    href={`/printers/periods/${period_id}/students/${row.student.id}/certificate_tuition`}
+                                                    target="_blank"
+                                                    className="text-gray-700 block px-4 py-2 text-sm"
+                                                >
+                                                    Certificado Matricula
                                                 </a>
                                                 
                                                 </MenuItem>
@@ -165,7 +175,7 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId } }: R
                                                 </MenuItem>
 
                                             </DropdownFz>
-                                        </div>
+                                        </div>}
                                     </TableCell>
                                 </TableRow>
                             ))}
