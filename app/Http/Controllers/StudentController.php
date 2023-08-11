@@ -27,16 +27,52 @@ class StudentController extends Controller
     public function index()
     {
         $period_id = request('period_id', null) ?? currentState()->period_id;
+        $course_id = request('course_id', null);
+        $parallel_id = request('parallel_id', null);
         $students = Student::search(request()->get('search', ''), 'first_name', ['last_name', 'doc_number'])
         ->with('tuitions.course', 'representative', 'user')
-        ->whereHas('tuitions', function($query) use($period_id) {
+        ->whereHas('tuitions', function($query) use($period_id, $course_id, $parallel_id){ 
+            $course_id && $query->where('course_id', $course_id);
+            $parallel_id && $query->where('parallel_id', $parallel_id);
             return $query->where('period_id', $period_id);
         })->paginate();
         $periods = Period::all();
+        $courses = Course::all();
+        $parallels = [];
+        if($course_id) {
+            $parallels = Parallel::where('course_id', $course_id)->get();
+        }
+
         return Inertia::render('Students/Index', [
             'success' => true,
             'data' => $students,
-            'metadata' => ['periods' =>$periods, 'current_period' => $period_id],
+            'metadata' => ['periods' =>$periods, 'courses' => $courses, 'parallels' => $parallels, 'current_period' => $period_id],
+        ]);
+    }
+
+    public function indexReports()
+    {
+        $period_id = request('period_id', null) ?? currentState()->period_id;
+        $course_id = request('course_id', null);
+        $parallel_id = request('parallel_id', null);
+        $students = Student::search(request()->get('search', ''), 'first_name', ['last_name', 'doc_number'])
+        ->with('tuitions.course', 'representative', 'user')
+        ->whereHas('tuitions', function($query) use($period_id, $course_id, $parallel_id){ 
+            $course_id && $query->where('course_id', $course_id);
+            $parallel_id && $query->where('parallel_id', $parallel_id);
+            return $query->where('period_id', $period_id);
+        })->paginate();
+        $periods = Period::all();
+        $courses = Course::all();
+        $parallels = [];
+        if($course_id) {
+            $parallels = Parallel::where('course_id', $course_id)->get();
+        }
+
+        return Inertia::render('Reports/Index', [
+            'success' => true,
+            'data' => $students,
+            'metadata' => ['periods' =>$periods, 'courses' => $courses, 'parallels' => $parallels, 'current_period' => $period_id],
         ]);
     }
 

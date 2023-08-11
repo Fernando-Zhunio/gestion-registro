@@ -1,0 +1,13 @@
+.select-label-filter {
+    position: absolute;
+    top: -11px;
+    left: 11px;
+    background: white;
+    padding-inline: 5px;
+    font-size: 14px;
+}
+
+select {
+    border-radius: 10px;
+    height: 40px;
+}

@@ -78,6 +78,7 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                             }}>
                                 <TableCell>id</TableCell>
                                 <TableCell>Nombre</TableCell>
+                                <TableCell>Curso</TableCell>
                                 <TableCell>Observación</TableCell>
                                 <TableCell>Total registrados</TableCell>
                                 <TableCell>Total de cupos</TableCell>
@@ -93,6 +94,9 @@ const Index = ({data}: ResponsePaginator<IParallel>) => {
                                     </TableCell>
                                     <TableCell>
                                         {row.name}
+                                    </TableCell>
+                                    <TableCell>
+                                        {row.course?.name}
                                     </TableCell>
                                     <TableCell>{row.observation}</TableCell>
                                     <TableCell>{row.registered}</TableCell>

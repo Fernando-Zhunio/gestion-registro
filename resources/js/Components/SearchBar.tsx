@@ -1,4 +1,4 @@
-import { PaginatorEvent, ResponsePaginator } from "@/types/global";
+import { PaginatorEvent, ResponseDataPaginator, ResponsePaginator } from "@/types/global";
 import { router, usePage } from "@inertiajs/react";
 import { CircularProgress, TablePagination } from "@mui/material";
 import axios from "axios";
@@ -11,6 +11,7 @@ interface SearchBarProps {
     notLoadDataOnInit?: boolean;
     width?: 1|2|3|4|5|6|7|8|9;
     params?: any;
+    data?: ResponseDataPaginator<any> | null;
     // paramsPage
     onIsLoading?: (isLoading: boolean) => void;
     onSetData?: (data: any) => void;
@@ -35,11 +36,12 @@ const SearchBarComponent = forwardRef(({
     onError,
     children,
     buttons,
+    data = null,
 }: SearchBarProps, ref) => {
     useImperativeHandle(ref, () => ({
         fetchUrl
       }));
-    const [data, setData] = useState<any[]>([]);
+    // const [data, setData] = useState<any[]>([]);
     const [pass, setPass] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<any>(false);
     const [error, setError] = useState<any>(null);
@@ -65,6 +67,17 @@ const SearchBarComponent = forwardRef(({
         fetchUrl();
         console.log({ props });
     }, []);
+
+    // useEffect(() => {
+    //     console.log({ props3: data });
+    //     if (data) {
+    //         setPaginator({
+    //             page: data.current_page - 1,
+    //             pageSize: data.per_page,
+    //             length: data.total,
+    //         })
+    //     }
+    // }, data as any);
     
     function getQueryParamSearch() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -76,14 +89,14 @@ const SearchBarComponent = forwardRef(({
         setIsLoading(isLoading);
         onIsLoading && onIsLoading(isLoading);
     }
-    function handlerSetData(data: any) {
-        setData(data);
-        onSetData && onSetData(data);
-    }
-    function handlerSetError(error: any) {
-        setError(error);
-        onError && onError(error);
-    }
+    // function handlerSetData(data: any) {
+    //     setData(data);
+    //     onSetData && onSetData(data);
+    // }
+    // function handlerSetError(error: any) {
+    //     setError(error);
+    //     onError && onError(error);
+    // }
 
     async function fetchUrl(page: number | null = null, params2: {[key: string]: any} | null = null) {
         handlerSetIsLoading(true);
@@ -97,7 +110,7 @@ const SearchBarComponent = forwardRef(({
         router.get(path, _params, {
             preserveState: true,
             onSuccess: (data: any) => {
-
+                console.log({ data });
                 setPaginator({
                     page: data.props.data.current_page - 1,
                     pageSize: data.props.data.per_page,
@@ -153,9 +166,9 @@ const SearchBarComponent = forwardRef(({
                     <TablePagination
                         rowsPerPageOptions={rowsPerPageOptions || [10, 25, 50]}
                         component="div"
-                        count={paginator.length}
-                        rowsPerPage={paginator.pageSize}
-                        page={paginator.page}
+                        count={data?.total || paginator.length}
+                        rowsPerPage={data?.per_page || paginator.pageSize}
+                        page={((data?.current_page || 1) -1) || paginator.page}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={(event) => {
                             setPaginator((prevState) => ({

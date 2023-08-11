@@ -124,7 +124,7 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId, role 
                                     </TableCell>
                                     <TableCell>
                                         {role !== 'student' && <div className="flex gap-1">
-                                            <DropdownFz text="Impresiones">
+                                            {/* <DropdownFz text="Impresiones">
                                                 <MenuItem>
                                                 <a
                                                     href={`/printers/periods/${period_id}/students/${row.student.id}/promotion_certificate`}
@@ -174,7 +174,14 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId, role 
                                                 </a>
                                                 </MenuItem>
 
-                                            </DropdownFz>
+                                            </DropdownFz> */}
+                                            <a
+                                                    href={`/printers/periods/${period_id}/students/${row.student.id}/certificate_tuition`}
+                                                    target="_blank"
+                                                    className=" block px-4 py-2 text-sm shadow text-center rounded-lg text-white bg-slate-900 hover:bg-slate-800"
+                                                >
+                                                    Certificado Matricula
+                                                </a>
                                         </div>}
                                     </TableCell>
                                 </TableRow>

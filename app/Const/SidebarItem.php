@@ -50,6 +50,12 @@ class SidebarItem
             'forRoles' => ['admin', 'teacher']
         ],
         [
+            'path' => '/reports',
+            'icon' => 'fas fa-file-alt',
+            'name' => 'Reportes',
+            'forRoles' => ['admin', 'teacher']
+        ],
+        [
             'path' => '/teachers',
             'icon' => 'fas fa-chalkboard-teacher',
             'name' => 'Docentes',

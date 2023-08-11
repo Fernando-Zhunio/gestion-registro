@@ -7,19 +7,20 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useContext, useEffect, useRef, useState } from "react";
-import { IStudent } from "./types/student.types";
+// import { IStudent } from "./types/student.types";
 import { ResponsePaginator } from "@/types/global";
 // import { CreateOrEditCourse } from "./CreateOrEditStudent";
 // import { showAlert } from "@/Helpers/alerts";
 import { Link, router, useForm } from "@inertiajs/react";
-import { IPeriod } from "../Periods/types/period.types";
+import { IPeriod } from "./Periods/types/period.types";
 import { AppContext } from "@/Context/AppContext";
 import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
-import "./styles-student.css";
-import { ICourse } from "../Courses/types/course.types";
-import { IParallel } from "../Parallels/types/parallel.types";
+import "../Students/styles-student.css";
+import { ICourse } from "./Courses/types/course.types";
+import { IParallel } from "./Parallels/types/parallel.types";
 import TablePagination from "@mui/material/TablePagination";
-const StudentsIndex = ({
+import { IStudent } from "./Students/types/student.types";
+const ReportsIndex = ({
     data,
     metadata: { periods, courses, parallels, current_period },
 }: ResponsePaginator<IStudent, any>) => {
@@ -31,7 +32,6 @@ const StudentsIndex = ({
     const [textSearch, setTextSearch] = useState<string>("");
     const { appInfo } = useContext(AppContext);
 
-    const refSearchBar: any = useRef();
     useEffect(() => {
         setPeriod_id(current_period);
     }, [current_period]);
@@ -239,9 +239,6 @@ const StudentsIndex = ({
                     </Table>
                 </TableContainer>
             </div>
-            {/* </SearchBarComponent> */}
-
-            {/* <CreateOrEditCourse setIsOpen={setIsOpen}  isOpen={isOpen} data={dataEdit || undefined} state="create"/> */}
             <TablePagination
                         rowsPerPageOptions={[10, 25, 50]}
                         component="div"
@@ -268,4 +265,4 @@ const StudentsIndex = ({
     );
 };
 
-export default StudentsIndex;
+export default ReportsIndex;

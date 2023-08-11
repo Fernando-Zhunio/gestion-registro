@@ -26,7 +26,7 @@ class ParallelController extends Controller
         $pageSize = $request->get('pageSize', 10);
         $currentState = currentState();
         $parallels = Parallel::search($search)
-        ->paginate($pageSize);
+        ->with('course')->paginate($pageSize);
         $parallels->getCollection()->map(function ($parallel) use($currentState) {
             $countStudents = Tuition::where('parallel_id', $parallel->id)
             ->where('period_id', $currentState->period_id)

@@ -123,6 +123,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
     });
 
+    Route::prefix('reports')->group(function () {
+        Route::get('/', [StudentController::class, 'indexReports'])->name('students-reports.index');
+    });
+
     Route::prefix('tuitions')->group(function () {
         Route::get('/', [TuitionController::class, 'index'])->name('tuitions.index');
         Route::get('/create', [TuitionController::class, 'create'])->name('tuitions.create');
