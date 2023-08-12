@@ -19,9 +19,10 @@ import "./styles-student.css";
 import { ICourse } from "../Courses/types/course.types";
 import { IParallel } from "../Parallels/types/parallel.types";
 import TablePagination from "@mui/material/TablePagination";
+import { showToast } from "@/Helpers/alerts";
 const StudentsIndex = ({
     data,
-    metadata: { periods, courses, parallels, current_period },
+    metadata: { periods, courses, parallels, current_period, role },
 }: ResponsePaginator<IStudent, any>) => {
     const { delete: _deleteCourse } = useForm();
 
@@ -84,26 +85,33 @@ const StudentsIndex = ({
             },
         })
     }
+    function onDownloadListStudents() {
+        if (!+period_id || !+course_id || !+parallel_id) {
+            showToast({
+                text: "Debe seleccionar un periodo, curso y paralelo",
+                icon: "error",
+            });
+            return;
+        }
+        const link = document.createElement("a");
+        link.href = `/printers/periods/${period_id}/courses/${course_id}/parallels/${parallel_id}/students`;
+        link.target = "_blank";
+        link.click();
+    }
 
     return (
-        <div className="">
-            {/* <SearchBarComponent
-                data={data}
-                ref={refSearchBar}
-                path="/students"
-                title="Estudiantes"
-                withPaginator={true}
-                notLoadDataOnInit={true}
-                params={{ period_id, course_id, parallel_id }}
-                buttons={ */}
+        <div>
            <div className="flex items-center justify-between px-3">
             <div className="flex gap-2 items-center">
-                <input onChange={(e) => {
-                    setTextSearch(e.target.value);
-                }}  type="text" placeholder="Buscar estudiante" />
-                <button onClick={onChangeTextSearch} className="w-10 h-10 bg-slate-800 text-white px-3 ">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                </button>
+                <div className="text-3xl">Estudiantes</div>
+                <div className="flex gap-2 items-center">
+                    <input onChange={(e) => {
+                        setTextSearch(e.target.value);
+                    }}  type="text" placeholder="Buscar estudiante" />
+                    <button onClick={onChangeTextSearch} className="w-10 h-10 bg-slate-800 text-white px-3 ">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
             </div>
              <div className="flex gap-2">
                  <div className="relative">
@@ -156,6 +164,7 @@ const StudentsIndex = ({
                          ))}
                      </select>
                  </div>
+                 <button onClick={onDownloadListStudents} className="btn-custom btn-create"><i className="fa-solid fa-print"></i> Estudiantes</button>
              </div>
            </div>
             {/* //     }
@@ -217,8 +226,8 @@ const StudentsIndex = ({
                                         {row.representative.first_name}
                                     </TableCell>
                                     <TableCell>
-                                        {appInfo.currentState?.period_id ==
-                                            period_id && (
+                                        {appInfo?.currentState?.period_id ==
+                                            period_id && role != 'teacher' && (
                                             <div className="flex gap-1">
                                                 <Link
                                                     href={

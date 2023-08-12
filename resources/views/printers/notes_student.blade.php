@@ -44,25 +44,10 @@
 
 <body>
     <div class="container px-4">
-        {{-- <header>
-            <div class="text-center">
-                <img src="{{ asset('img/logo_ecuador.png') }}" alt="">
-            </div>
-            <div id="sub-header">
-                <a style="display: flex; width: 100%;justify-content: space-between">
-                    <strong>AÑO LECTIVO:</strong> {{ $data['period']->promotion }}
-                    <div style="float: right">
-                        <strong>RÉGIMEN:</strong> SIERRA
-                    </div>
-                </a>
-
-            </div>
-            <h2 class="text-center">CERTIFICADO DE PROMOCION</h2>
-        </header> --}}
         <div class="text-center">
             <h4>
-                <strong>{{ env('NAME_COLLEGE') }}</strong> <br>
-                <strong>“MARIANO VALLA SAGÑAY”</strong>
+                <strong>UNIDAD EDUCATIVA INTERCULTURAL BILINGÜE MARIANO VALLA SAGNAY</strong>
+                <br>
             </h4>
             <h5>COLTA – ECUADOR</h5>
             <h5>Informe de calificaciones de {{$data['trimester']}}{{$data['trimester'] == 2 ? 'do' : 'er'}} trimestre</h5>

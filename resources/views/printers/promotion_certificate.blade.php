@@ -61,7 +61,7 @@
         </header>
         <div class="text-center">
             <h4>
-                <strong>{{ env('NAME_COLLEGE') }}</strong>
+                <strong>UNIDAD EDUCATIVA INTERCULTURAL BILINGÜE MARIANO VALLA SAGNAY</strong>
             </h4>
         </div>
         <div>

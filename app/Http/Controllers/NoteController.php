@@ -22,7 +22,7 @@ class NoteController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['role:teacher|super-admin|admin'])->except(['index', 'getSubjectByParallel', 'getNoteByStudent']);
+        $this->middleware(['role:teacher|super-admin|admin'])->except(['index', 'getParallels', 'getSubjectByParallel', 'getNoteByStudent']);
     }
     public function index()
     {
@@ -66,14 +66,6 @@ class NoteController extends Controller
         /**
          * @var \App\Models\User $user
          */
-        // $user = $request->user();
-        // $teacher = $user?->teacher;
-        // $isTeacher = $user->hasRole('teacher');
-        // $search = $request->get('search', '');
-        // $parallels = Parallel::search($search)->whereHas('schedules', function ($query) use ($teacher, $isTeacher) {
-        //     $isTeacher && $query->where('teacher_id', $teacher?->id);
-        //     $query->where('period_id', currentState()->period_id);
-        // })->paginate();
         $parallels = getParallelsByRoleAndPeriod($period->id);
         return response()->json([
             'success' => true,

@@ -18,7 +18,7 @@ class StudentController extends Controller
 {
 
     public function __construct() {
-        $this->middleware(['role:super-admin|admin|secretary']);
+        $this->middleware(['role:super-admin|admin|secretary|teacher']);
     }
     /**
      * Display a listing of the resource.
@@ -43,10 +43,12 @@ class StudentController extends Controller
             $parallels = Parallel::where('course_id', $course_id)->get();
         }
 
+        $role = auth()->user()->roles[0]->name;
+
         return Inertia::render('Students/Index', [
             'success' => true,
             'data' => $students,
-            'metadata' => ['periods' =>$periods, 'courses' => $courses, 'parallels' => $parallels, 'current_period' => $period_id],
+            'metadata' => ['periods' =>$periods, 'role' => $role, 'courses' => $courses, 'parallels' => $parallels, 'current_period' => $period_id],
         ]);
     }
 

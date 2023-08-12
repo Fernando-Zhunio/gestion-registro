@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [NoteController::class, 'create'])->name('notes.create');
         Route::get('/periods/{period}/parallels', [NoteController::class, 'getParallels'])->name('notes.parallels');
         Route::get('/periods/{period}/subjects/{subject}', [NoteController::class, 'getSubjectByPeriod'])->name('notes.getSubjectByPeriod');
-        Route::get('/parallels/{parallel}/subjects', [NoteController::class, 'getSubjectByParallel'])->name('notes.getSubjectByParallel');
+        // Route::get('/parallels/{parallel}/subjects', [NoteController::class, 'getSubjectByParallel'])->name('notes.getSubjectByParallel');
         // Route::get('/student/{student}', [NoteController::class, 'getNoteByStudent'])->name('notes.getNoteByStudent');
         Route::get('/parallels/{parallel}/search-students', [NoteController::class, 'searchStudentByParallels'])->name('notes.searchStudentByParallels');
         Route::post('/', [NoteController::class, 'store'])->name('notes.store');
@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/periods/{period}/students/{student}/notes_student/trimester/{trimester}', [PrinterController::class, 'notesByTrimester'])->name('printers.notesByTrimester');
         Route::get('/periods/{period}/students/{student}/certificate_tuition', [PrinterController::class, 'certificateTuition'])->name('printers.certificateTuition');
         Route::get('/periods/{period}/notes_students/trimester/{trimester}', [PrinterController::class, 'notesByTeacher'])->name('printers.notesByTeacher');
+        Route::get('/periods/{period}/courses/{course}/parallels/{parallel}/students', [PrinterController::class, 'listStudents'])->name('printers.listStudents');
     });
 
     Route::prefix('students')->group(function () {

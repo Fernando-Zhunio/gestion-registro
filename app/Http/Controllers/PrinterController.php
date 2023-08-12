@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\Note;
 use App\Models\Parallel;
 use App\Models\Period;
@@ -14,7 +15,8 @@ use Normalizer;
 
 class PrinterController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware(['role:super-admin|admin|teacher']);
     }
 
@@ -31,15 +33,15 @@ class PrinterController extends Controller
         $data['subjects'] = $this->_getSubjectByParallel($tuition->parallel_id, $period_id);
         $data['notes'] = addAverageInNotes(Note::where('student_id', $student->id)->where('period_id', $period_id)->get());
         $view = view('printers.promotion_certificate', compact('data'))->render();
-        
+
         $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
-        $name = $student->doc_number.'-certificado_promocion'.'.pdf';
+        $name = $student->doc_number . '-certificado_promocion' . '.pdf';
         return $pdf->download($name);
     }
 
 
 
-public function notesByTrimester(Request $request, Period $period, Student $student, int $trimester)
+    public function notesByTrimester(Request $request, Period $period, Student $student, int $trimester)
     {
         $period_id = $period->id;
         $tuition = Tuition::with('course')
@@ -54,17 +56,17 @@ public function notesByTrimester(Request $request, Period $period, Student $stud
 
         $data['subjects'] = $this->_getSubjectByParallel($tuition->parallel_id, $period_id);
         $data['notes'] = addAverageInNotes(Note::where('student_id', $student->id)->where('period_id', $period_id)->get());
-        // return view('printers.notes_student', compact('data'));
         $view = view('printers.notes_student', compact('data'))->render();
-        
+
         // $pdf = Pdf::loadView('printers.promotion_certificate', compact('data') );
         // return ['view' => $view];
         $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
-        $name = $student->doc_number.'-certificado_promocion'.'.pdf';
+        $name = $student->doc_number . '-certificado_promocion' . '.pdf';
         return $pdf->download($name);
     }
 
-    public function certificateTuition(Request $request, Period $period, Student $student) {
+    public function certificateTuition(Request $request, Period $period, Student $student)
+    {
         $period_id = $period->id;
         $tuition = Tuition::with('course', 'parallel')
             ->where('student_id', $student->id)
@@ -76,11 +78,12 @@ public function notesByTrimester(Request $request, Period $period, Student $stud
         $data['tuition'] = $tuition;
         $view = view('printers.certificate_tuition', compact('data'))->render();
         $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
-        $name = $student->doc_number.'-certificado_matricula'.'.pdf';
+        $name = $student->doc_number . '-certificado_matricula' . '.pdf';
         return $pdf->download($name);
     }
 
-    public function notesByTeacher(Request $request, Period $period,  int $trimester) {
+    public function notesByTeacher(Request $request, Period $period,  int $trimester)
+    {
 
         $request->validate([
             'parallel_id' => 'required',
@@ -90,18 +93,11 @@ public function notesByTrimester(Request $request, Period $period, Student $stud
          * @var User $user
          */
         $user = auth()->user();
-        // $builder = Note::where('period_id', $period->id)->where('subject_id', $request->subject_id)
-        // ->whereHas('student.tuitions', function ($query) use ($request, $period) {
-        //     $query->where('parallel_id', $request->get('parallel_id'));
-        //     $query->where('period_id', $period->id);
-        // });
+
         $builder = Student::whereHas('tuitions', function ($query) use ($request, $period) {
             $query->where('parallel_id', $request->get('parallel_id'));
             $query->where('period_id', $period->id);
         });
-        if ($user->hasRole('teacher')) {
-            $builder->where('user_id', $user->id);
-        }
         $students = $builder->with('notes', function ($query) use ($period, $request) {
             $query->where('period_id', $period->id)->where('subject_id', $request->subject_id);
         })->get();
@@ -110,15 +106,35 @@ public function notesByTrimester(Request $request, Period $period, Student $stud
         $data['promotion'] = $period->promotion;
         $data['parallel'] = Parallel::find($request->get('parallel_id'))->name;
         $data['subject'] = Subject::find($request->get('subject_id'))->name;
-        // dd($data);
-        // return view('printers.notes_teacher', compact('data'));
         $view = view('printers.notes_teacher', compact('data'))->render();
         $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
-        $name = $user->doc_number.'-notas_teacher'.'.pdf';
+        $name = $user->doc_number . '-notas_teacher' . '.pdf';
         return $pdf->download($name);
+    }
 
+    public function listStudents(Period $period,  Course $course, Parallel $parallel)
+    {
 
+        /**
+         * @var User $user
+         */
+        $user = auth()->user();
 
+        $students = Student::whereHas('tuitions', function ($query) use ($period, $course, $parallel) {
+            $query->where('parallel_id', $parallel->id);
+            $query->where('course_id', $course->id);
+            $query->where('period_id', $period->id);
+        })->get();
+
+        $data['students'] = $students;
+        $data['promotion'] = $period->promotion;
+        $data['parallel'] = $parallel->name;
+        $data['course'] = $course->name;
+        // $data['subject'] = Subject::find($request->get('subject_id'))->name;
+        $view = view('printers.list_students', compact('data'))->render();
+        $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
+        $name = $user->doc_number . '-list_note' . '.pdf';
+        return $pdf->download($name);
     }
     private function _getSubjectByParallel(int $parallel_id, int $period_id)
     {

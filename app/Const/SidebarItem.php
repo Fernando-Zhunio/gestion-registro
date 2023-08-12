@@ -29,7 +29,7 @@ class SidebarItem
             'path' => '/parallels',
             'icon' => 'fas fa-users',
             'name' => 'Paralelos',
-            'forRoles' => ['admin', 'teacher', 'secretary']
+            'forRoles' => ['admin', 'secretary']
         ],
         [
             'path' => '/representatives',
@@ -41,7 +41,7 @@ class SidebarItem
             'path' => '/tuitions',
             'icon' => 'fas fa-money-bill-alt',
             'name' => 'Matriculas',
-            'forRoles' => ['admin', 'secretary', 'student']
+            'forRoles' => ['admin', 'secretary']
         ],
         [
             'path' => '/students',

@@ -41,22 +41,23 @@ interface CreateOrEditNoteProps {
 const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [note, setNote] = useState<INote | null>();
-    const [tuition, setTuition] = useState<ITuition>();
+    const [tuition, setTuition] = useState<ITuition | null>();
     const [subjects, setSubjects] = useState<ISubject[]>([]);
     // const [period_id, setPeriodId] = useState<number | ''>(data.currentPeriod);
-    const [subject_id, setSubjectId] = useState<number | "">("");
+    const [subject_id, setSubjectId] = useState<number>();
     const [pathStudents, setPathStudents] = useState<string>("");
 
-    function onChangeTuition(e: any) {
-        if (isLoading) return;
+    function onChangeTuition(e: any | null) {
+        // if (isLoading) return;
         setSubjects([]);
         setNote(null);
-        setSubjectId("");
+        setSubjectId(0);
         const tuition = data.tuitions.find((x) => x.id == e.target.value);
+        console.log(tuition);
         setTuition(tuition);
         if (!tuition) return;
         const parallel_id = tuition?.parallel_id!;
-        getSubjects(e.target.value, parallel_id);
+        getSubjects(tuition.period.id, parallel_id);
     }
 
     // function onChangeSubject(e: any) {
@@ -70,7 +71,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         (period_id: number, parallel_id: number) => {
             axios
                 .get(
-                    `/notes/parallels/${parallel_id}/subjects?period_id=${period_id}`
+                    `periods/${period_id}/notes/parallels/${parallel_id}/subjects`
                 )
                 .then(({ data }) => {
                     setSubjects(data.data);
@@ -94,7 +95,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         setIsLoading(true);
         axios
             .get(
-                `/notes/student/${data.student.id}?subject_id=${e.target.value}`
+                `periods/${tuition.period_id}/notes/students/${data.student.id}/subjects/${e.target.value}`
             )
             .then(({ data }) => {
                 setNote(data.data?.note);
@@ -137,7 +138,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                         return (
                                             <option
                                                 selected={
-                                                    item.period.id ===
+                                                    item.id ===
                                                     data.currentPeriod
                                                 }
                                                 key={item.id}
@@ -261,7 +262,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                 <small># ID: {data.student?.doc_number}</small>
                             </div>
                         </div>
-                        {subject_id && (
+                        {Boolean(subject_id) && (
                             <FormCreateOrEditNoteStudent note={note} />
                         )}
                     </div>

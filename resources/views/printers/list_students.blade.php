@@ -50,23 +50,23 @@
                  <br>
             </h4>
             <h4>COLTA – ECUADOR</h4>
-            <h3>Informe de calificaciones de {{$data['trimester']}}{{$data['trimester'] == 2 ? 'do' : 'er'}} trimestre</h3>
+            <h3>Informe de estudiantes</h3>
         </div>
         <div>
            
             <p>Año lectivo:: {{ $data['promotion'] }}</p>
             <p>
-                <span>Paralelo: {{ $data['parallel'] }}</span>
-                <span style="float: right">Materia: {{ $data['subject'] }}</span>
+                <span>Curso: {{ $data['course'] }}</span>
+                <span style="float: right">Paralelo: {{ $data['parallel'] }}</span>
             </p>
             <table class="table">
                 <thead>
                     <tr>
                         <th>Estudiante</th>
-                        <th>Aporte</th>
-                        <th>Proyecto 1</th>
+                        <th># Documento</th>
+                        {{-- <th>Proyecto 1</th>
                         <th>Evaluación</th>
-                        <th>Promedio</th>
+                        <th>Promedio</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -76,40 +76,13 @@
                     @endphp
                     @if ($countStudents > 0)
                         @foreach ($data['students'] as $student)
-                            @php
-                                $trimesterKeyAverage = ['averageFirstTrimester', 'averageSecondTrimester', 'averageThirdTrimester']
-                            @endphp
                             <tr>
                                 <td>
-                                    @php
-                                        $note = addAverageInNotes($student->notes)->first();
-                                    @endphp
                                     {{ $student->first_name }} {{ $student->last_name }}
                                 </td>
-                                @if ($note)
-                                    <td>
-                                        {{-- {{ $note->{{'partial_trimester_'$data['trimester']}}-> }} --}}
-                                        {{ ($note->{'partial_trimester_'.$data['trimester']}) ?? 0 }}
-                                    </td>
-                                    <td>
-                                        {{ ($note->{'integrating_project_'.$data['trimester']}) ?? 0 }}
-                                    </td>
-                                    <td>
-                                        {{ ($note->{'evaluation_mechanism_'.$data['trimester']}) ?? 0 }}
-                                    </td>
-                                    <td>
-                                        @php
-                                            $acc += $note->{$trimesterKeyAverage[$data['trimester'] -1]} ?? 0;
-                                        @endphp
-                                        {{
-                                            $note->{$trimesterKeyAverage[$data['trimester'] -1]} ?? 0
-                                        }}
-                                    </td>
-                                @else
-                                    <td colspan="4"> 
-                                        No existen notas en esta materia
-                                    </td>
-                                @endif
+                                <td>
+                                    {{ $student->doc_number }}
+                                </td>
                                 {{-- <td>
                                     @php
                                         $note = $data['notes']->where('subject_id', $subject->id)?->first()->noteFinal ?? 0;
@@ -122,15 +95,6 @@
                                 </td> --}}
                             </tr>
                         @endforeach
-                        <tr>
-                            <td><strong>Promedio</strong> </td>
-                            <td colspan="3" style="border:none !important;">
-                                {{-- {{ $acc / $countSubjects ?? 0 }} --}}
-                            </td>
-                            <td>
-                                {{ round($acc / $countStudents, 2) }}
-                            </td>
-                        </tr>
                     @else
                         <tr>
                             <td colspan="3">
