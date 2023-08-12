@@ -12,19 +12,23 @@ import { ResponsePaginator } from "@/types/global";
 // import { CreateOrEditCourse } from "./CreateOrEditStudent";
 // import { showAlert } from "@/Helpers/alerts";
 import { Link, router, useForm } from "@inertiajs/react";
-import { IPeriod } from "./Periods/types/period.types";
+// import { IPeriod } from "./Periods/types/period.types";
 import { AppContext } from "@/Context/AppContext";
 import { ConstDocTypes, ConstGender } from "@/Classes/Consts";
 import "../Students/styles-student.css";
-import { ICourse } from "./Courses/types/course.types";
-import { IParallel } from "./Parallels/types/parallel.types";
+// import { ICourse } from "./Courses/types/course.types";
+// import { IParallel } from "./Parallels/types/parallel.types";
 import TablePagination from "@mui/material/TablePagination";
-import { IStudent } from "./Students/types/student.types";
+// import { IStudent } from "./Students/types/student.types";
 import DropdownFz from "@/Components/DropdownFz";
 import MenuItem from "@mui/material/MenuItem";
 import { Divider } from "@mui/material";
 import { DialogPrintNotes } from "./Components/DialogPrintNotes";
 import { showAlert } from "@/Helpers/alerts";
+import { IPeriod } from "../Periods/types/period.types";
+import { ICourse } from "../Courses/types/course.types";
+import { IParallel } from "../Parallels/types/parallel.types";
+import { IStudent } from "../Students/types/student.types";
 const ReportsIndex = ({
     data,
     metadata: { periods, courses, parallels, current_period },
@@ -36,7 +40,7 @@ const ReportsIndex = ({
     const [parallel_id, setParallel_id] = useState<number>(0);
     const [textSearch, setTextSearch] = useState<string>("");
     const { appInfo } = useContext(AppContext);
-    const [dataForNote, setDataForNote] = useState({
+    const [dataForNote, setDataForNote] = useState<any>({
         period: null,
         course: null,
         parallel: null,
