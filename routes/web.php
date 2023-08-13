@@ -75,7 +75,6 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('periods')->group(function () {
         Route::get('/', [PeriodController::class, 'index'])->name('periods.index');
-        // Route::get('/create', [PeriodController::class, 'create'])->name('period.create');
         Route::post('/', [PeriodController::class, 'store'])->name('period.store');
         Route::put('/{period}', [PeriodController::class, 'update'])->name('period.update');
     });

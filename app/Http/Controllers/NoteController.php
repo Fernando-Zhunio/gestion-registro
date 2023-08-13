@@ -22,7 +22,7 @@ class NoteController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['role:teacher|super-admin|admin'])->except(['index', 'getParallels', 'getSubjectByParallel', 'getNoteByStudent']);
+        $this->middleware(['role:teacher|super-admin|admin|secretary'])->except(['index', 'getParallels', 'getSubjectByParallel', 'getNoteByStudent']);
     }
     public function index()
     {

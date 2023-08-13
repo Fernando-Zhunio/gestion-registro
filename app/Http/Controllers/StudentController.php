@@ -54,6 +54,13 @@ class StudentController extends Controller
 
     public function indexReports()
     {
+        /**
+         * @var User $user
+         * */
+        $user = auth()->user();
+        if ($user->hasRole('teacher')) {
+            validationException('user', 'No se puede mostrar reportes para un profesor(a).');            
+        }
         $period_id = request('period_id', null) ?? currentState()->period_id;
         $course_id = request('course_id', null);
         $parallel_id = request('parallel_id', null);

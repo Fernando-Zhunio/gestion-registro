@@ -25,7 +25,7 @@ class TuitionController extends Controller
     use GenerateFile;
 
     public function __construct() {
-        $this->middleware(['role:super-admin|admin|secretary'])->except(['index']);
+        $this->middleware(['role:super-admin|admin|secretary']);
     }
     /**
      * Display a listing of the resource.
@@ -318,10 +318,10 @@ class TuitionController extends Controller
                 'course_id' => $request->course_id,
             ]);
             
-            /**
-             * @var \App\Models\User $user
-             */
-            $user = auth()->user();
+            // /**
+            //  * @var \App\Models\User $user
+            //  */
+            $user = $tuition->student->user;
             $user->update([
                 'name' => $request->first_name . ' ' . $request->last_name,
             ]);

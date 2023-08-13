@@ -11,25 +11,25 @@ class SidebarItem
             'path' => '/periods',
             'icon' => 'fas fa-calendar-alt',
             'name' => 'Periodos',
-            'forRoles' => ['admin', 'secretary']
+            'forRoles' => ['admin']
         ],
         [
             'path' => '/courses',
             'icon' => 'fas fa-book',
             'name' => 'Cursos',
-            'forRoles' => ['admin', 'secretary']
+            'forRoles' => ['admin']
         ],
         [
             'path' => '/subjects',
             'icon' => 'fas fa-book-open',
             'name' => 'Materias',
-            'forRoles' => ['admin', 'secretary']
+            'forRoles' => ['admin']
         ],
         [
             'path' => '/parallels',
             'icon' => 'fas fa-users',
             'name' => 'Paralelos',
-            'forRoles' => ['admin', 'secretary']
+            'forRoles' => ['admin']
         ],
         [
             'path' => '/representatives',
@@ -47,13 +47,13 @@ class SidebarItem
             'path' => '/students',
             'icon' => 'fas fa-user-graduate',
             'name' => 'Estudiantes',
-            'forRoles' => ['admin', 'teacher']
+            'forRoles' => ['admin', 'teacher', 'secretary']
         ],
         [
             'path' => '/reports',
             'icon' => 'fas fa-file-alt',
             'name' => 'Reportes',
-            'forRoles' => ['admin', 'teacher']
+            'forRoles' => ['admin', 'secretary']
         ],
         [
             'path' => '/teachers',
@@ -71,13 +71,13 @@ class SidebarItem
             'path' => '/notes',
             'icon' => 'fas fa-clipboard-list',
             'name' => 'Notas',
-            'forRoles' => ['admin', 'teacher', 'student']
+            'forRoles' => ['admin', 'secretary', 'teacher', 'student']
         ],
         [
             'path' => '/academic',
             'icon' => 'fas fa-user-graduate',
             'name' => 'Académico',
-            'forRoles' => ['admin', 'secretary']
+            'forRoles' => ['super-admin']
         ],
        
     ];

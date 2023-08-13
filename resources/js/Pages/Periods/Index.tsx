@@ -12,7 +12,6 @@ import {  ResponsePaginator } from "@/types/global";
 import { CreateOrEditPeriod } from "./CreateOrEditPeriod";
 
 const PeriodsIndex = ({data}: ResponsePaginator<IPeriod>) => {
-    // const [data, setData] = useState<Period[]>(_data.data);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dataEdit, setDataEdit] = useState<IPeriod | undefined>(undefined);
     function openPeriod(row: IPeriod | undefined): void {

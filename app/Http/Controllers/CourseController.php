@@ -6,6 +6,7 @@ use App\Builders\BuilderForRoles;
 use App\Models\Course;
 use App\Http\Requests\StorecourseRequest;
 use App\Http\Requests\UpdatecourseRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -86,6 +87,13 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
+        /**
+         * @var User $user
+         * */
+        $user = auth()->user();
+        if ($user->hasRole('secretary')) {
+            validationException('user', 'No se puede eliminar a un secretario(a).');            
+        }
         $course->delete();
         return to_route('courses.index', [
             'success' => true,

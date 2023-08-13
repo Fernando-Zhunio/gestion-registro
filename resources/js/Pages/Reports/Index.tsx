@@ -85,9 +85,7 @@ const ReportsIndex = ({
     }
     function onChangeCourse(e: any) {
         const courseId = e.target.value;
-        // if (!courseId) {
         setParallel_id(0);
-        // }
         setCourse_id(courseId);
         router.reload({
             replace: true,
@@ -278,7 +276,7 @@ const ReportsIndex = ({
                                                         target="_blank"
                                                         className="text-gray-700 block px-4 py-2 text-sm"
                                                     >
-                                                        Note 1
+                                                        Trimestre 1
                                                     </a>
                                                 </MenuItem>
                                                 <MenuItem>
@@ -287,7 +285,7 @@ const ReportsIndex = ({
                                                         target="_blank"
                                                         className="text-gray-700 block px-4 py-2 text-sm"
                                                     >
-                                                        Note 2
+                                                        Trimestre 2
                                                     </a>
                                                 </MenuItem>
                                                 <MenuItem>
@@ -296,7 +294,7 @@ const ReportsIndex = ({
                                                         target="_blank"
                                                         className="text-gray-700 block px-4 py-2 text-sm"
                                                     >
-                                                        Note 3
+                                                        Trimestre 3
                                                     </a>
                                                 </MenuItem>
                                             </DropdownFz>

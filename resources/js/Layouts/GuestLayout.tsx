@@ -4,10 +4,11 @@ import { PropsWithChildren } from 'react';
 
 export default function Guest({ children }: PropsWithChildren) {
     return (
-        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
+        <div  className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+            <div className='text-center'>
+                <h1 style={{ backgroundColor: "cornflowerblue" }} className='text-3xl p-3 text-white font-bold text-center mb-2'>UEIB "Mariano Valla Sagñay"</h1>
                 <Link href="/">
-                    <img src="/img/logo-colegio.jpeg" className="w-36 h-36 fill-current text-gray-500" />
+                    <img src="/img/logo-colegio.jpeg" className="w-36 rounded-full m-auto fill-current text-gray-500" />
                 </Link>
             </div>
 

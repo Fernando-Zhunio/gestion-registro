@@ -5,14 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Teacher;
 use App\Http\Requests\StoreteacherRequest;
 use App\Http\Requests\UpdateteacherRequest;
-use App\Models\ContractTeacher;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
-
-use function PHPUnit\Framework\isEmpty;
 
 class TeacherController extends Controller
 {

@@ -53,14 +53,14 @@ export default function Authenticated({
     return (
         <>
             <div className="min-h-screen">
-                <nav className="border-b border-gray-100 header-main">
+                <nav style={{ backgroundColor: "cornflowerblue" }} className="border-b  border-gray-100 header-main text-white">
                     <div className=" mx-auto px-4 sm:px-6 lg:px-4">
                         <div className="flex justify-between h-16 w-full">
                             <div className="flex">
                                 <div className="shrink-0 flex items-center uppercase font-bold">
                                     <Link href="/">
                                         {/* <img src="/img/logo-colegio.jpeg" className="block h-9 w-auto fill-current" /> */}
-                                        Unidad Educativa Mariano Valla
+                                        UEIB "Mariano Valla Sagñay"
                                     </Link>
                                 </div>
 
