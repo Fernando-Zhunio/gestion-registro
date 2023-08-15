@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CurrentState;
 use App\Models\Period;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class AcademicController extends Controller
         return Inertia::render('Academic/Index', [
             'success' => true,
             'data' => $users,
-            'metadata' => ['periods' => $periods],
+            'metadata' => ['periods' => $periods, 'rector' => currentState()->observation],
         ]);
     }
 
@@ -108,6 +109,18 @@ class AcademicController extends Controller
             validationException('user', 'No se puede eliminar a un super-admin.');
         }
         $user->delete();
+        return to_route('academic.index');
+    }
+
+    public function changeRector(Request $request) {
+        $request->validate([
+            'name' => 'required| string',
+        ]);
+
+        $academic = CurrentState::first();
+        $academic->observation = $request->name;
+        $academic->save();
+        refreshCurrentState();
         return to_route('academic.index');
     }
 }

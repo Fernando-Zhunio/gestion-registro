@@ -45,7 +45,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         },
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [note, setNote] = useState<INote>();
+    const [note, setNote] = useState<INote | null>(null);
     const [students, setStudents] = useState<IStudent[]>([]);
     const [subjects, setSubjects] = useState<ISubject[]>([]);
     const [pathStudents, setPathStudents] = useState<string>("");
@@ -65,6 +65,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         if (isLoading) return;
         setValue("parallel_id", e.target.value);
         setStudents([]);
+        setNote(null);
         setSelectStudent(null);
         setValue("subject_id", "");
         setSubjects([]);
@@ -75,8 +76,8 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
 
     function onChangePeriod(e: any) {
         if (isLoading) return;
-        // setValue("period_id", e.target.value);
         setValue("parallel_id", "");
+        setNote(null);
         setStudents([]);
         setSelectStudent(null);
         setValue("subject_id", "");
@@ -90,12 +91,12 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
 
     const getSubjects = useCallback(
         (watchParallel: number) => {
+            setNote(null);
             axios
                 .get(
                     `/periods/${wathPeriod}/notes/parallels/${watchParallel}/subjects`
                 )
                 .then(({ data }) => {
-                    console.log({ data });
                     setSubjects(data.data);
                 });
         },
@@ -137,6 +138,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
         }
         setIsLoading(true);
         setSelectStudent(null);
+        setNote(null);
         axios
             .get(
                 `periods/${wathPeriod}/notes/students/${student.id}/subjects/${watchSubject}`
@@ -147,6 +149,12 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                 setIsLoading(false);
             })
             .catch((err) => {
+                console.log(err);
+                showToast({
+                    icon: "error",
+                    title: "Error",
+                    text: "Este estudiante no tiene nota",
+                })
                 setIsLoading(false);
             });
     }
@@ -247,6 +255,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                     control={control}
                                     onChange={(e) => {
                                         setValue("subject_id", e.target.value);
+                                        setNote(null);
                                         setSelectStudent(null);
                                     }}
                                 >

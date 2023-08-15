@@ -57,7 +57,7 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId, role 
                     </>
                 }
             >
-                <TableContainer sx={{ maxHeight: 740 }} component={Paper}>
+                <TableContainer className="overflow-auto" component={Paper}>
                     <Table
                         stickyHeader
                         aria-label="sticky table"
@@ -76,6 +76,7 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId, role 
                                 <TableCell>Nombres</TableCell>
                                 <TableCell>Apellidos</TableCell>
                                 <TableCell>Correo</TableCell>
+                                <TableCell>Curso Aprobado</TableCell>
                                 <TableCell>Dirección</TableCell>
                                 <TableCell>Tipo Doc</TableCell>
                                 <TableCell>Numero Doc</TableCell>
@@ -99,6 +100,9 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId, role 
                                     <TableCell>
                                         {row.student?.user?.email}
                                     </TableCell>
+                                    <TableCell>
+                                       <span className={+row.approved ? "text-green-500" : "text-red-500"}>{+row.approved ? "Si" : "No"}</span> 
+                                    </TableCell>
                                     <TableCell>{row.student.address}</TableCell>
                                     <TableCell>
                                         {
@@ -117,6 +121,7 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId, role 
                                             ]
                                         }
                                     </TableCell>
+
                                     <TableCell>{row.course.name}</TableCell>
                                     <TableCell>{row.parallel.name}</TableCell>
                                     <TableCell>
@@ -124,57 +129,6 @@ export default function IndexTuitions({ data, metadata: { currentPeriodId, role 
                                     </TableCell>
                                     <TableCell>
                                         {role !== 'student' && <div className="flex gap-1">
-                                            {/* <DropdownFz text="Impresiones">
-                                                <MenuItem>
-                                                <a
-                                                    href={`/printers/periods/${period_id}/students/${row.student.id}/promotion_certificate`}
-                                                    target="_blank"
-                                                    className="text-gray-700 block px-4 py-2 text-sm"
-                                                >
-                                                    Certificado Promoción
-                                                </a>
-                                                
-                                                </MenuItem>
-                                                <MenuItem>
-                                                <a
-                                                    href={`/printers/periods/${period_id}/students/${row.student.id}/certificate_tuition`}
-                                                    target="_blank"
-                                                    className="text-gray-700 block px-4 py-2 text-sm"
-                                                >
-                                                    Certificado Matricula
-                                                </a>
-                                                
-                                                </MenuItem>
-                                                <Divider />
-                                                <MenuItem>
-                                                <a
-                                                    href={`/printers/periods/${period_id}/students/${row.student.id}/notes_student/trimester/1`}
-                                                    target="_blank"
-                                                    className="text-gray-700 block px-4 py-2 text-sm"
-                                                >
-                                                    Note 1
-                                                </a>
-                                                </MenuItem>
-                                                <MenuItem>
-                                                <a
-                                                    href={`/printers/periods/${period_id}/students/${row.student.id}/notes_student/trimester/2`}
-                                                    target="_blank"
-                                                    className="text-gray-700 block px-4 py-2 text-sm"
-                                                >
-                                                    Note 2
-                                                </a>
-                                                </MenuItem>
-                                                <MenuItem>
-                                                <a
-                                                    href={`/printers/periods/${period_id}/students/${row.student.id}/notes_student/trimester/2`}
-                                                    target="_blank"
-                                                    className="text-gray-700 block px-4 py-2 text-sm"
-                                                >
-                                                    Note 3
-                                                </a>
-                                                </MenuItem>
-
-                                            </DropdownFz> */}
                                             <a
                                                     href={`/printers/periods/${period_id}/students/${row.student.id}/certificate_tuition`}
                                                     target="_blank"

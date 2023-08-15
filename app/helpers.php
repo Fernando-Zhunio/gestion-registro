@@ -23,6 +23,15 @@ if (!function_exists('currentState')) {
     }
 }
 
+if (!function_exists('refreshCurrentState')) {
+    function refreshCurrentState(): CurrentState
+    {
+            $currentState = CurrentState::first();
+            Cache::put('current_state', $currentState);
+            return $currentState;
+    }
+}
+
 if (!function_exists('validationException')) {
     /**
      * Lanza una exception de tipo validation

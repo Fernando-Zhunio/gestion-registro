@@ -11,8 +11,16 @@ import { IParallel } from "../Parallels/types/parallel.types";
 import { IPeriod } from "../Periods/types/period.types";
 import TableUsersAcademic, { IUser } from "./components/TableUsersAcademic";
 import { ResponseDataPaginator } from "@/types/global";
+import { Divider } from "@mui/material";
+import FormRector from "./components/FormRector";
 
-const AcademicIndex = ({data,metadata}:{data: ResponseDataPaginator<IUser> ,metadata: {periods: IPeriod[]}}) => {
+const AcademicIndex = ({
+    data,
+    metadata,
+}: {
+    data: ResponseDataPaginator<IUser>;
+    metadata: { periods: IPeriod[]; rector: string };
+}) => {
     const { control, watch } = useForm();
     const { appInfo } = useContext(AppContext);
     console.log({ appInfo });
@@ -28,21 +36,23 @@ const AcademicIndex = ({data,metadata}:{data: ResponseDataPaginator<IUser> ,meta
             cancelButtonText: "Cancelar",
         });
         if (!resultQuestion.isConfirmed) {
-            return
+            return;
         }
         setIsLoading(true);
         console.log({ resultQuestion });
-        axios.post(`/academic/periods/${nextPeriod}/period-next`).then(() => {
-            setIsLoading(false);
-            window.location.reload();
-
-        }).catch(() => {
-            setIsLoading(false);
-            showToast({ 
-                title: 'Error, no se pudo cambiar el periodo',
-                icon: 'error'
+        axios
+            .post(`/academic/periods/${nextPeriod}/period-next`)
+            .then(() => {
+                setIsLoading(false);
+                window.location.reload();
             })
-        })
+            .catch(() => {
+                setIsLoading(false);
+                showToast({
+                    title: "Error, no se pudo cambiar el periodo",
+                    icon: "error",
+                });
+            });
     }
 
     return (
@@ -62,19 +72,25 @@ const AcademicIndex = ({data,metadata}:{data: ResponseDataPaginator<IUser> ,meta
                         name="period_id"
                     >
                         <option value="">Seleccione una opción</option>
-                        {
-                            metadata.periods?.map((period) => (
-                                <option key={period.id} value={period.id}>
-                                    {period.promotion}
-                                </option>
-                            ))
-                        }
+                        {metadata.periods?.map((period) => (
+                            <option key={period.id} value={period.id}>
+                                {period.promotion}
+                            </option>
+                        ))}
                     </Select>
                     <div className="mt-3">
-                        <button disabled={isLoading || !nextPeriod} onClick={onChangePeriod} className="btn-custom shadow-lg bg-slate-900 rounded-md text-white px-3 py-2">
+                        <button
+                            disabled={isLoading || !nextPeriod}
+                            onClick={onChangePeriod}
+                            className="btn-custom shadow-lg bg-slate-900 rounded-md text-white px-3 py-2"
+                        >
                             Cambiar
                         </button>
                     </div>
+                    <div className="my-3">
+                        <Divider />
+                    </div>
+                    <FormRector name={metadata.rector} />
                 </div>
                 <div className="col-span-9">
                     <TableUsersAcademic />

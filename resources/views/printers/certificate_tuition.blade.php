@@ -89,12 +89,12 @@
             <div class="text-center">
                 <p class="text-center" style="width: 200px;border-bottom: 1px solid;margin: auto;
                 margin-block: 20px"></p>
-                <div style="margin-bottom: 10px">
-                    MsC. Sandra Herrera.
+                <div style="margin-bottom: 10px;margin-top: 5px">
+                    {{currentState()->observation}}
                 </div>
                 <div>
                     <strong>
-                        RECTORA
+                        RECTOR(A)
                     </strong>
                 </div>
             </div>

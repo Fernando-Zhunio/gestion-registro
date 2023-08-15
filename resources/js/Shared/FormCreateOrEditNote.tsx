@@ -39,7 +39,9 @@ const FormCreateOrEditNote = ({
                 note
             )
         );
+        console.log({ note });
     }, [note]);
+
     const {
         handleSubmit,
         getValues,

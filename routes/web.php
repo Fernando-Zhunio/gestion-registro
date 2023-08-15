@@ -190,6 +190,7 @@ Route::middleware('auth')->group(function () {
         Route::post('users', [AcademicController::class, 'storeUser'])->name('academic.storeUser');
         Route::put('users/{user}', [AcademicController::class, 'updateUser'])->name('academic.updateUser');
         Route::delete('users/{user}', [AcademicController::class, 'destroyUser'])->name('academic.destroyUser');
+        Route::post('rector', [AcademicController::class, 'changeRector'])->name('academic.changeRector');
     });
 });
 
