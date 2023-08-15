@@ -57,11 +57,10 @@ class PrinterController extends Controller
         $data['subjects'] = $this->_getSubjectByParallel($tuition->parallel_id, $period_id);
         $data['notes'] = addAverageInNotes(Note::where('student_id', $student->id)->where('period_id', $period_id)->get());
         $view = view('printers.notes_student', compact('data'))->render();
+        // return view('printers.notes_student', compact('data'));
 
-        // $pdf = Pdf::loadView('printers.promotion_certificate', compact('data') );
-        // return ['view' => $view];
         $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
-        $name = $student->doc_number . '-certificado_promocion' . '.pdf';
+        $name = $student->doc_number . '-notes_student' . '.pdf';
         return $pdf->download($name);
     }
 
@@ -115,25 +114,25 @@ class PrinterController extends Controller
     public function listStudents(Period $period,  Course $course, Parallel $parallel)
     {
 
-        /**
-         * @var User $user
-         */
-        $user = auth()->user();
+        // /**
+        //  * @var User $user
+        //  */
+        // $user = auth()->user();
 
         $students = Student::whereHas('tuitions', function ($query) use ($period, $course, $parallel) {
             $query->where('parallel_id', $parallel->id);
             $query->where('course_id', $course->id);
             $query->where('period_id', $period->id);
-        })->get();
+        })->orderBy('last_name', 'asc')->get();
 
         $data['students'] = $students;
         $data['promotion'] = $period->promotion;
         $data['parallel'] = $parallel->name;
         $data['course'] = $course->name;
-        // $data['subject'] = Subject::find($request->get('subject_id'))->name;
         $view = view('printers.list_students', compact('data'))->render();
+        // return view('printers.list_students', compact('data'));
         $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
-        $name = $user->doc_number . '-list_note' . '.pdf';
+        $name = 'list_note' . '.pdf';
         return $pdf->download($name);
     }
     private function _getSubjectByParallel(int $parallel_id, int $period_id)

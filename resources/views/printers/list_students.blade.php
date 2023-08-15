@@ -15,6 +15,9 @@
         .text-center {
             text-align: center;
         }
+        .text-start {
+            text-align: start;
+        }
 
         #sub-header {
             display: flex;
@@ -30,10 +33,12 @@
         td,
         th {
             border: 1px solid #ddd !important;
+            border-collapse: collapse
         }
 
         table {
             border: 1px solid #ddd !important;
+            border-collapse: collapse
         }
 
         * {
@@ -54,19 +59,16 @@
         </div>
         <div>
            
-            <p>Año lectivo:: {{ $data['promotion'] }}</p>
+            <p><strong>Año lectivo:</strong>  {{ $data['promotion'] }}</p>
             <p>
-                <span>Curso: {{ $data['course'] }}</span>
-                <span style="float: right">Paralelo: {{ $data['parallel'] }}</span>
+                <span><strong>Curso:</strong> {{ $data['course'] }}</span>
+                <span style="float: right"><strong>Paralelo:</strong> {{ $data['parallel'] }}</span>
             </p>
-            <table class="table">
+            <table style="width: 100%;" class="table ">
                 <thead>
                     <tr>
                         <th>Estudiante</th>
                         <th># Documento</th>
-                        {{-- <th>Proyecto 1</th>
-                        <th>Evaluación</th>
-                        <th>Promedio</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -78,21 +80,11 @@
                         @foreach ($data['students'] as $student)
                             <tr>
                                 <td>
-                                    {{ $student->first_name }} {{ $student->last_name }}
+                                    <div  style="text-align: left;padding-left: 5px"> {{ $student->last_name }} {{ $student->first_name }}</div>
                                 </td>
                                 <td>
                                     {{ $student->doc_number }}
                                 </td>
-                                {{-- <td>
-                                    @php
-                                        $note = $data['notes']->where('subject_id', $subject->id)?->first()->noteFinal ?? 0;
-                                        $acc += $note;
-                                    @endphp
-                                    {{ $note }}
-                                </td>
-                                <td>
-                                    {{ $note >= 7 ? 'APROBADO' : 'REPROBADO' }}
-                                </td> --}}
                             </tr>
                         @endforeach
                     @else

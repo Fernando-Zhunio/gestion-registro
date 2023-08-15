@@ -30,10 +30,12 @@
         td,
         th {
             border: 1px solid #ddd !important;
+            border-collapse: collapse
         }
 
         table {
             border: 1px solid #ddd !important;
+            border-collapse: collapse
         }
 
         * {

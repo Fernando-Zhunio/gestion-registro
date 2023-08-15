@@ -94,7 +94,7 @@
                         @foreach ($data['subjects'] as $subject)
                             <tr>
                                 <td>
-                                    {{ Normalizer::normalize($subject->name) }}
+                                    <div  style="text-align: left;padding-left: 5px">{{ Normalizer::normalize($subject->name) }}</div> 
                                 </td>
                                 <td>
                                     @php
@@ -111,7 +111,7 @@
                         <tr>
                             <td><strong>Promedio</strong> </td>
                             <td>
-                                {{ $acc / $countSubjects ?? 0 }}
+                                {{ round($acc / $countSubjects ?? 0, 2) }}
                             </td>
                             <td>
                                 {{ (($acc / $countSubjects) ?? 0) >= 7 ? 'APROBADO' : 'REPROBADO' }}

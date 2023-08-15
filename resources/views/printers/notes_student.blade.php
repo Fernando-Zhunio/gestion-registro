@@ -30,10 +30,12 @@
         td,
         th {
             border: 1px solid #ddd !important;
+            border-collapse: collapse
         }
 
         table {
             border: 1px solid #ddd !important;
+            border-collapse: collapse
         }
 
         * {
@@ -54,7 +56,8 @@
         </div>
         <div>
            
-            <h3 class="text-center">{{ $data['student']->first_name }} {{ $data['student']->last_name }}</h3>
+            <h3 style="text-transform: uppercase" class="text-center">{{ $data['student']->first_name }} {{ $data['student']->last_name }}</h3>
+            <p><strong>Año lectivo: {{ $data['period']->promotion }}</strong></p>
             <p><strong>Nivel Educación: {{ $data['course']->name }} - BILINGÜE SIERRA</strong></p>
             <p>Se obtuvo las siguientes calificaciones durante el presente año lectivo.</p>
             <table class="table">
@@ -80,7 +83,7 @@
                             @endphp
                             <tr>
                                 <td>
-                                    {{ $subject->name }}
+                                    <div  style="text-align: left;padding-left: 5px"> {{ $subject->name }}</div>
                                 </td>
                                 @if ($note)
                                     <td>

@@ -30,10 +30,12 @@
         td,
         th {
             border: 1px solid #ddd !important;
+            border-collapse: collapse;
         }
 
         table {
             border: 1px solid #ddd !important;
+            border-collapse: collapse;
         }
 
         * {
@@ -84,7 +86,7 @@
                                     @php
                                         $note = addAverageInNotes($student->notes)->first();
                                     @endphp
-                                    {{ $student->first_name }} {{ $student->last_name }}
+                                    <div  style="text-align: left;padding-left: 5px">{{ $student->last_name }} {{ $student->first_name }} </div>  
                                 </td>
                                 @if ($note)
                                     <td>
