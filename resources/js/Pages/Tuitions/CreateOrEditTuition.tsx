@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { router, usePage } from "@inertiajs/react";
 import { Avatar } from "@mui/material";
 import axios from "axios";
-import { showToast } from "@/Helpers/alerts";
+import { showQuestion, showToast } from "@/Helpers/alerts";
 
 interface CreateOrEditCourseProps {
     state: "create" | "edit";
@@ -134,8 +134,19 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
         setParallels(parallels.data);
     }
 
-    function saveInServer(data : any) {
+    async function saveInServer(data : any) {
         console.log({data})
+        const result = await showQuestion({
+            text: "¿Esta seguro de crear la matricula en este curso, por favor verifique que este asignado al curso correcto?",
+            icon: "question",
+            title: "Crear Matricula",
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+        })
+        if (!result.isConfirmed) {
+            return
+        }
         const options = {
             forceFormData: true,
             onSuccess: () => {
@@ -336,19 +347,6 @@ const CreateOrEditTuition = ({ data }: CreateOrEditCourseProps) => {
                     )}
                 </CardContent>
             </Card>
-            {/* <DialogActions slot="slotAction">
-                <Button
-                    disabled={isLoading}
-                    onClick={saveInServer}
-                    variant="contained"
-                    color="success"
-                >
-                    Guardar <i className="fa-regular fa-paper-plane ml-2"></i>
-                </Button>
-                <Button variant="contained" color="error">
-                    Cerrar <i className="fa-solid fa-xmark ml-2"></i>
-                </Button>
-            </DialogActions> */}
         </div>
     );
 };

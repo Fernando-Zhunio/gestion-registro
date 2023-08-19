@@ -56,7 +56,10 @@
         </div>
         <div>
            
-            <p>Año lectivo:: {{ $data['promotion'] }}</p>
+            <p>
+                <span>Año lectivo: {{ $data['promotion'] }}</span> 
+                <span  style="float: right">Curso: {{ $data['course'] }}</span> 
+            </p>
             <p>
                 <span>Paralelo: {{ $data['parallel'] }}</span>
                 <span style="float: right">Materia: {{ $data['subject'] }}</span>
