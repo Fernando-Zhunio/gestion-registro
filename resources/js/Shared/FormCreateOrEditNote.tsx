@@ -40,7 +40,7 @@ const FormCreateOrEditNote = ({
             )
         );
         console.log({ note });
-    }, [note]);
+    }, [note, student_id]);
 
     const {
         handleSubmit,
@@ -129,7 +129,7 @@ const FormCreateOrEditNote = ({
             subject_id,
             parallel_id,
         };
-        if (note) {
+        if (note?.id) {
             axios.put(`/notes/${note?.id}`, params).then((res) => {
                 showToast({
                     icon: "success",
@@ -294,7 +294,6 @@ export function InputsTrimester({
         [0, 0, 0]
     );
     useEffect(() => {
-        console.log(wPartial);
         const partial = (
             // (watchPartialFirst.reduce(
             //     (a: number, b: number) => (+a || 0) + (+b || 0),
