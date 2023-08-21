@@ -17,7 +17,7 @@ class PrinterController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['role:super-admin|admin|teacher']);
+        $this->middleware(['role:super-admin|admin|teacher|secretary']);
     }
 
     public function promotionCertificate(Request $request, Period $period, Student $student)
