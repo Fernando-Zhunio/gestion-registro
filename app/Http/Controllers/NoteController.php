@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Builders\BuilderForRoles;
 use App\Models\Note;
 use App\Http\Requests\StorenoteRequest;
 use App\Http\Requests\UpdatenoteRequest;
@@ -46,8 +45,6 @@ class NoteController extends Controller
 
     private function indexForStudent() {
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
-        // $periods = getPeriodByRole();
-        // $parallels = getParallelsByRoleAndPeriod($period_id);
         /**
          * @var \App\Models\User $user
          */
@@ -107,17 +104,7 @@ class NoteController extends Controller
      */
     public function create()
     {
-        /**
-         * @var \App\Models\User $user
-         */
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
-        $user = request()->user();
-        $teacher = $user->teacher;
-        $isTeacher = $user->hasRole('teacher');
-        // $parallels = Parallel::whereHas('schedules', function ($query) use ($teacher, $isTeacher, $period_id) {
-        //     $isTeacher && $query->where('teacher_id', $teacher?->id);
-        //     $query->where('period_id', $period_id);
-        // })->get();
         $periods = getPeriodByRole();
         $parallels = getParallelsByRoleAndPeriod($period_id);
 
@@ -133,11 +120,6 @@ class NoteController extends Controller
         $search = request()->get('search', null);
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
         $parallel_id = $parallel->id;
-        // /**
-        //  * @var \App\Models\User $user
-        //  */
-        // $user = auth()->user();
-        // $isTeacher = $user->hasRole('teacher');
         $notes = Student::search($search, 'first_name', ['last_name', 'doc_number'])
             ->whereHas('tuitions', function ($query) use ($period_id, $parallel_id) {
                 $query->where('parallel_id', $parallel_id);
@@ -216,27 +198,37 @@ class NoteController extends Controller
         $notes = Note::where('student_id', $student_id)->where('period_id', $period_id)->get();
         $subjects = $this->_getSubjectByParallel($parallel_id, $period_id);
         $tuition = Tuition::where('student_id', $student_id)->where('parallel_id', $parallel_id)->where('period_id', $period_id)->first();
+        $approved = 1;
         foreach ($subjects as $subject) {
             if(!$notes->contains('subject_id', $subject->id)) {
-                $tuition->approved = 0;
-                $tuition->save();
-                return 0;
+                $approved = 0;
+                break;
             }
-            $note = $notes->where('subject_id', $subject->id)->first();
-            $firstTrimesterNote = (($note?->partial_trimester_1 ?? 0) + (+$note?->integrating_project_1 ?? 0) + (+$note?->evaluation_mechanism_1 ?? 0)) / 10;
-            $secondTrimesterNote = ((+$note?->partial_trimester_2 ?? 0) + (+$note?->integrating_project_2 ?? 0) + (+$note?->evaluation_mechanism_2 ?? 0)) / 10;
-            $thirdTrimesterNote = ((+$note?->partial_trimester_3 ?? 0) + (+$note?->integrating_project_3 ?? 0) + (+$note?->evaluation_mechanism_3 ?? 0)) / 10;
-            $finalNote = ((($firstTrimesterNote + $secondTrimesterNote + $thirdTrimesterNote) / 3.33333333333333)+ ((+$note?->project_final/10) ?? 0));
-            // dd($firstTrimesterNote, $secondTrimesterNote, $thirdTrimesterNote, $finalNote );
-            if($finalNote < 7) {
-                $tuition->approved = 0;
-                $tuition->save();
-                return 0;
-            }
+            // $note = $notes->where('subject_id', $subject->id)->first();
+            // $note = addAverageInNotes($notes);
+            // if($note['noteFinal'] < 7) {
+            //     $approved = 0;
+            //     break;
+            // } else {
+            //     $approved = 1;
+            // }
         }
-        $tuition->approved = 1;
-        $tuition->save();
-        return 1;
+        if ($approved == 0) {
+            $tuition->approved = 0;
+            $tuition->save();
+        }
+        $approved = addAverageInNotes($notes)->every(function($note) {
+            return $note['noteFinal'] >= 7;
+        });
+        if ($approved) {
+            $tuition->approved = 1;
+            $tuition->save();
+        } else {
+            $tuition->approved = 0;
+            $tuition->save();
+        }
+        // $tuition->approved = $approved;
+        // $tuition->save();
     }
 
     /**

@@ -24,7 +24,8 @@ class TuitionController extends Controller
 {
     use GenerateFile;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware(['role:super-admin|admin|secretary']);
     }
     /**
@@ -38,7 +39,7 @@ class TuitionController extends Controller
         $tuitions = Tuition::whereHas('student', function ($query) use ($search, $period_id) {
             $query->search($search, 'first_name', ['last_name']);
         })->with('student', 'course', 'period', 'student.user', 'parallel')
-        ->where('period_id', $period_id)->orderBy('created_at', 'desc')->paginate();
+            ->where('period_id', $period_id)->orderBy('created_at', 'desc')->paginate();
         $role = auth()->user()->roles[0]->name;
         return Inertia::render('Tuitions/Index', [
             'success' => true,
@@ -143,7 +144,7 @@ class TuitionController extends Controller
             DB::rollBack();
             validationException(
                 'student',
-                'No se pudo crear la matricula intentelo nuevamente',
+                'No se pudo crear la matricula inténtelo nuevamente',
             );
         }
     }
@@ -198,21 +199,6 @@ class TuitionController extends Controller
         ];
     }
 
-    // private function rulesRepresentative()
-    // {
-    //     return [
-    //         'representative.first_name' => 'required|string|max:255',
-    //         'representative.last_name' => 'required|string|max:255',
-    //         'representative.email' => 'required|email|unique:representatives,email',
-    //         'representative.phone' => 'required|string|max:255',
-    //         'representative.address' => 'required|string|max:1000',
-    //         'representative.doc_type' => 'required|string|max:255|in:' . ConstMiscellany::CI . ',' . ConstMiscellany::PASSPORT . ',' . ConstMiscellany::FOREIGNER_ID,
-    //         'representative.doc_number' => 'required|string|unique:representatives,doc_number|max:255',
-    //         'representative.gender' => 'required|string|max:255|in:' . ConstMiscellany::MALE . ',' . ConstMiscellany::FEMALE,
-    //         'representative.occupation' => 'required|string|max:255',
-    //     ];
-    // }
-
     private function generateUserStudent($name, $email)
     {
         $user = User::create([
@@ -265,35 +251,8 @@ class TuitionController extends Controller
         $course_id = $request->course_id;
 
         validateParallel($parallel_id, $course_id);
-
         DB::beginTransaction();
-        // $request->validate($this->rulesStudent());
-        // $representative_id = null;
-        // $requestRepresentative = $request->all()['representative'];
-
-        // if ($request->has('representative_id') && !empty($request->representative_id)) {
-        //     $representative_id = $request->representative_id;
-        // } else {
-        //     $request->validate($this->rulesRepresentative());
-        // }
         try {
-            // if (!$representative_id) {
-            //     $representative = Representative::create($requestRepresentative);
-            //     $representative_id = $representative->id;
-            // }
-
-            // $user = $this->generateUserStudent($requestStudent['first_name'] . ' ' . $requestStudent['last_name'], $requestStudent['email']);
-
-            // unset($requestStudent['email']);
-            // $student = Student::create(array_merge($requestStudent, ['representative_id' => $representative_id, 'user_id' => $user->id]));
-            // Tuition::create([
-            //     'student_id' => $student->id,
-            //     'period_id' => $currentPeriod,
-            //     'course_id' => $student->course_id,
-            //     'parallel_id' => $requestStudent['parallel_id'],
-            //     'status' => '1',
-            //     'approved' => '0'
-            // ]);
             $dataStudent = [
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
@@ -308,7 +267,6 @@ class TuitionController extends Controller
                 'representative_id' => $request->representative_id,
             ];
 
-            $currentPeriod = currentState()->period_id;
             if ($request->has('photo') && !empty($request->photo)) {
                 $dataStudent['photo'] = $this->generateFile($request->get('photo'));
             }
@@ -317,10 +275,10 @@ class TuitionController extends Controller
                 'parallel_id' => $request->parallel_id,
                 'course_id' => $request->course_id,
             ]);
-            
-            // /**
-            //  * @var \App\Models\User $user
-            //  */
+
+            /**
+             * @var \App\Models\User $user
+             */
             $user = $tuition->student->user;
             $user->update([
                 'name' => $request->first_name . ' ' . $request->last_name,
@@ -331,7 +289,7 @@ class TuitionController extends Controller
             DB::rollBack();
             validationException(
                 'student',
-                'No se pudo crear la matricula intentelo nuevamente',
+                'No se pudo crear la matricula inténtelo nuevamente',
             );
         }
     }
