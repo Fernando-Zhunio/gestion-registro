@@ -13,6 +13,7 @@ import TableUsersAcademic, { IUser } from "./components/TableUsersAcademic";
 import { ResponseDataPaginator } from "@/types/global";
 import { Divider } from "@mui/material";
 import FormRector from "./components/FormRector";
+import ManagerNote from "./components/ManagerNote";
 
 const AcademicIndex = ({
     data,
@@ -53,7 +54,7 @@ const AcademicIndex = ({
                     icon: "error",
                 });
             });
-    }
+    
 
     return (
         <div>
@@ -94,6 +95,9 @@ const AcademicIndex = ({
                 </div>
                 <div className="col-span-9">
                     <TableUsersAcademic />
+                </div>
+                <div className="col-span-12">
+                    <ManagerNote></ManagerNote>
                 </div>
             </div>
         </div>

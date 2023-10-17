@@ -53,7 +53,6 @@ export class ManagerSchedule {
     }
 
     generateElement(indexColumn: number, indexRow: number) {
-        // debugger;
         this.overlayElement = document.createElement("div");
         console.log({ index: indexColumn })
         const column = this.getCurrentColumn(indexColumn);
