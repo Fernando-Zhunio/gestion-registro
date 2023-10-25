@@ -2,7 +2,9 @@ import Input from "@/Components/Input";
 import Textarea from "@/Components/Textarea";
 import { showToast } from "@/Helpers/alerts";
 import { patchValues } from "@/Helpers/patchValues";
+import { IManagerNote } from "@/Pages/Academic/types/acedemy.type";
 import { INote } from "@/Pages/Notes/types/note.types";
+import { usePage } from "@inertiajs/react";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,6 +22,8 @@ const FormCreateOrEditNote = ({
     parallel_id: number;
     disabled: boolean;
 }) => {
+    const {props: {data:{manager_notes: notes}}} = usePage() as {props: {data: {manager_notes: IManagerNote[]}}};
+    const [managerNotes, setManagerNotes] = useState<IManagerNote[]>([])
     useEffect(() => {
         reset(
             patchValues(
@@ -74,6 +78,13 @@ const FormCreateOrEditNote = ({
     const [noteFinal, setNoteFinal] = useState(0);
 
     const watchProjectFinal = watch("project_final");
+
+    useEffect(() => {
+        setManagerNotes(() => {
+            return notes.sort((a, b) => a.partial-b.partial) as any
+        })
+    },[notes]);
+
     useEffect(() => {
         const note =
             (ponderateFirst || 0) +
@@ -169,6 +180,22 @@ const FormCreateOrEditNote = ({
     return (
         <div className=" shadow-lg-fz px-4 h-auto py-4 rounded-xl">
             <form onSubmit={handleSubmit(onSubmit)}>
+                {
+                    managerNotes.map((note, index) => (
+                    <div key={note.id} className="border shadow-lg-fz border-gray-200 p-6 rounded-xl mb-7 section-note-trimester">
+                        <h3 className="">Parcial {note.partial}</h3>
+    
+                        {/* <InputsTrimester
+                            disabled={disabled}
+                            control={control}
+                            setValue={setValue}
+                            watch={watch}
+                            trimester={1}
+                            getData={getPonterate1}
+                        /> */}
+                    </div> 
+                    ))
+                }
                 <div className="border shadow-lg-fz border-gray-200 p-6 rounded-xl mb-7 section-note-trimester">
                     <h3 className="">Primer Trimestre</h3>
 

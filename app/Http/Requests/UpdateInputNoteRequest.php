@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreManagerNoteRequest extends FormRequest
+class UpdateInputNoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,8 +22,7 @@ class StoreManagerNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'notes' => 'array|required',
-            'partials' => 'required|integer|min:1|max:12',
+            //
         ];
     }
 }

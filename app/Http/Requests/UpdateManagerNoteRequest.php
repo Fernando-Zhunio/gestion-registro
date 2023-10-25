@@ -22,8 +22,8 @@ class UpdateManagerNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'notes' => 'json|required',
-            'interval_month' => 'required|integer',
+            'notes' => 'array|required',
+            'partials' => 'required|integer|min:1|max:12',
         ];
     }
 }

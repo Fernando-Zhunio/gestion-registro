@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Note;
 use App\Http\Requests\StorenoteRequest;
 use App\Http\Requests\UpdatenoteRequest;
+use App\Models\ManagerNote;
 use App\Models\Parallel;
 use App\Models\Period;
 use App\Models\Schedule;
@@ -34,12 +35,18 @@ class NoteController extends Controller
         }
         
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
+        $managerNotes = ManagerNote::with('inputNotes')->where('period_id', $period_id)->get();
         $periods = getPeriodByRole();
         $parallels = getParallelsByRoleAndPeriod($period_id);
 
         return Inertia::render('Notes/CreateOrEditNote', [
             'success' => true,
-            'data' => ['currentPeriod' => $period_id, 'periods' => $periods, 'parallels' => $parallels],
+            'data' => [
+                'currentPeriod' => $period_id, 
+                'periods' => $periods, 
+                'parallels' => $parallels,
+                'manager_notes' => $managerNotes
+            ],
         ]);
     }
 

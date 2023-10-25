@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Period;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class ManagerNoteFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'notes' => [['name' => 'Examen', 'value' => 50], ['name' => 'aporte', 'value' => 25 ], ['name' => 'Lecciones', 'value' => 25]], 
+            'partial' => 1, 
+            'period_id' => Period::all()->random()->id
         ];
     }
 }

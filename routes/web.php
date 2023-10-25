@@ -4,6 +4,7 @@ use App\Const\SidebarItem;
 use App\Http\Controllers\AcademicController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManagerNoteController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepresentativeController;
@@ -191,6 +192,8 @@ Route::middleware('auth')->group(function () {
         Route::put('users/{user}', [AcademicController::class, 'updateUser'])->name('academic.updateUser');
         Route::delete('users/{user}', [AcademicController::class, 'destroyUser'])->name('academic.destroyUser');
         Route::post('rector', [AcademicController::class, 'changeRector'])->name('academic.changeRector');
+        Route::post('manager-notes', [ManagerNoteController::class, 'store'])->name('manager-notes.store');
+        Route::put('manager-notes/{managerNote}', [ManagerNoteController::class, 'update'])->name('manager-notes.update');
     });
 });
 

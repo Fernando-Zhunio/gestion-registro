@@ -54,7 +54,7 @@ const AcademicIndex = ({
                     icon: "error",
                 });
             });
-    
+    }
 
     return (
         <div>
@@ -97,8 +97,9 @@ const AcademicIndex = ({
                     <TableUsersAcademic />
                 </div>
                 <div className="col-span-12">
+                    
                     <ManagerNote></ManagerNote>
-                </div>
+                </div> 
             </div>
         </div>
     );

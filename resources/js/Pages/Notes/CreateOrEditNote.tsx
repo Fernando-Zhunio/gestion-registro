@@ -22,6 +22,7 @@ import { IPeriod } from "@/Models/period";
 import { AppContext } from "@/Context/AppContext";
 import DropdownFz from "@/Components/DropdownFz";
 import MenuItem from "@mui/material/MenuItem";
+import { IManagerNote } from "../Academic/types/acedemy.type";
 // import dayjs from "dayjs";
 // import Snackbar from "@mui/material/Snackbar";
 // import Alert from "@mui/material/Alert";
@@ -33,6 +34,7 @@ interface CreateOrEditNoteProps {
         parallels: IParallel[];
         currentPeriod: number;
         periods: IPeriod[];
+        manager_note: IManagerNote;
     };
 }
 

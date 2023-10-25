@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('manager_notes', function (Blueprint $table) {
+        Schema::create('input_notes', function (Blueprint $table) {
             $table->id();
-            $table->integer('partial');
-            $table->foreignId('period_id')->constrained('periods');
+            $table->string('name');
+            $table->integer('value');
+            $table->foreignId('manager_note_id')->constrained('manager_notes')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('manager_notes');
+        Schema::dropIfExists('input_notes');
     }
 };
