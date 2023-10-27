@@ -35,7 +35,7 @@ class NoteController extends Controller
         }
         
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
-        $managerNotes = ManagerNote::with('inputNotes')->where('period_id', $period_id)->get();
+        $managerNotes = ManagerNote::where('period_id', $period_id)->with('inputNotes', 'period')->get();
         $periods = getPeriodByRole();
         $parallels = getParallelsByRoleAndPeriod($period_id);
 

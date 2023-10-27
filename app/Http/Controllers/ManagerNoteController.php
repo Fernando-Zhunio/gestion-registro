@@ -41,16 +41,23 @@ class ManagerNoteController extends Controller
         // }
         // DB::beginTransaction();
         // try {
+            // dd($request->all());
             ManagerNote::where('period_id', $period_id)?->delete();
             for ($key = 0; $key < $request->partials; $key++) {
                 $managerNote = ManagerNote::create([
                     'partial' => $key + 1,
                     'period_id' => $period_id
                 ]);
-                foreach ($request->notes as $key => $value) {
-                    $managerNote->inputNotes()->create([
+                foreach ($request->notes as $key1 => $value) {
+                    // dd($value['name']);
+                    // $managerNote->inputNotes()->create([
+                    //     'name' => $value['name'],
+                    //     'value' => $value['value']
+                    // ]);
+                    InputNote::create([
                         'name' => $value['name'],
-                        'value' => $value['value']
+                        'value' => $value['value'],
+                        'manager_note_id' => $managerNote->id
                     ]);
                 }
             }
@@ -102,10 +109,11 @@ class ManagerNoteController extends Controller
                 'partial' => $key + 1,
                 'period_id' => $period_id
             ]);
-            foreach ($request->notes as $key => $value) {
-                $managerNote->notesInput()->create([
+            foreach ($request->notes as $key1 => $value) {
+                InputNote::create([
                     'name' => $value['name'],
-                    'value' => $value['value']
+                    'value' => $value['value'],
+                    'manager_note_id' => $managerNote->id
                 ]);
             }
         }

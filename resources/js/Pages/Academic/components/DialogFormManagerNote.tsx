@@ -13,7 +13,7 @@ export function DialogFormManagerNote({
     note: IManagerNote | null;
     close: () => void;
 }) {
-    const [notes, setNotes] = useState<INote[]>(note?.notes || []);
+    // const [notes, setNotes] = useState<INote[]>(note?.input_notes || []);
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit } = useForm({
         defaultValues: patchValues(
@@ -22,7 +22,7 @@ export function DialogFormManagerNote({
                 partials: "",
                 period_id: "",
             },
-            note
+            {...note, notes: note?.input_notes || []}
         ),
     });
 
@@ -38,16 +38,16 @@ export function DialogFormManagerNote({
         });
     }
 
-    function validation() {
-        if (notes.reduce((acc, { value }) => acc + value, 0) !== 100) {
-            showToast({
-                icon: "error",
-                text: "La suma de los valores debe ser 100%",
-            });
-            return false;
-        }
-        return true;
-    }
+    // function validation() {
+    //     if (notes.reduce((acc, { value }) => acc + value, 0) !== 100) {
+    //         showToast({
+    //             icon: "error",
+    //             text: "La suma de los valores debe ser 100%",
+    //         });
+    //         return false;
+    //     }
+    //     return true;
+    // }
 
     function deleteItem(index: number) {
         if (fields.length < 2) {
@@ -102,7 +102,7 @@ export function DialogFormManagerNote({
             open={true}
         >
             <form onSubmit={handleSubmit(saveInServer)}>
-                <div>
+                <div className="mb-2">
                     <Input
                         control={control}
                         name="partials"

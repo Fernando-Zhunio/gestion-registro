@@ -17,8 +17,8 @@ export default function ManagerNote() {
     //     }, note),
     // });
     const {
-        props: { managerNote },
-    }: { props: { managerNote: IManagerNote | null } } = usePage();
+        props: { managerNotes },
+    }: { props: { managerNotes: IManagerNote[] | [] } } = usePage();
     const [isOpen, setIsOpen] = useState(false);
     function close() {
         setIsOpen(false);
@@ -34,24 +34,32 @@ export default function ManagerNote() {
                     }}
                     className="bg-slate-800 ml-2 text-white p-2 rounded-lg text-sm"
                 >
-                   {managerNote ? 'Editar' : 'Agregar'}
+                   {managerNotes ? 'Editar' : 'Agregar'}
                 </button>
             </h3>
-            {managerNote && (
-                <div>
+            {managerNotes && (
+                <div className="table shadow-md rounded-lg p-3">
                     <table>
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>Valor</th>
+                                <th>Parcial</th>
+                                <th>Notas</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {managerNote?.notes?.map(
-                                ({ value, name }, index) => (
-                                    <tr key={index}>
-                                        <td>{name}</td>
-                                        <td>{value}%</td>
+                            {managerNotes?.map(
+                                (item, index) => (
+                                    <tr key={item.id}>
+                                        <td className="text-center p-2">{item.partial}</td>
+                                        <td className="text-center p-2">
+                                            <ul>
+                                               {
+                                                   item.input_notes.map((note, index) => (
+                                                       <li key={note.id}>{note.name} | {note.value}%</li>
+                                                   ))
+                                               }
+                                            </ul>
+                                        </td>
                                     </tr>
                                 )
                             )}
@@ -61,7 +69,7 @@ export default function ManagerNote() {
             )}
             {isOpen && (
                 <DialogFormManagerNote
-                    note={managerNote}
+                    note={managerNotes[0]}
                     close={() => {
                         setIsOpen(false);
                     }}

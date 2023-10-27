@@ -8,6 +8,7 @@ import { usePage } from "@inertiajs/react";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { InputsNote } from "./InputsNote";
 
 const FormCreateOrEditNote = ({
     note = null,
@@ -193,10 +194,11 @@ const FormCreateOrEditNote = ({
                             trimester={1}
                             getData={getPonterate1}
                         /> */}
+                        <InputsNote note={note.input_notes} control={control}></InputsNote>
                     </div> 
                     ))
                 }
-                <div className="border shadow-lg-fz border-gray-200 p-6 rounded-xl mb-7 section-note-trimester">
+                {/*<div className="border shadow-lg-fz border-gray-200 p-6 rounded-xl mb-7 section-note-trimester">
                     <h3 className="">Primer Trimestre</h3>
 
                     <InputsTrimester
@@ -208,7 +210,7 @@ const FormCreateOrEditNote = ({
                         getData={getPonterate1}
                     />
                 </div>
-                <div className="border shadow-lg-fz border-gray-200 p-4 rounded-xl mb-7 section-note-trimester">
+                 <div className="border shadow-lg-fz border-gray-200 p-4 rounded-xl mb-7 section-note-trimester">
                     <h3 className="">Segundo Trimestre</h3>
                     <InputsTrimester
                         disabled={disabled}
@@ -231,7 +233,6 @@ const FormCreateOrEditNote = ({
                     />
                 </div>
                 <div className="border shadow-lg-fz border-gray-200 p-4 rounded-xl mb-3">
-                    {/* <h3 className="text-2xl mb-2">Proyecto final</h3> */}
                     <div className="grid grid-cols-12 gap-4">
                         <div className="col-span-8">
                             <Textarea
@@ -278,7 +279,7 @@ const FormCreateOrEditNote = ({
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 {!disabled && <button
                     type="submit"
                     disabled={isLoading}

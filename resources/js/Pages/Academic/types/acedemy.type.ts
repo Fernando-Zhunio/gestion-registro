@@ -6,7 +6,7 @@ export interface INote {
 
 export interface IManagerNote {
     id: number,
-    notes : INote[], 
+    input_notes: INote[], 
     partial: number, 
     period_id: number,
 }

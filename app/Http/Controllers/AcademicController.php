@@ -22,10 +22,11 @@ class AcademicController extends Controller
         $period_id = currentState()->period_id;
         $periods = Period::where('id', '>', $period_id)->get();
         $users = User::with('roles')->role(['super-admin', 'admin', 'secretary'])->paginate(request()->get('pageSize', 10));
-        $managerNote = ManagerNote::where('period_id', $period_id)->first();
+        $managerNotes = ManagerNote::where('period_id', $period_id)->with('inputNotes', 'period')->get();
+
         return Inertia::render('Academic/Index', [
             'success' => true,
-            'managerNote' => $managerNote,
+            'managerNotes' => $managerNotes,
             'data' => $users,
             'metadata' => ['periods' => $periods, 'rector' => currentState()->observation],
         ]);
