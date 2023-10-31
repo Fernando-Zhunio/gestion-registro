@@ -42,23 +42,36 @@ export default function ManagerNote() {
                     <table>
                         <thead>
                             <tr>
-                                <th>Parcial</th>
-                                <th>Notas</th>
+                                <th className="text-center p-2">Parcial</th>
+                                <th className="text-center p-2">Notas</th>
+                                <th className="text-center p-2">Activo</th>
                             </tr>
                         </thead>
                         <tbody>
                             {managerNotes?.map(
-                                (item, index) => (
+                                (item) => (
                                     <tr key={item.id}>
                                         <td className="text-center p-2">{item.partial}</td>
                                         <td className="text-center p-2">
                                             <ul>
                                                {
-                                                   item.input_notes.map((note, index) => (
+                                                   item?.input_notes?.map((note) => (
                                                        <li key={note.id}>{note.name} | {note.value}%</li>
                                                    ))
                                                }
                                             </ul>
+                                        </td>
+                                        <td className="text-center p-2">
+                                            <button
+                                                className={`${item.is_active ? "bg-blue-400" : "bg-red-400"} text-white px-2 py-1 rounded-lg text-sm`}
+                                                onClick={() => {
+                                                    router.put(
+                                                        `/academic/manager-notes/${item.id}/active-toggle`,
+                                                    );
+                                                }}
+                                            >
+                                                {item.is_active ? "Activo, click para inactivar" : "Inactivo , click para activar"}
+                                            </button>
                                         </td>
                                     </tr>
                                 )

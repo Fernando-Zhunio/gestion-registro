@@ -59,6 +59,8 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
     const watchSubject = watch("subject_id");
     const wathPeriod = watch("period_id");
 
+    const [groupNoteByPartial, setGroupNoteByPartial] = useState<{[key: string]: INote}>({});
+
     useEffect(() => {
         console.log({ data });
         setValue("period_id", data?.currentPeriod);
@@ -149,6 +151,7 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                 setSelectStudent(student);
                 setNote(data.data?.note);
                 setIsLoading(false);
+                convertDataNote(data.data?.note);
             })
             .catch((err) => {
                 console.log(err);
@@ -159,6 +162,20 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                 })
                 setIsLoading(false);
             });
+    }
+
+    function convertDataNote(data: INote[]) {
+        const groupByPartial: any = {}
+        data.forEach((item) => {
+            const key: string = item.input_note?.manager_note_id! as any;
+            if (groupByPartial[key as any]) {
+                groupByPartial[key].push(item);
+            } else {
+                groupByPartial[key] = [item]
+            }
+        });
+        console.log({ groupByPartial });
+        setGroupNoteByPartial(groupByPartial);
     }
 
     return (
@@ -361,15 +378,18 @@ const CreateOrEditNote = ({ data }: CreateOrEditNoteProps) => {
                                 <small># ID: {selectStudent?.doc_number}</small>
                             </div>
                         </div>
-                        <FormCreateOrEditNote
-                            parallel_id={watchParallel}
-                            student_id={selectStudent?.id}
-                            subject_id={watchSubject}
-                            note={note}
-                            disabled={
-                                wathPeriod != appInfo.currentState?.period_id
-                            }
-                        />
+                        {watchParallel && watchSubject && selectStudent?.id && (
+                            <FormCreateOrEditNote
+                                parallel_id={watchParallel}
+                                student_id={selectStudent?.id}
+                                subject_id={watchSubject}
+                                groupNoteByPartial={groupNoteByPartial}
+                                note={note}
+                                disabled={
+                                    wathPeriod != appInfo.currentState?.period_id
+                                }
+                            />    
+                        )}
                     </div>
                 </div>
             </div>

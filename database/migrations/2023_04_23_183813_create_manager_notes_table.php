@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('manager_notes', function (Blueprint $table) {
             $table->id();
             $table->integer('partial');
+            $table->boolean('is_active')->default(false);
             $table->foreignId('period_id')->constrained('periods');
             $table->timestamps();
         });

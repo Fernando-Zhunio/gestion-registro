@@ -35,25 +35,17 @@ class ManagerNoteController extends Controller
     public function store(StoreManagerNoteRequest $request)
     {
         $period_id = currentState()->period_id;
-        // $exist = ManagerNote::where('period_id', $period_id)->exists();
-        // if ($exist) {
-        //     validationException('period_id', 'El periodo ya tiene notas');
-        // }
-        // DB::beginTransaction();
-        // try {
-            // dd($request->all());
+
+        DB::beginTransaction();
+        try {
             ManagerNote::where('period_id', $period_id)?->delete();
             for ($key = 0; $key < $request->partials; $key++) {
                 $managerNote = ManagerNote::create([
                     'partial' => $key + 1,
-                    'period_id' => $period_id
+                    'period_id' => $period_id,
+                    'is_active' => false,
                 ]);
                 foreach ($request->notes as $key1 => $value) {
-                    // dd($value['name']);
-                    // $managerNote->inputNotes()->create([
-                    //     'name' => $value['name'],
-                    //     'value' => $value['value']
-                    // ]);
                     InputNote::create([
                         'name' => $value['name'],
                         'value' => $value['value'],
@@ -61,13 +53,20 @@ class ManagerNoteController extends Controller
                     ]);
                 }
             }
-            // DB::commit();
-        // } catch (\Throwable $th) {
-        //     DB::rollback();
-        //     validationException('period_id', $th->getMessage());
-        // }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            validationException('period_id', $th->getMessage());
+        }
 
         return to_route('academic.index');
+    }
+
+    public function toggleActive(ManagerNote $managerNote) {
+        $managerNote->is_active = !$managerNote->is_active;
+        $managerNote->save();
+        return to_route('academic.index');
+
     }
 
     /**

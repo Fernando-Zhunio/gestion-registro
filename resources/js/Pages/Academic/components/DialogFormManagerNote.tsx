@@ -1,6 +1,6 @@
 import DialogCustom from "@/Components/DialogCustom";
 import { useState } from "react";
-import { IManagerNote, INote } from "../types/acedemy.type";
+import { IManagerNote, IInputNote } from "../types/acedemy.type";
 import { showToast } from "@/Helpers/alerts";
 import { router } from "@inertiajs/react";
 import { useFieldArray, useForm } from "react-hook-form";

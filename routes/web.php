@@ -98,6 +98,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [NoteController::class, 'index'])->name('notes.index');
         Route::get('/create', [NoteController::class, 'create'])->name('notes.create');
         Route::get('/periods/{period}/parallels', [NoteController::class, 'getParallels'])->name('notes.parallels');
+        Route::post('/manager-note/{managerNote}/save', [NoteController::class, 'saveNote'])->name('notes.saveNote');
         Route::get('/periods/{period}/subjects/{subject}', [NoteController::class, 'getSubjectByPeriod'])->name('notes.getSubjectByPeriod');
         // Route::get('/parallels/{parallel}/subjects', [NoteController::class, 'getSubjectByParallel'])->name('notes.getSubjectByParallel');
         // Route::get('/student/{student}', [NoteController::class, 'getNoteByStudent'])->name('notes.getNoteByStudent');
@@ -194,6 +195,7 @@ Route::middleware('auth')->group(function () {
         Route::post('rector', [AcademicController::class, 'changeRector'])->name('academic.changeRector');
         Route::post('manager-notes', [ManagerNoteController::class, 'store'])->name('manager-notes.store');
         Route::put('manager-notes/{managerNote}', [ManagerNoteController::class, 'update'])->name('manager-notes.update');
+        Route::put('manager-notes/{managerNote}/active-toggle', [ManagerNoteController::class, 'toggleActive'])->name('manager-notes.toggle-active');
     });
 });
 

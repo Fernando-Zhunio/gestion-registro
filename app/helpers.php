@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\CurrentState;
+use App\Models\InputNote;
+use App\Models\ManagerNote;
 use App\Models\Note;
 use App\Models\Parallel;
 use App\Models\Period;
@@ -26,9 +28,9 @@ if (!function_exists('currentState')) {
 if (!function_exists('refreshCurrentState')) {
     function refreshCurrentState(): CurrentState
     {
-            $currentState = CurrentState::first();
-            Cache::put('current_state', $currentState);
-            return $currentState;
+        $currentState = CurrentState::first();
+        Cache::put('current_state', $currentState);
+        return $currentState;
     }
 }
 
@@ -106,22 +108,20 @@ if (!function_exists('getParallelsByRoleAndPeriod')) {
         if ($user->hasRole('student')) {
             $student_id = $user->student->id;
             $parallel = Parallel::whereHas('tuitions', function ($query) use ($period_id, $student_id) {
-                $query->where('period_id', $period_id);
+                // $query->where('period_id', $period_id);
                 $query->where('student_id', $student_id);
             })->get();
             return $parallel;
         } else  if ($user->hasRole('teacher')) {
             $teacher_id = $user->teacher->id;
             $parallel = Parallel::whereHas('schedules', function ($query) use ($period_id, $teacher_id) {
-                $query->where('period_id', $period_id);
+                // $query->where('period_id', $period_id);
                 $query->where('teacher_id', $teacher_id);
             })->get();
             return $parallel;
         }
 
-        return Parallel::whereHas('tuitions', function ($query) use ($period_id) {
-            $query->where('period_id', $period_id);
-        })->get();
+        return Parallel::all();
     }
 }
 
@@ -163,15 +163,38 @@ if (!function_exists('addAverageInNotes')) {
         /**
          * @var \App\Models\User $user
          */
+        // dd($notes);
         foreach ($notes as $key => $note) {
-            $note['averageFirstTrimester'] =((($note?->partial_trimester_1 ?? 0) * 9) + (($note?->integrating_project_1 ?? 0)/2) + (($note?->evaluation_mechanism_1 ?? 0) / 2)) / 10;
-            $note['averageSecondTrimester'] =( (($note?->partial_trimester_2 ?? 0) * 9) + (($note?->integrating_project_2 ?? 0) / 2) + (($note?->evaluation_mechanism_2 ?? 0) / 2)) / 10;
-            $note['averageThirdTrimester'] =( (($note?->partial_trimester_3 ?? 0) * 9) + (($note?->integrating_project_3 ?? 0) / 2) + (($note?->evaluation_mechanism_3 ?? 0) / 2)) / 10;
+            $note['averageFirstTrimester'] = ((($note?->partial_trimester_1 ?? 0) * 9) + (($note?->integrating_project_1 ?? 0) / 2) + (($note?->evaluation_mechanism_1 ?? 0) / 2)) / 10;
+            $note['averageSecondTrimester'] = ((($note?->partial_trimester_2 ?? 0) * 9) + (($note?->integrating_project_2 ?? 0) / 2) + (($note?->evaluation_mechanism_2 ?? 0) / 2)) / 10;
+            $note['averageThirdTrimester'] = ((($note?->partial_trimester_3 ?? 0) * 9) + (($note?->integrating_project_3 ?? 0) / 2) + (($note?->evaluation_mechanism_3 ?? 0) / 2)) / 10;
             $note['noteFinal'] = round((($note['averageFirstTrimester']  + $note['averageSecondTrimester'] + $note['averageThirdTrimester']) / 3.3333333333) + (($note->project_final ?? 0) / 10), 2);
             // dd($note, $note['noteFinal']);
         }
-
         return $notes;
     }
+}
 
+if (!function_exists('noteBySubject')) {
+    function noteByStudentAndSubject($student_id, $subject_id, $period_id, $managerNotes)
+    {
+        $notes = Note::where('student_id', $student_id)
+            ->where('period_id', $period_id)
+            ->where('subject_id', $subject_id)
+            ->get();
+        
+        $acc = 0;
+        $notes = collect($notes);
+        $baseNote = 12;
+        // $managerNotes = ManagerNote::with('inputNotes')->where('period_id', $period_id)->get();
+        foreach ($managerNotes as $key => $value) {
+            foreach ($value->inputNotes as $key1 => $inputNote) {
+                $value = $notes->where('input_note_id', $inputNote->id)->first()?->value ?? 0;
+                $acc += (($value / $baseNote) * $inputNote->value);
+                // dd($acc);
+            }
+        }
+        $noteFinal = (round(((($acc / 100)* $baseNote)/ $managerNotes->count()), 2) );
+        return  $noteFinal;
+    }
 }

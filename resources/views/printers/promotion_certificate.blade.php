@@ -24,6 +24,7 @@
         .table {
             width: 100%;
             text-align: center;
+            border-collapse: collapse;
         }
 
         table,
@@ -98,7 +99,7 @@
                                 </td>
                                 <td>
                                     @php
-                                        $note = $data['notes']->where('subject_id', $subject->id)?->first()->noteFinal ?? 0;
+                                        $note = noteByStudentAndSubject($data['student']->id, $subject->id, $data['period']->id, $data['managerNotes']);  //$data['notes']->where('subject_id', $subject->id)?->first()->noteFinal ?? 0;
                                         $acc += $note;
                                     @endphp
                                     {{ $note }}

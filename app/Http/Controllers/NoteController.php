@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Note;
 use App\Http\Requests\StorenoteRequest;
 use App\Http\Requests\UpdatenoteRequest;
+use App\Models\InputNote;
 use App\Models\ManagerNote;
 use App\Models\Parallel;
 use App\Models\Period;
@@ -33,7 +34,7 @@ class NoteController extends Controller
         if ($user->hasRole('student')) {
             return $this->indexForStudent();
         }
-        
+
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
         $managerNotes = ManagerNote::where('period_id', $period_id)->with('inputNotes', 'period')->get();
         $periods = getPeriodByRole();
@@ -42,15 +43,16 @@ class NoteController extends Controller
         return Inertia::render('Notes/CreateOrEditNote', [
             'success' => true,
             'data' => [
-                'currentPeriod' => $period_id, 
-                'periods' => $periods, 
+                'currentPeriod' => $period_id,
+                'periods' => $periods,
                 'parallels' => $parallels,
                 'manager_notes' => $managerNotes
             ],
         ]);
     }
 
-    private function indexForStudent() {
+    private function indexForStudent()
+    {
         $period_id = request()->get('period_id', null) ?? currentState()->period_id;
         /**
          * @var \App\Models\User $user
@@ -85,10 +87,6 @@ class NoteController extends Controller
             'success' => true,
             'data' => $schedules,
         ]);
-    }
-
-    public function getSubjectByPeriod(Period $period) {
-
     }
 
     private function _getSubjectByParallel(int $parallel_id, int $period_id)
@@ -143,10 +141,10 @@ class NoteController extends Controller
     {
         $subject_id = $subject->id;
 
-        $note = Note::where('student_id', $student->id)
+        $note = Note::with('inputNote')->where('student_id', $student->id)
             ->where('period_id', $period->id)
             ->where('subject_id', $subject_id)
-            ->first();
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -177,13 +175,24 @@ class NoteController extends Controller
             }
         }
 
+        $period_id = currentState()->period_id;
+
         $note = Note::where('student_id', $request->student_id)
-            ->where('period_id', currentState()->period_id)
+            ->where('period_id', $period_id)
             ->where('subject_id', $request->subject_id)
             ->first();
+
         if ($note) {
             validationException('note_id', 'La nota ya existe.');
         }
+
+        $inputNotes = InputNote::whereHas('managerNote', function ($query) use ($period_id) {
+            $query->where('period_id', $period_id);
+        })->get();
+
+        $inputNotes->each(function ($inputNote) use ($request) {
+        });
+
         $mergeData = array_merge($data, [
             'user_id' => auth()->id(),
             'period_id' => currentState()->period_id,
@@ -199,6 +208,47 @@ class NoteController extends Controller
         ]);
     }
 
+    public function saveNote(Request $request, ManagerNote $managerNote)
+    {
+        $period_id = currentState()->period_id;
+        if ($managerNote->period_id != $period_id) {
+            validationException('period_id', 'El periodo no corresponde a la nota');
+        }
+
+        $inputNotes = InputNote::where('manager_note_id', $managerNote->id)->get();
+        $collectNotes = collect($request->notes);
+
+        // dd($collectNotes->get(3));
+        $inputNotes->each(function ($inputNote) use ($request, $period_id, $collectNotes) {
+            $note = Note::where('input_note_id', $inputNote->id)
+                ->where('period_id', $period_id)
+                ->where('subject_id', $request->subject_id)
+                ->where('student_id', $request->student_id)
+                ->first();
+
+            if ($note) {
+                // validationException('note_id', 'La nota ya existe.');
+                // dd($note);
+                $note->value = $collectNotes->get($inputNote->id) ?? 0;
+                $note->user_id = auth()->id();
+                $note->save();
+            } else {
+                Note::create([
+                    'student_id' => $request->student_id,
+                    'input_note_id' => $inputNote->id,
+                    'value' => $collectNotes->get($inputNote->id) ?? 0,
+                    'period_id' => $period_id,
+                    'subject_id' => $request->subject_id,
+                    'user_id' => auth()->id()
+                ]);
+            }
+        });
+    }
+
+    // public function updateNote(Request $request, ManagerNote $managerNote) {
+    //     f
+    // }
+
     public function verifiedApprovedCourse($parallel_id, $student_id)
     {
         $period_id = currentState()->period_id;
@@ -207,7 +257,7 @@ class NoteController extends Controller
         $tuition = Tuition::where('student_id', $student_id)->where('parallel_id', $parallel_id)->where('period_id', $period_id)->first();
         $approved = 1;
         foreach ($subjects as $subject) {
-            if(!$notes->contains('subject_id', $subject->id)) {
+            if (!$notes->contains('subject_id', $subject->id)) {
                 $approved = 0;
                 break;
             }
@@ -224,7 +274,7 @@ class NoteController extends Controller
             $tuition->approved = 0;
             $tuition->save();
         }
-        $approved = addAverageInNotes($notes)->every(function($note) {
+        $approved = addAverageInNotes($notes)->every(function ($note) {
             return $note['noteFinal'] >= 7;
         });
         if ($approved) {

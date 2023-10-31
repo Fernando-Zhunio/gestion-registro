@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ManagerNote extends Model
 {
-    protected $fillable = ['partial', 'period_id'];
     use HasFactory;
+    protected $fillable = ['partial', 'period_id', 'is_active'];
 
     public function period() {
         return $this->belongsTo(Period::class);

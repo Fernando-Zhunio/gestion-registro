@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\ManagerNote;
 use App\Models\Note;
 use App\Models\Parallel;
 use App\Models\Period;
@@ -32,9 +33,15 @@ class PrinterController extends Controller
         $data['course'] = $tuition->course;
         $data['subjects'] = $this->_getSubjectByParallel($tuition->parallel_id, $period_id);
         $data['notes'] = addAverageInNotes(Note::where('student_id', $student->id)->where('period_id', $period_id)->get());
-        $view = view('printers.promotion_certificate', compact('data'))->render();
+        $data['managerNotes'] = ManagerNote::with('inputNotes')->where('period_id', $period_id)->get();
 
-        $pdf = Pdf::loadHTML(Normalizer::normalize($view), 'UTF-8');
+        // noteByStudentAndSubject($student->id, $tuition->parallel_id, $period_id, $managerNotes);
+        $view = view('printers.promotion_certificate', compact('data'));
+        if (env('APP_ENV') == 'local') {
+            return $view;
+        }
+
+        $pdf = Pdf::loadHTML(Normalizer::normalize($view->render()), 'UTF-8');
         $name = $student->doc_number . '-certificado_promocion' . '.pdf';
         return $pdf->download($name);
     }

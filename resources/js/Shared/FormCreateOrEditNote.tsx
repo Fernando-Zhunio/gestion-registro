@@ -1,14 +1,24 @@
 import Input from "@/Components/Input";
-import Textarea from "@/Components/Textarea";
+// import Textarea from "@/Components/Textarea";
 import { showToast } from "@/Helpers/alerts";
-import { patchValues } from "@/Helpers/patchValues";
+// import { patchValues } from "@/Helpers/patchValues";
 import { IManagerNote } from "@/Pages/Academic/types/acedemy.type";
 import { INote } from "@/Pages/Notes/types/note.types";
 import { usePage } from "@inertiajs/react";
 import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { InputsNote } from "./InputsNote";
+
+const baseNote = 12;
+const noteMinApproved = 7;
+function getNoteFinal(notesTotal: any, divisor: number) {
+    const prev = Object.values<number>(notesTotal).reduce(
+        (a: number, b: number) => (+a || 0) + (+b || 0),
+        0
+    );
+    return ((prev / divisor / 100) * baseNote).toFixed(2);
+}
 
 const FormCreateOrEditNote = ({
     note = null,
@@ -16,34 +26,40 @@ const FormCreateOrEditNote = ({
     subject_id,
     parallel_id,
     disabled,
+    groupNoteByPartial,
 }: {
     note?: INote | null;
     student_id?: number;
     subject_id?: number;
     parallel_id: number;
     disabled: boolean;
+    groupNoteByPartial: {[key: string]: INote}
 }) => {
-    const {props: {data:{manager_notes: notes}}} = usePage() as {props: {data: {manager_notes: IManagerNote[]}}};
-    const [managerNotes, setManagerNotes] = useState<IManagerNote[]>([])
+    const {
+        props: {
+            data: { manager_notes: notes },
+        },
+    } = usePage() as { props: { data: { manager_notes: IManagerNote[] } } };
+    const [managerNotes, setManagerNotes] = useState<IManagerNote[]>([]);
     useEffect(() => {
-        reset(
-            patchValues(
-                {
-                    partial_trimester_1: 0,
-                    partial_trimester_2: 0,
-                    partial_trimester_3: 0,
-                    integrating_project_1: 0,
-                    integrating_project_2: 0,
-                    integrating_project_3: 0,
-                    evaluation_mechanism_1: 0,
-                    evaluation_mechanism_2: 0,
-                    evaluation_mechanism_3: 0,
-                    project_final: 0,
-                    observation: "",
-                },
-                note
-            )
-        );
+        // reset(
+        //     patchValues(
+        //         {
+        //             partial_trimester_1: 0,
+        //             partial_trimester_2: 0,
+        //             partial_trimester_3: 0,
+        //             integrating_project_1: 0,
+        //             integrating_project_2: 0,
+        //             integrating_project_3: 0,
+        //             evaluation_mechanism_1: 0,
+        //             evaluation_mechanism_2: 0,
+        //             evaluation_mechanism_3: 0,
+        //             project_final: 0,
+        //             observation: "",
+        //         },
+        //         note
+        //     )
+        // );
         console.log({ note });
     }, [note, student_id]);
 
@@ -53,151 +69,55 @@ const FormCreateOrEditNote = ({
         setValue,
         watch,
         reset,
+
         formState: { errors },
         control,
-    } = useForm<INote>({
-        defaultValues: {
-            partial_trimester_1: 0,
-            partial_trimester_2: 0,
-            partial_trimester_3: 0,
-            integrating_project_1: 0,
-            integrating_project_2: 0,
-            integrating_project_3: 0,
-            evaluation_mechanism_1: 0,
-            evaluation_mechanism_2: 0,
-            evaluation_mechanism_3: 0,
-            project_final: 0,
-            observation: "",
-            ...note,
-        },
-    });
+    } = useForm<INote>();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [ponderateFirst, setPonderateFirst] = useState(0);
-    const [ponderateSecond, setPonderateSecond] = useState(0);
-    const [ponderateThird, setPonderateThird] = useState(0);
-    const [noteFinal, setNoteFinal] = useState(0);
+    const [notesTotal, setNotesTotal] = useState({});
+    const noteFinal = useMemo(
+        () => getNoteFinal(notesTotal, managerNotes.length),
+        [notesTotal]
+    );
 
-    const watchProjectFinal = watch("project_final");
+    function setNoteTotal(key: number, value: number) {
+        setNotesTotal((curr: any) => {
+            curr[key] = value;
+            return { ...curr };
+        });
+    }
 
     useEffect(() => {
         setManagerNotes(() => {
-            return notes.sort((a, b) => a.partial-b.partial) as any
-        })
-    },[notes]);
-
-    useEffect(() => {
-        const note =
-            (ponderateFirst || 0) +
-            (ponderateSecond || 0) +
-            (ponderateThird || 0) +
-            (+(watchProjectFinal / 10) || 0);
-        setNoteFinal(note?.toFixed(2) as any);
-    }, [ponderateFirst, ponderateSecond, ponderateThird, watchProjectFinal]);
-
-    function getPonterate1(partial: number, ponderate: number) {
-        setPonderateFirst(ponderate);
-    }
-
-    function getPonterate2(partial: number, ponderate: number) {
-        setPonderateSecond(ponderate);
-    }
-
-    function getPonterate3(partial: number, ponderate: number) {
-        setPonderateThird(ponderate);
-    }
-
-    const onSubmit = (data: INote) => {
-        if (!parallel_id) {
-            showToast({
-                icon: "error",
-                title: "Error",
-                text: "Debe seleccionar un paralelo",
-            });
-            return;
-        }
-        if (!subject_id) {
-            showToast({
-                icon: "error",
-                title: "Error",
-                text: "Debe seleccionar un materia",
-            });
-            return;
-        }
-        if (!student_id) {
-            showToast({
-                icon: "error",
-                title: "Error",
-                text: "Debe seleccionar un estudiante",
-            });
-            return;
-        }
-
-        setIsLoading(true);
-
-        const params = {
-            ...data,
-            student_id,
-            subject_id,
-            parallel_id,
-        };
-        if (note?.id) {
-            axios.put(`/notes/${note?.id}`, params).then((res) => {
-                showToast({
-                    icon: "success",
-                    title: "Éxito",
-                    text: "Nota actualizada",
-                });
-                setIsLoading(false);
-            });
-            return;
-        }
-
-        axios
-            .post("/notes", params)
-            .then((res) => {
-                showToast({
-                    icon: "success",
-                    title: "Éxito",
-                    text: "Nota creada",
-                });
-                setIsLoading(false);
-                console.log(res.data.data);
-                note = res.data.data;
-            })
-            .catch((err: AxiosError) => {
-                console.log(err);
-                showToast({
-                    icon: "error",
-                    title: "Error",
-                    text:
-                        (err?.response?.data as any)?.message ||
-                        "No se pudo crear la nota, vuelva a intentarlo",
-                });
-                setIsLoading(false);
-            });
-    };
+            return notes.sort((a, b) => a.partial - b.partial) as any;
+        });
+    }, [notes]);
 
     return (
-        <div className=" shadow-lg-fz px-4 h-auto py-4 rounded-xl">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {
-                    managerNotes.map((note, index) => (
-                    <div key={note.id} className="border shadow-lg-fz border-gray-200 p-6 rounded-xl mb-7 section-note-trimester">
-                        <h3 className="">Parcial {note.partial}</h3>
-    
-                        {/* <InputsTrimester
-                            disabled={disabled}
-                            control={control}
-                            setValue={setValue}
-                            watch={watch}
-                            trimester={1}
-                            getData={getPonterate1}
-                        /> */}
-                        <InputsNote note={note.input_notes} control={control}></InputsNote>
-                    </div> 
-                    ))
-                }
+        <div className="shadow-lg-fz px-4 h-auto py-4 rounded-xl">
+            <div>
+                {managerNotes.map((note, index) => (
+                    <div
+                        key={note.id}
+                        className="border shadow-lg-fz border-gray-200 p-6 rounded-xl mb-7 section-note-trimester"
+                    >
+                        <h3>Parcial {note.partial}</h3>
+                        <InputsNote
+                            student_id={student_id}
+                            subject_id={subject_id}
+                            parallel_id={parallel_id}
+                            isActive={note.is_active}
+                            baseNote={baseNote}
+                            setNoteTotal={setNoteTotal}
+                            id={note?.id}
+                            // setValue={setValue}
+                            values={groupNoteByPartial?.[note.id] as any}
+                            // disabled={disabled}
+                            managerNote={note}
+                        ></InputsNote>
+                    </div>
+                ))}
                 {/*<div className="border shadow-lg-fz border-gray-200 p-6 rounded-xl mb-7 section-note-trimester">
                     <h3 className="">Primer Trimestre</h3>
 
@@ -280,16 +200,34 @@ const FormCreateOrEditNote = ({
                         </div>
                     </div>
                 </div> */}
-                {!disabled && <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`btn-custom btn-store ${
-                        isLoading ? "is-loading" : ""
-                    }`}
-                >
-                    Guardar
-                </button>}
-            </form>
+                <div>
+                    <div
+                        className={`${
+                            +noteFinal >= noteMinApproved
+                                ? "bg-green-500"
+                                : "bg-red-500"
+                        } text-white p-2 rounded-md mb-3 inline-block`}
+                    >
+                        Nota Final: <span>{noteFinal}</span>
+                        <small>
+                            {+noteFinal >= noteMinApproved
+                                ? " Curso Aprobado"
+                                : " Curso Reprobado"}
+                        </small>
+                    </div>
+                </div>
+                {!disabled && (
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className={`btn-custom btn-store ${
+                            isLoading ? "is-loading" : ""
+                        }`}
+                    >
+                        Guardar
+                    </button>
+                )}
+            </div>
         </div>
     );
 };
@@ -322,12 +260,15 @@ export function InputsTrimester({
         [0, 0, 0]
     );
     useEffect(() => {
-        const partial = (
-            // (watchPartialFirst.reduce(
-            //     (a: number, b: number) => (+a || 0) + (+b || 0),
-            //     0
-            // ) || 0) / 10
-            (((+wPartial[0] || 0)* 9) + ((+wPartial[1] || 0)/2) + ((+wPartial[2] || 0)/2)) / 10
+        const partial = // (watchPartialFirst.reduce(
+        //     (a: number, b: number) => (+a || 0) + (+b || 0),
+        //     0
+        // ) || 0) / 10
+        (
+            ((+wPartial[0] || 0) * 9 +
+                (+wPartial[1] || 0) / 2 +
+                (+wPartial[2] || 0) / 2) /
+            10
         ).toFixed(2);
         const ponderate = (+partial / 3.3333333333333).toFixed(2);
         setPonderateFirst(ponderate as any);
